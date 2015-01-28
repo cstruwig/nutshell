@@ -1,0 +1,5 @@
+# OSx
+*.DS_Store
+
+# settings
+/settings.json

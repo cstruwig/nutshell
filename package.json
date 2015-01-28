@@ -1,0 +1,29 @@
+{
+  "name": "nutshelljs",
+  "version": "1.0.0",
+  "description": "desc",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "hardus van der berg <hardus@sunfork.com> (http://www.sunfork.com)",
+  "license": "ISC",
+  "dependencies": {
+    "request": "*",
+    "inflection": "*",
+    "bunyan": "^1.2.3",
+    "restify": "^2.8.4",
+    "js2xmlparser": "*",
+    "promise": "*",
+    "underscore": "*",
+    "guid": "*",
+    "longjohn": "*",
+    "twitter": "*"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5"
+  }
+}
