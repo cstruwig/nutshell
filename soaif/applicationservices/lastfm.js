@@ -1,4 +1,4 @@
-//require('../soaif/node_modules/longjohn/lib');
+require('longjohn');
 
 var ns = require('../lib');
 var debug = ns.debug;
@@ -13,39 +13,35 @@ exports.searchArtists = function(filter, next) {
 
 	var result = tools.collection('artist');
 	
-	try {
-		ns.request(url, function (err, response, body) {
-			if (err || response.statusCode !== 200) {
-				debug.log('some error' + err);
-				throw new Error('some error' + err);
-			} else {
-				var artists = JSON.parse(body).results.artistmatches.artist;
+	ns.request(url, function (err, response, body) {
+		if (err || response.statusCode !== 200) {
+			debug.log('some error' + err);
+			throw new Error('some error' + err);
+		} else {
+			var artists = JSON.parse(body).results.artistmatches.artist;
 
-				//FIX! validate
-				artists.makeArray().forEach(function(item) {
-					
-					var artist = {
-						name: item.name,
-						url: item.url,
-						image: ''
-					};
-					
-					item.image.forEach(function(image) {
-						if (image['#text'] !== '' && image.size === 'mega') {
-							artist.image = image['#text'];
-						}
-					});
-
-					result.add(artist);					
-				});
+			//FIX! validate
+			artists.makeArray().forEach(function(item) {
 				
-				return next(null, result);
-			}		  	
-		});
-	}
-	catch (err) {
-		return next(err, null);
-	}
+				var artist = {
+					name: item.name,
+					url: item.url,
+					image: ''
+				};
+				
+				item.image.forEach(function(image) {
+					if (image['#text'] !== '' && image.size === 'mega') {
+						artist.image = image['#text'];
+					}
+				});
+
+				result.add(artist);					
+			});
+			
+			return next(null, result);
+		}		  	
+	});
+	
 };
 
 exports.getTopTracks = function (filter, next) {

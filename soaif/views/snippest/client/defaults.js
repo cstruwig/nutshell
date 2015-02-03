@@ -1,0 +1,1 @@
+Session.set('adding_interest', false);

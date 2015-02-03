@@ -1,0 +1,32 @@
+<head>
+  <title>ns_soaif</title>
+</head>
+
+<body>
+  <form>
+    <input type="text" name="query" placeholder="partial artist name">
+    <input type="submit" value="Search">
+  </form>
+
+  {{#if searching}}
+    <p>Retrieving artist information...</p>
+  {{else}}
+    {{#if artists.count}}
+      <hr>
+      <table>
+        {{#each artists}}
+          {{> artist}}
+        {{/each}}
+      </table>
+    {{/if}}
+  {{/if}}
+</body>
+
+<template name="artist">  
+  <tr>
+    <td class="image"><img style="width: 150px;" src="{{image}}"></td>
+    <td>
+      <a href="{{url}}" target="_blank">{{name}}</a>
+    </td>
+  </tr>
+</template>

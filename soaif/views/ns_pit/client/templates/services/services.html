@@ -1,0 +1,16 @@
+<template name="services">
+	<div class="container">
+		<h1><small>services</small></h1>
+		<div>
+			{{#each services}}
+				{{> service}}
+			{{/each}}
+		</div>
+	</div>
+</template>
+
+<template name="service">
+	<div>
+		<p>{{name}}</p>
+	</div>
+</template>

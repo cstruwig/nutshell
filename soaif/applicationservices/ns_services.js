@@ -19,6 +19,12 @@ module.exports = {
 				options: ['application', 'enterprise', 'compound', 'soaif']
 			});
 
+			var name = nsReq.getParameter('name', {
+				typeName: 'string',
+				description: 'partial service name to search',
+				defaultValue: ''
+			});
+
 			//validate
 			//nsReq.validateParameters();
 			
@@ -52,18 +58,38 @@ module.exports = {
 			files.makeArray().forEach(function(item) {
 				//console.log(util.inspect(item, { showHidden: true, depth: null }));
 				var file = fs.lstatSync(path + item);
+
+				var tempParams = nsReq.parameters;
+				tempParams.name = item.replace('.js', '');
+
+				var service = { 
+					name: item,
+					url: '/' + nsReq.service.name + '/' + nsReq.resource.name + '.' + nsReq.resource.output + '?' + require('querystring').stringify(nsReq.parameters)
+				}
+
 				//console.log(util.inspect(file, { showHidden: true, depth: null }));
 				if (file && file.isFile() && item.endsWith('.js')) {
 					if (showSOAIF) {
 						if (item.startsWith('ns_')) {
-							result.add({ name: item });	
+							if (name === '') {
+								result.add(service);
+							} else {
+								if (item.includes(name)) {
+									result.add(service);
+								}
+							}
 						}
 					} else {
 						if (!item.startsWith('ns_')) {
-							result.add({ name: item });
+							if (name === '') {
+								result.add(service);
+							} else {
+								if (item.includes(name)) {
+									result.add(service);
+								}
+							}
 						}
-					}
-					
+					}					
 				};
 			});
 
@@ -100,8 +126,6 @@ module.exports = {
 				description: 'partial artist name to search for',
 				defaultValue: 'enterprise'
 			});
-			
-
 
 			//validate
 			//nsReq.validateParameters();

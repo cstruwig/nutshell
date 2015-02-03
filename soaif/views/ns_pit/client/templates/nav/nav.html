@@ -1,0 +1,53 @@
+<template name="nav">
+
+<div class="container">
+	<div class="navbar navbar-default navbar-fixed-top">
+		<div class="navbar-header">
+				<a class="navbar-brand" href="#" style="color: #000">&nbsp;<img width="20px" alt="nutshell" src="../nutshell.png">&nbsp;<strong>nut</strong>shell</a>
+				<button class="navbar-toggle" data-toggle="collapse" data-target=".navHeaderCollapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+			</div>
+
+			<div class="collapse navbar-collapse navHeaderCollapse">
+				<ul class="nav navbar-nav">
+			        <li class=""><a class="xyz" href="#">xyz</a></li>
+			    </ul>
+				<ul class="nav navbar-nav navbar-right pull-right">
+					<li><a class="dashboard" href="#">abc</a></li>
+					<li>{{> loginButtons align="right"}}</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</template>
+<!--
+<template name="nav">
+	<div class="navbar navbar-static-top navbar-fixed-top">
+		<div class="navbar-inner">
+			<a class="brand" href="#" style="color: #000;">
+				
+			</a>
+			<ul class="nav">
+				<li><a class="dashboard" href="#">dashboard</a></li>
+				{{#if currentUser}}
+				<li><a class="tasks" href="#">tasks</a></li>
+				<li><a class="services" href="#">services&nbsp;<span class="badge">12</span></a></li>
+				<li><a class="settings" href="#">settings</a></li>
+				<li><a class="activity" href="#">activity</a></li>
+				<li><a class="views" href="#">views</a></li>
+				<li><a class="diagnostics" href="#">diagnostics</a></li>
+				{{/if}}
+				<li><a class="trending" href="#">trending</a></li>
+
+			</ul>			
+			<ul class="nav pull-right">
+				<li>{{> loginButtons align="right"}}</li>
+			</ul>
+		</div>
+	</div>
+</template>
+-->

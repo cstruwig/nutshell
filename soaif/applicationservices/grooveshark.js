@@ -6,7 +6,7 @@ var apiSearch = 'http://tinysong.com/s/';
 var apiUrl = '?format=json&limit=10&key=3e863f6d123ce0704b82ab0f2b4ea7c0';
 
 exports.searchArtists = function (artistName, next) {
-	artistName = 'carcass';
+	//artistName = 'carcass';
 	var url = apiSearch + artistName + apiUrl;
 	
 	var result = tools.collection('artist');

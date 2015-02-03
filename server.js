@@ -1,3 +1,16 @@
+/*
+o fok...
+--------
+service catalogue
+settings
+logs
+diagnostics/testing
+views
+
+create compound service
+*/
+
+
 //if (process.env.NODE_ENV !== 'production'){
 //	require('longjohn');
 //}
@@ -24,6 +37,14 @@ function serveResponse(nsReq, options, next) {
 		if (nsReq.options.educateme) {
 			nsReq.response.data['education'] = nsReq.education;
 		}
+
+		nsReq.response.data['request'] = {
+			time: 2,
+			size: 111,
+			service: nsReq.service.name,
+			resource: nsReq.resource.name,
+			params: nsReq.params
+		};
 	
 		//FIX! options-from-service-override-mechanism goes here... i.e. call from service : nsReq.override('output', 'html'); to override options.contentType below...
 		switch (nsReq.resource.output) {
@@ -130,6 +151,9 @@ server.use(restify.queryParser());
 server.use(restify.authorizationParser());
 
 server.get({ path: '/nutshell/:service/:resource', name: 'nutshellRequest' }, processRequest);
+server.get(/\/?.*/, restify.serveStatic({
+    directory: __dirname + '/soaif/views/'
+}));
 server.get('.*', restify.serveStatic({ directory: '.', default: 'index.html' }));  //everything AND anything else... serve error HTML
 
 function errorRequest(req, res, cb) {
@@ -149,6 +173,6 @@ server.on('VersionNotAllowed', errorRequest);     // When a client request is se
 server.on('UnsupportedMediaType', errorRequest);  // When a client request is sent for a route that exist, but has a content-type mismatch, restify will emit this event. Note that restify checks for listeners on this event, and if there are none, responds with a default 415 handler. It is expected that if you listen for this event, you respond to the client.
 server.on('InternalError', errorRequest);
 
-server.listen(8080, function() {
+server.listen(8080, '127.0.0.1', function() {
 	console.log('nutshell RESTful listener started...\naccepting requests @ %s\n', server.url);
 });

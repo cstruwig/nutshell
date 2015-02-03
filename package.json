@@ -21,7 +21,8 @@
     "underscore": "*",
     "guid": "*",
     "longjohn": "*",
-    "twitter": "*"
+    "twitter": "*",
+    "youtube-node": "*"
   },
   "devDependencies": {
     "grunt": "^0.4.5"

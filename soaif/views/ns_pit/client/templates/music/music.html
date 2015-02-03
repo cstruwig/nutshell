@@ -1,0 +1,17 @@
+<template name="music">
+	<div class="container">
+		<h1><small>artists</small></h1>
+		<input class="artistquery" type="text" value="korn" />
+		<div class="scroll">
+			{{#each artists}}
+				{{> artist}}
+			{{/each}}
+		</div>
+	</div>
+</template>
+
+<template name="artist">
+	<div>
+		<p>{{name}}</p>
+	</div>
+</template>

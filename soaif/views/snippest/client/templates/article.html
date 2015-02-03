@@ -1,0 +1,17 @@
+<template name="article">
+	<div class="item well span4">
+		<iframe height="{{height}}" src="{{surl}}"></iframe>
+		<hr>
+		<!--<pre>
+			Articles.remove({ _id : '{{_id}}' });
+			<a href="{{url}}">{{url}}</a>
+		</pre>-->
+		<h4 class="muted">{{name}}</h4>
+		<p>{{description}}</p>
+		{{#if currentUser}}
+		<a href="{{url}}" class="like"><img width="22px" src="http://i.stack.imgur.com/hKRny.png" class="img-circle" /></a>
+		<span class="label label-info">{{numlikes}}</span>
+		<span class="badge badge-success">{{likesthis}}</span>
+		{{/if}}
+	</div>
+</template>

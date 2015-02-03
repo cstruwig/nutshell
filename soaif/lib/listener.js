@@ -9,6 +9,8 @@ exports.setupRequest = function(req, res, next) {
 
 	var nsRequest = require('./nsrequest');
 	var nsReq = nsRequest.init(req, res);
+
+	//nsReq.host = options.host || 'n/a';
 	
 	nsRequest.parse(nsReq, function(err, result) {
 		if (err) {
@@ -51,15 +53,28 @@ exports.loadView = function(nsReq) {
 	var viewSource;
 
 	try {
-		var path = '../views/' + nsReq.options.view + '.html';		//__dirname + '/../views/' + nsReq.options.view + '.html';
+
+		console.log('view=' + nsReq.options.view);
+
+		if (nsReq.options.view === 'default') {
+			console.log('view=default');
+			nsReq.options.view = nsReq.resource.name;
+		}
+
+		//var path = '../views/' + nsReq.options.view + '.html';
+		var path = __dirname + '/../views/' + nsReq.options.view + '.html';
+
+		console.log(path);
 		if (fs.fileExists(path)) {
+			console.log('fileExists');
 			contentBuffer = fs.readFile(path);
 		} else {
+			console.log('boooooooohoooooooo');
 			contentBuffer = fs.readFile(__dirname + '/../views/default.html');	
 		}
 		
 		viewSource = contentBuffer.toString();
-		viewData = viewSource.replace('<!-- nsData -->', 'var nsData = ' + JSON.stringify(nsReq.response.data) + ';');
+		viewData = viewSource.replace('/* #nsData */', 'var nsData = ' + JSON.stringify(nsReq.response.data) + ';');
 
 		return viewData;
 	}

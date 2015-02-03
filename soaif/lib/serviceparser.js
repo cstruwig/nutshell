@@ -6,39 +6,12 @@ var fs = require('./filesystem');
 var util = require('util');
 var path = require('path');
 
-function soaifModule(resourceName) {
-
-	var result = null;
-	resourceName = inflection.pluralize('resourceName').toLowerCase();
-
-	try {
-
-		//eg /nutshell/soaif/logs
-		switch (resourceName.toLowerCase()) {
-			case 'logs':
-				result = 'logs';
-				break;
-			case 'services':
-				result = 'services';
-				break;
-			default:
-				result = '____not_yet_decided____';
-				break;
-		}
-
-		//debug.log('---: result ' + util.inspect(result, false, Infinity, false)); //JSON.stringify(result));
-	}
-	catch (err) {
-		debug.log('<=== function ends ERROR [' + err + ']');
-	}
-
-	return result;
-}
-
 function nutshellIt(module) {
 	module.getResources = function(nsReq, next) {
 		
 		var result = require('./tools').collection('resources');
+
+		console.log('OK***********************************');
 
 		for (var name in nsReq.service.module) {
 			obj = nsReq.service.module[name];
@@ -112,7 +85,6 @@ exports.parse = function(nsReq, next) {
 			default:
 				service.modulePath = process.cwd() + '/soaif/enterpriseservices/' + serviceName + '.js';
 				//service.modulePath = __dirname + '/../enterpriseservices/' + serviceName + '.js'; //__dirname + '/../../enterprise/' + serviceName + '.js';
-				debug.lo('service.modulePath', service.modulePath);
 				if (fs.fileExists(service.modulePath)) {
 					service.serviceType = 'enterprise';
 					serviceFound = true;
