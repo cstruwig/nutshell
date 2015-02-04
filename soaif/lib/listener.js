@@ -64,14 +64,15 @@ exports.loadView = function(nsReq) {
 		//var path = '../views/' + nsReq.options.view + '.html';
 		var path = __dirname + '/../views/' + nsReq.options.view + '.html';
 
-		console.log(path);
 		if (fs.fileExists(path)) {
 			console.log('fileExists');
 			contentBuffer = fs.readFile(path);
 		} else {
-			console.log('boooooooohoooooooo');
+			console.log('defaulting the view');
 			contentBuffer = fs.readFile(__dirname + '/../views/default.html');	
 		}
+
+		nsReq.response.data.peach = function() { alert('x'); };
 		
 		viewSource = contentBuffer.toString();
 		viewData = viewSource.replace('/* #nsData */', 'var nsData = ' + JSON.stringify(nsReq.response.data) + ';');

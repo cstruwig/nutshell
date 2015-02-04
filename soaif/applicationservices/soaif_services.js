@@ -64,13 +64,15 @@ module.exports = {
 
 				var service = { 
 					name: item,
-					url: '/' + nsReq.service.name + '/' + nsReq.resource.name + '.' + nsReq.resource.output + '?' + require('querystring').stringify(nsReq.parameters)
+					url:  '/' + nsReq.service.name + '/' + nsReq.resource.name + '.' + nsReq.resource.output + '?' + require('querystring').stringify(nsReq.parameters)
 				}
+
+				console.log(require('path').normalize(service.url));
 
 				//console.log(util.inspect(file, { showHidden: true, depth: null }));
 				if (file && file.isFile() && item.endsWith('.js')) {
 					if (showSOAIF) {
-						if (item.startsWith('ns_')) {
+						if (item.startsWith('soaif_')) {
 							if (name === '') {
 								result.add(service);
 							} else {
@@ -80,7 +82,7 @@ module.exports = {
 							}
 						}
 					} else {
-						if (!item.startsWith('ns_')) {
+						if (!item.startsWith('soaif_')) {
 							if (name === '') {
 								result.add(service);
 							} else {

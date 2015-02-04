@@ -1,26 +1,171 @@
 <!DOCTYPE html>
 <html>
 	<head>
-	  <meta charset="utf-8">
-	  <title>nutshell</title>
+		<title>title</title>
+		<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+		<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+		<script src="../../assets/nutshell.js"></script>
+		<link rel="stylesheet" href="../../assets/nutshell.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
 	</head>
 	<body>
-		<h4>nutshell...</h4>
-		<br>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.js"></script>
-		<script>
-		<!-- nsData -->
+		
+		<div class="container">
+			<div class="row clearfix">
+				<div class="col-md-12 column">
+					<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+						<div class="navbar-header">
+							 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"> <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand" href="#" style="color: #000"><strong>nut</strong>shell</a>
+						</div>
+						
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<ul class="nav navbar-nav">
+								<li class="active">
+									<a id="link" href="#"></a>
+								</li>
+							</ul>
+							<form class="navbar-form navbar-left" role="search">
+								<div class="form-group">
+									<input id="searchText" type="text" class="form-control" placeholder="partial name"/>
+								</div>
+								<button id="searchButton" type="submit" class="btn btn-default">search</button>
 
-		if (nsData.education) {
-			$.each(nsData.education, function(ctr, item) {
-				//alert(ite);
-				console.log(item);
+<!-- <em class="glyphicon glyphicon-align-right"> -->
+<!--							<div class="btn-group btn-group-xs">
+									 <button class="btn btn-default" type="button">compound</button>
+									 <button class="btn btn-default" type="button">enterprise</button>
+									 <button class="btn btn-default" type="button">application</button>
+									 <button class="btn btn-default" type="button">soaif</button>
+								</div> -->
+
+							</form>
+
+							<ul class="nav navbar-nav navbar-right">
+								<li class="dropdown">
+									 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+									 	<img style="margin-top: -10px; margin-bottom: -10px; width: 26px; margin-right: 6px" src="../../assets/nutshell.png"><strong style="margin-right: 8px" class="caret"></strong>
+									 </a>
+									<ul class="dropdown-menu" style="margin-right: 10px">
+										<li>
+											<a href="#modal-advancedFiltering" role="button" class="btn" data-toggle="modal">advanced filtering</a>
+										</li>
+										<li>
+											<a href="#">func2()</a>
+										</li>
+										<li>
+											<a href="#">func3()</a>
+										</li>
+										<li class="divider">
+										</li>
+										<li class="sunfork">
+											<a href="#modal-other" role="button" class="btn" data-toggle="modal">funcn()</a>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</div>
+					</nav>
+					
+					<table class="table table-bordered table-condensed table-hover" style="margin-top: 60px">
+						<thead>
+							<tr>
+								<th>
+									#
+								</th>
+								<th id="serviceName"></th>
+								<th>
+									?
+								</th>
+							</tr>
+						</thead>
+						<tbody id="results">
+						</tbody>
+					</table>
+
+					 <!-- <a id="modal-560698" href="#modal-container-560698" role="button" class="btn" data-toggle="modal">Launch demo modal</a> -->
+					
+					<div class="modal fade" id="modal-advancedFiltering" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+									<h4 class="modal-title" id="myModalLabel">
+										advanced filtering
+									</h4>
+								</div>
+								<div class="modal-body">
+									...
+								</div>
+								<div class="modal-footer">
+									 <button type="button" class="btn btn-default" data-dismiss="modal">cancel</button> <button type="button" class="btn btn-primary">search</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="modal fade" id="modal-other" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+									<h4 class="modal-title" id="myModalLabel">
+										advanced OTHER
+									</h4>
+								</div>
+								<div class="modal-body">
+									...
+								</div>
+								<div class="modal-footer">
+									 <button type="button" class="btn btn-default" data-dismiss="modal">cancel</button> <button type="button" class="btn btn-primary">search</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+		/* #nsData */
+
+		$('document').ready(function() {
+
+			var request = parsePath(nsData);
+
+			if (!request) {
+				alert('damn!');
+			}
+			
+			$('#link').html(' > ' + request.service + ' > ' + request.resource);
+			$('#serviceName').html(request.singularResource);
+
+			//populate table
+			nsData[request.resource][request.singularResource].forEach(function(item, i) {
+				var row = '<tr class="active"><td>' + i + '</td><td>' + item.name.replace('.js', '') + '</td><td><a href="./' + item.url + '">help</a></td></tr>';
+
+				$('#results').append(row);
 			});
-		}
 
-		// $.each(nsData.services.service, function(ctr, item) {
-		//	$('body').append('<li>' + item.name + '</li>');
-		// });
+			$('#searchButton').click(function(evt) {
+				evt.preventDefault();
+				if (!$('#searchText').val()) {
+					return;
+				}
+				updateQuerystring('name', $('#searchText').val());
+			});
+
+			$('#advancedFiltering').click(function(evt) {
+				evt.preventDefault();
+
+			});
+			
+
+			
+		});
+		
 		</script>
 	</body>
 </html>

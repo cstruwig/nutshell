@@ -38,13 +38,10 @@ function serveResponse(nsReq, options, next) {
 			nsReq.response.data['education'] = nsReq.education;
 		}
 
-		nsReq.response.data['request'] = {
-			time: 2,
-			size: 111,
-			service: nsReq.service.name,
-			resource: nsReq.resource.name,
-			params: nsReq.params
-		};
+		nsReq.response.data.request = nsReq.request;
+		nsReq.response.data.request.time = 2;
+		nsReq.response.data.request.size = 222;
+		nsReq.response.data.request.params = nsReq.parameters;
 	
 		//FIX! options-from-service-override-mechanism goes here... i.e. call from service : nsReq.override('output', 'html'); to override options.contentType below...
 		switch (nsReq.resource.output) {
@@ -150,11 +147,10 @@ var server = restify.createServer({ name: 'nutshell listener' });
 server.use(restify.queryParser());
 server.use(restify.authorizationParser());
 
+
 server.get({ path: '/nutshell/:service/:resource', name: 'nutshellRequest' }, processRequest);
-server.get(/\/?.*/, restify.serveStatic({
-    directory: __dirname + '/soaif/views/'
-}));
-server.get('.*', restify.serveStatic({ directory: '.', default: 'index.html' }));  //everything AND anything else... serve error HTML
+server.get(/assets\/.*/, restify.serveStatic({ directory: process.cwd() + '/soaif/views' }));
+server.get({ path:  /.*/, name: 'lander' }, restify.serveStatic({ directory : process.cwd() + '/soaif/views', fileName: 'welcome.html' }));
 
 function errorRequest(req, res, cb) {
 	var body = '<html><body>' + res.content || 'unknown' + '</body></html>';

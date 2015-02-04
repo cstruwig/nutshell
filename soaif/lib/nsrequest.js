@@ -67,6 +67,7 @@ exports.init = function(req, res) {
 		req: req,
 		res: res,
 		ref: null,
+		host: 'n/a',
 		date: new Date(),
 		status: null,
 		authorized: false,
@@ -99,6 +100,7 @@ exports.init = function(req, res) {
 			funcionName: '',
 			output: 'json'
 		},
+		request: {},
 		response: {
 			ref: null,
 			status: null, 

@@ -7,6 +7,15 @@ function updateQuerystring(key, value) {
 	window.location.href = pathname + '?' + jQuery.param(params);
 }
 
+function parsePath(nsData) {
+  var path = nsData.request.path.split('/');
+  return {
+    service: path[0],
+    resource: path[1],
+    singularResource: path[2]
+  }
+}
+
 function toParams(searchUrl) {
   var result = {}
   if(searchUrl == '')

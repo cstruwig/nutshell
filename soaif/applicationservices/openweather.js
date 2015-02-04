@@ -17,17 +17,24 @@ exports.getForecast = function(filter, next) {
 			throw new Error('some error' + err);
 		} else {
 			
-			var data = JSON.parse(body);
+			var movies = JSON.parse(body).results.artistmatches.artist;
 
-			var forecast = {
-				city: filter.city,
-				summary: data.weather[0].main,
-				description: data.weather[0].description
-			};
+			//FIX! validate
+			artists.makeArray().forEach(function(item) {
+				
+				var artist = {
+					name: item.name,
+					url: item.url,
+					image: ''
+				};
+				
+				item.image.forEach(function(image) {
+					if (image['#text'] !== '' && image.size === 'mega') {
+						artist.image = image['#text'];
+					}
+				});
 
-			result.add(forecast);
-
-			return next(null, result);
+				result.add(artist);	
 		}		  	
 	});
 
