@@ -35,13 +35,12 @@ exports.searchArtists = function(filter, next) {
 					}
 				});
 
-				result.add(artist);					
+				result.add(artist);
 			});
-			
+
 			return next(null, result);
 		}		  	
 	});
-	
 };
 
 exports.getTopTracks = function (filter, next) {

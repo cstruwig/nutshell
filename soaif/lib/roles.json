@@ -1,0 +1,38 @@
+{ 
+	"id": 22,
+	"name": "japie",
+	"roles": 
+		{ 
+			"role": 
+				[ 
+					"user", 
+					"demo"
+				],
+			"resources": 
+				[
+					{
+						"path": "entertaintment/artists",
+						"ops": "r",
+						"role": "user"
+					},
+					{
+						"path": "entertaintment/movies",
+						"ops": "r",
+						"role": "user"
+					},
+					{
+						"path": "weather/forecasts",
+						"ops": "r",
+						"role": "demo"
+					}
+				],
+			"exceptions": 
+				[
+					{
+						"path" : "entertaintment/artists",
+						"ops": "c",
+						"role": "user"
+					}
+				]
+		}
+}

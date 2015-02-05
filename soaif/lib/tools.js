@@ -1,6 +1,7 @@
 require('longjohn');
 
 var inflection = require('inflection');
+var fs = require('fs');
 
 exports.makeArray = function(obj) {
 	if (!obj.isArray()) {
@@ -102,10 +103,8 @@ exports.collection = function(name) {
 }
 
 exports.getResources = function(nsReq, next) {
-		
-	var result = exports.collection('resources');
 
-	console.log('OK***********************************');
+	var result = exports.collection('resources');
 
 	for (var name in nsReq.service.module) {
 		obj = nsReq.service.module[name];
@@ -121,4 +120,39 @@ exports.getResources = function(nsReq, next) {
 	nsReq.response.data = result.data();
 	
 	next(nsReq);
+}
+
+exports.getFileList = function(path, next) {
+
+	var result = exports.collection('files');
+	var files = fs.readdirSync(path);
+
+	files = files.makeArray();
+	files.forEach(function(item) {
+		if (!item.startsWith('.'))
+			result.add({ name: item });
+	});
+
+	next(null, result);
+}
+
+exports.getURL = function(req, options) {
+	
+	var result = '';
+	
+	var options = {
+		excludeHost: options.excludeHost || false,
+		excludePath: options.excludePath || false
+	};
+
+	if (!options.excludeHost) {
+		result = (req.isSecure()) ? 'https' : 'http' + '://' + req.headers.host;
+	}
+
+	if (!options.excludePath) {
+		result += req.url;	
+	}
+	
+
+	return result;
 }

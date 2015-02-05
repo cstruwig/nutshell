@@ -42,6 +42,7 @@ function serveResponse(nsReq, options, next) {
 		nsReq.response.data.request.time = 2;
 		nsReq.response.data.request.size = 222;
 		nsReq.response.data.request.params = nsReq.parameters;
+		nsReq.response.data.user = nsReq.req.userFB;
 	
 		//FIX! options-from-service-override-mechanism goes here... i.e. call from service : nsReq.override('output', 'html'); to override options.contentType below...
 		switch (nsReq.resource.output) {
@@ -143,14 +144,23 @@ require('fs').writeFile('./logs/trace.log', '{ "started": "... nutshell server .
 //****************************************************************
 
 var server = restify.createServer({ name: 'nutshell listener' });
+var userFB = {};
 
 server.use(restify.queryParser());
 server.use(restify.authorizationParser());
 
-
-server.get({ path: '/nutshell/:service/:resource', name: 'nutshellRequest' }, processRequest);
-server.get(/assets\/.*/, restify.serveStatic({ directory: process.cwd() + '/soaif/views' }));
-server.get({ path:  /.*/, name: 'lander' }, restify.serveStatic({ directory : process.cwd() + '/soaif/views', fileName: 'welcome.html' }));
+server.get({ path: '/nutshell/:service/:resource', name: 'nutshellRequest' }, [listener.authIt(), processRequest]);
+server.get({ path: /assets\/.*/, name: 'asset' }, restify.serveStatic({ directory: process.cwd() + '/soaif/views' }));
+server.get({ path: /guides\/.*/, name: 'guide' }, restify.serveStatic({ directory: process.cwd() + '/soaif/views/' }));
+server.get({ path:  /.*/, name: 'lander' }, 
+	function(req, res, next) { 
+		var roles = 'user';	//lookup from req.session.user or req.user._id;
+	    res.header('Location', '/nutshell/soaif/guides.view?type=' + roles);
+		res.send(302, 'ur_welcome...');
+		next();	
+	},
+	restify.serveStatic({ directory : process.cwd() + '/soaif/views', fileName: 'welcome.html' })
+);
 
 function errorRequest(req, res, cb) {
 	var body = '<html><body>' + res.content || 'unknown' + '</body></html>';

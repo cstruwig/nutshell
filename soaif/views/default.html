@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 		<title>title</title>
 		<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
 		<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
@@ -17,7 +18,12 @@
 				<div class="col-md-12 column">
 					<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
 						<div class="navbar-header">
-							 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"> <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand" href="#" style="color: #000"><strong>nut</strong>shell</a>
+							 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+							 	<span class="sr-only">Toggle navigation</span>
+							 	<span class="icon-bar"></span>
+							 	<span class="icon-bar"></span>
+							 	<span class="icon-bar"></span>
+							 </button><a class="navbar-brand" href="#" style="color: #000"><strong>nut</strong>shell</a>
 						</div>
 						
 						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -123,6 +129,31 @@
 							</div>
 						</div>
 					</div>
+
+					<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+						<div class="modal-dialog">
+						    <div class="modal-content">
+						        <div class="modal-header">
+						            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						            <h3>Dialog</h3>
+						        </div>
+						        <div class="modal-body">
+						            <form role="form"  class="form-horizontal">
+						                <div class="form-group">
+						                    <label class="col-sm-3 control-label" for="mutual">Example: </label>
+						                    <div class="col-sm-6">
+						                        <input type="text" id="example-form" value="" class="form-control">
+						                    </div>
+						                </div>
+						            </form>
+						        </div>
+						        <div class="modal-footer">
+						            <button id="edit-form"  data-id-mutual="" class="btn btn-primary">Save</button>
+						            <button class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Cancel</button>
+						        </div>
+						    </div><!-- /.modal-content -->
+						</div><!-- /.modal-dialog -->
+					</div><!-- /.modal -->
 					
 				</div>
 			</div>
@@ -133,6 +164,8 @@
 
 		$('document').ready(function() {
 
+			var User = nsData.user;		//FIX! this will come from firebase
+
 			var request = parsePath(nsData);
 
 			if (!request) {
@@ -142,14 +175,42 @@
 			$('#link').html(' > ' + request.service + ' > ' + request.resource);
 			$('#serviceName').html(request.singularResource);
 
+
+
 			//populate table
 			nsData[request.resource][request.singularResource].forEach(function(item, i) {
-				var row = '<tr class="active"><td>' + i + '</td><td>' + item.name.replace('.js', '') + '</td><td><a href="./' + item.url + '">help</a></td></tr>';
+
+				var row = $('<tr class="active"><td>' + i + '</td><td>' + item.name.replace('.js', '') + '</td><td><a class="modalSpawner" data-url="' + item.url + '" >Detail</a></td></tr>');
 
 				$('#results').append(row);
 			});
 
+			//http://stackoverflow.com/questions/20073618/using-bootstrap-3-0-modals-to-load-dynamic-remote-content-within-an-iframe
+			$('.modalSpawner').click(function() {
+				var url = $(this).data('url');
+				$.ajax({
+			        url: url,
+			        dataType: 'html',
+			        type: 'GET',
+			        success: function(data) {
+
+			        	$('#modal-other').show();
+			            if (data) {
+			            	alert('sweet')	;
+			            	//var $modal = $(data.dialog);
+			                //$('body').append($modal);
+			                //$modal.filter('.modal').modal();
+			            } else {
+			                alert('no data');
+			            }
+
+			        }
+			    });
+
+		    });
+
 			$('#searchButton').click(function(evt) {
+				
 				evt.preventDefault();
 				if (!$('#searchText').val()) {
 					return;
@@ -157,13 +218,6 @@
 				updateQuerystring('name', $('#searchText').val());
 			});
 
-			$('#advancedFiltering').click(function(evt) {
-				evt.preventDefault();
-
-			});
-			
-
-			
 		});
 		
 		</script>

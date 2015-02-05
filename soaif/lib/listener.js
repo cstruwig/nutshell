@@ -4,6 +4,7 @@ var util = require('util');
 var fs = require('./filesystem');
 var inflection = require('inflection');
 var debug = require('./debug');
+var tools = require('./tools');
 
 exports.setupRequest = function(req, res, next) {
 
@@ -82,4 +83,20 @@ exports.loadView = function(nsReq) {
 	catch (err) {
 		return '<h1>o moer...</h1>sorry...';
 	}
+}
+
+exports.authIt = function(options) {
+
+	function parseAuthorization(req, res, next) {
+
+		//if authorized
+		//get user's roles PLUS their services and resources
+
+		//setup for demo!
+		req.userFB = require('./roles.json');	//FIX! get from firebase
+
+		return (next());
+	}
+
+	return (parseAuthorization);
 }
