@@ -1,3 +1,7 @@
+body {
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+
 .sunfork {
 	height: 42px;
 	background-image: url('sunforky.png');

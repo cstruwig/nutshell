@@ -10,7 +10,7 @@ var apiUrl = 'http://www.omdbapi.com/?r=json&';
 exports.searchMovies = function(filter, next) {
 
 	var result = tools.collection('forecast');
-	var url = apiUrl + 'type=movie&s=' + filter.title + '&y=' + filter.year;
+	var url = apiUrl + 'type=movie&s=' + filter.name + '&y=' + filter.year;
 
 	var result = tools.collection('movies');
 
@@ -26,7 +26,7 @@ exports.searchMovies = function(filter, next) {
 			movies.makeArray().forEach(function(item) {
 				var movie = {
 					ref: item.imdbID,
-					title: item.Title,
+					name: item.Title,
 					year: item.Year,
 					//type: item.Type,
 					url: 'http://www.imdb.com/title/' + item.imdbID

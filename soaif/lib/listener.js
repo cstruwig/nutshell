@@ -92,8 +92,47 @@ exports.authIt = function(options) {
 		//if authorized
 		//get user's roles PLUS their services and resources
 
-		//setup for demo!
-		req.userFB = require('./roles.json');	//FIX! get from firebase
+		req.userFB = require('./roles.json');
+
+
+		// //setup for demo!
+		// userFB = { //FIX! get firebase
+		// 	id: 123,
+		// 	roles: ['demo'],
+		// 	services: {	//FYI!
+		// 		service: [ {
+		// 			resources: {
+		// 				resource: []
+		// 			}
+		// 		}]
+		// 	}
+		// };
+
+		// //authorised roles
+		// userFB.roles = tools.collection('roles');;
+		// userFB.roles.add({ name: 'demo'});
+
+		// userFB.services = tools.collection('services');
+		// //userFB.roles.each(function(ctr, item) {
+		// 	console.log('s][]q[we]qweoqiwuyiwquehqwlehqwkjeqwlkjehqwlkjehqwelkjhqwelkjqwhe');
+		// 	tools.getFileList('./soaif/enterpriseservices/', function(err, list) {
+		// 		console.log('ppp' + JSON.stringify(list));
+		// 	});
+
+		// 	//FIX! add resolveResources(userFB.roles)
+		// 	// userFB.services.add({ name: 'entertainment' });
+		// 	// userFB.services.add({ name: 'weather' });
+		// 	// userFB.services.add({ name: 'socialmedia' });
+		// 	// //userFB.services.add({ name: 'insurance' });
+		// //});
+
+		// // userFB.services = tools.collection('services');
+
+		// // userFB.roles.each(function(ctr, item) {
+		// // 	console.log(item);
+		// // });
+
+		
 
 		return (next());
 	}

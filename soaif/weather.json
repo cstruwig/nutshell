@@ -1,0 +1,44 @@
+{
+	"coord": {"lon":29.47,"lat":-23.9},
+	"sys":
+		{
+			"message":0.0356,
+			"country":"ZA",
+			"sunrise":1423194242,
+			"sunset":1423241300
+		},
+	"weather":
+		[
+			{
+				"id":803,
+				"main":"Clouds",
+				"description":
+				"broken clouds",
+				"icon":"04d"
+			}
+		],
+	"base":"cmc stations",
+	"main":
+		{
+			"temp":291.331,
+			"temp_min":291.331,
+			"temp_max":291.331,
+			"pressure":879.94,
+			"sea_level":1023.34,
+			"grnd_level":879.94,
+			"humidity":95
+		},
+	"wind":
+		{
+			"speed":1.88,
+			"deg":190.502
+		},
+	"clouds":
+		{
+			"all":56
+		},
+	"dt":1423204312,
+	"id":965289,
+	"name":"Polokwane",
+	"cod":200
+}

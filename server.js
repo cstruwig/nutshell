@@ -42,6 +42,9 @@ function serveResponse(nsReq, options, next) {
 		nsReq.response.data.request.time = 2;
 		nsReq.response.data.request.size = 222;
 		nsReq.response.data.request.params = nsReq.parameters;
+
+		debug.sho(nsReq.req.userFB);
+
 		nsReq.response.data.user = nsReq.req.userFB;
 	
 		//FIX! options-from-service-override-mechanism goes here... i.e. call from service : nsReq.override('output', 'html'); to override options.contentType below...

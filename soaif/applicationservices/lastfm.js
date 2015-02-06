@@ -8,7 +8,7 @@ var apiUrl = 'http://ws.audioscrobbler.com/2.0/?api_key=' + ns.setting('APIKEY_L
 
 exports.searchArtists = function(filter, next) {
 
-	var url = apiUrl + '&method=artist.search&artist=' + (filter.artist || '');
+	var url = apiUrl + '&method=artist.search&artist=' + (filter.name || '');
 	url += '&limit=' + (filter.limit < 1 ? 10 : filter.limit);
 
 	var result = tools.collection('artist');
@@ -39,7 +39,7 @@ exports.searchArtists = function(filter, next) {
 			});
 
 			return next(null, result);
-		}		  	
+		}
 	});
 };
 

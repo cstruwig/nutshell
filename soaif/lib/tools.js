@@ -109,7 +109,8 @@ exports.getResources = function(nsReq, next) {
 	for (var name in nsReq.service.module) {
 		obj = nsReq.service.module[name];
 		if (!!(obj && obj.constructor && obj.call && obj.apply) && name !== 'getResources') {
-			//its a function, no lets check for the CRUDs
+			console.log('lllllllllll========' + name);
+			//its a function, now lets check for the CRUDs
 			if (name.startsWith('get') || name.startsWith('add') || name.startsWith('update') || name.startsWith('delete')) {
 				var resource = name.replace('get', '').replace('add', '').replace('udpate', '').replace('delete', '').toLowerCase();
 				result.add({ name: resource });

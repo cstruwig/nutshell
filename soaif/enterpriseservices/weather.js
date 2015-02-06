@@ -4,13 +4,13 @@ var ns = require('../lib');
 var openWeather = require('../applicationservices/openweather');
 
 module.exports = {
-	getForecasts: function(nsReq, next) {
+	getConditions: function(nsReq, next) {
 	
 		try {
 			//******************* setup filters....
-			var city = nsReq.getParameter('city', { 
+			var name = nsReq.getParameter('name', { 
 				typeName: 'string', 
-				mandatory: true, 
+				mandatory: true,
 				description: 'city name for weather search'
 			});
 			
@@ -19,10 +19,10 @@ module.exports = {
 			
 			//******************* process....		
 			//setup search filter
-			var filter = { city: city };
+			var filter = { city: name };
 			
 			//get the data
-			openWeather.getForecast(filter, function(err, forecast) {
+			openWeather.getCityForecase(filter, function(err, forecast) {
 				if (err) {
 					throw err;
 				} else {
@@ -30,11 +30,6 @@ module.exports = {
 
 					nsReq.response.data = forecast.data();
 
-					// artists.each(function(artist) {
-					// 	nsReq.response.data = { artists: { artist: [ { a: true }, { b: false } ] } };
-					// });
-					//nsReq.response.data = artists;
-					
 					nsReq.response.status = 'valid';
 					
 					next(nsReq);
@@ -49,6 +44,9 @@ module.exports = {
 		}
 	}
 }
+
+
+
 
 // module.exports = {
 // 	getArtists: function(nsReq, next) {
@@ -135,3 +133,4 @@ module.exports = {
 // 		}
 // 	}
 // }
+

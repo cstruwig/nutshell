@@ -11,7 +11,7 @@ module.exports = {
 	
 		try {
 			//******************* setup filters....
-			var artist = nsReq.getParameter('artist', { 
+			var name = nsReq.getParameter('name', { 
 				typeName: 'string', 
 				mandatory: true, 
 				description: 'partial artist name to search for'
@@ -29,7 +29,7 @@ module.exports = {
 			
 			//******************* process....		
 			//setup search filter
-			var filter = { artist: artist, limit: limit };
+			var filter = { name: name, limit: limit };
 			
 			//get the data
 			lastfm.searchArtists(filter, function(err, artists) {
@@ -62,10 +62,10 @@ module.exports = {
 	getMovies: function(nsReq, next) {
 		
 		//******************* setup filters....
-		var title = nsReq.getParameter('title', { 
+		var name = nsReq.getParameter('name', { 
 			typeName: 'string', 
 			mandatory: true, 
-			description: 'partial movie title to search for'
+			description: 'partial movie name to search for'
 		});
 
 		var year = nsReq.getParameter('year', { 
@@ -79,7 +79,7 @@ module.exports = {
 		
 		//******************* process....		
 		//setup search filter
-		var filter = { title: title, year: year };
+		var filter = { name: name, year: year };
 		
 		//get the data
 		omdb.searchMovies(filter, function(err, movies) {

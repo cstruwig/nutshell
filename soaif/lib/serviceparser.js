@@ -88,7 +88,5 @@ exports.parse = function(nsReq, next) {
 		return next(err, nsReq);
  	}
 
-	debug.sho(service);
-
 	next(null, nsReq);
 }

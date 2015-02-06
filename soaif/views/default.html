@@ -12,31 +12,38 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
 	</head>
 	<body>
-		
 		<div class="container">
 			<div class="row clearfix">
 				<div class="col-md-12 column">
 					<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-						<div class="navbar-header">
+						<div class="navbar-header navbar-nav">
 							 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
 							 	<span class="sr-only">Toggle navigation</span>
 							 	<span class="icon-bar"></span>
 							 	<span class="icon-bar"></span>
 							 	<span class="icon-bar"></span>
-							 </button><a class="navbar-brand" href="#" style="color: #000"><strong>nut</strong>shell</a>
-						</div>
-						
-						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-							<ul class="nav navbar-nav">
-								<li class="active">
-									<a id="link" href="#"></a>
-								</li>
-							</ul>
-							<form class="navbar-form navbar-left" role="search">
-								<div class="form-group">
-									<input id="searchText" type="text" class="form-control" placeholder="partial name"/>
+							 </button>
+							 	<a class="navbar-brand" href="#" style="color: #000; font-size: 25px; font-family: 'Trebuchet MS', Helvetica, sans-serif;"><strong>nut</strong>shell&nbsp;>&nbsp;<span class="small" id="link"></span></a>
+							 	<div>
+									<ul class="dropdown-menu" style="margin-right: 10px; disaply: block">
+										<li>
+											<a href="#">ABC</a>
+										</li>
+										<li>
+											<a href="#">een-twee-drie</a>
+										</li>
+										<li class="divider">
+										</li>
+										<li>
+											<a href="#">sopkombuis</a>
+										</li>
+									</ul>
 								</div>
-								<button id="searchButton" type="submit" class="btn btn-default">search</button>
+						</div>
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<form class="navbar-form navbar-left" role="search">
+								<input id="searchText" maxlength="15" type="text" class="form-control" autocomplete="off" data-provide="typeahead" style="margin-left: -30px; width: 200%; padding: 4px; height: 34px; line-height: 34px; font-size:25px; font-family: 'Trebuchet MS', Helvetica, sans-serif;" />
+								
 
 <!-- <em class="glyphicon glyphicon-align-right"> -->
 <!--							<div class="btn-group btn-group-xs">
@@ -50,9 +57,9 @@
 
 							<ul class="nav navbar-nav navbar-right">
 								<li class="dropdown">
-									 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-									 	<img style="margin-top: -10px; margin-bottom: -10px; width: 26px; margin-right: 6px" src="../../assets/nutshell.png"><strong style="margin-right: 8px" class="caret"></strong>
-									 </a>
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+										<img style="margin-top: -10px; margin-bottom: -10px; width: 26px; margin-right: 6px" src="../../assets/nutshell.png"><strong style="margin-right: 8px" class="caret"></strong>
+									</a>
 									<ul class="dropdown-menu" style="margin-right: 10px">
 										<li>
 											<a href="#modal-advancedFiltering" role="button" class="btn" data-toggle="modal">advanced filtering</a>
@@ -74,7 +81,7 @@
 						</div>
 					</nav>
 					
-					<table class="table table-bordered table-condensed table-hover" style="margin-top: 60px">
+					<table class="table table-default table-condensed table-hover" style="margin-top: 60px">
 						<thead>
 							<tr>
 								<th>
@@ -157,7 +164,12 @@
 					
 				</div>
 			</div>
+
+			<div class="container-fluid" id="debug" style="border: 1px solid #000; height:400px; font-size: 25px; color: lightgray;"></div>
+
 		</div>
+
+		
 
 		<script type="text/javascript">
 		/* #nsData */
@@ -165,21 +177,54 @@
 		$('document').ready(function() {
 
 			var User = nsData.user;		//FIX! this will come from firebase
-
 			var request = parsePath(nsData);
 
 			if (!request) {
 				alert('damn!');
 			}
 			
-			$('#link').html(' > ' + request.service + ' > ' + request.resource);
+			//$('#link').html(' > ' + request.service + ' > ' + request.resource);
+			$('#searchText').attr('placeholder', request.service + ' > ' + request.resource);
 			$('#serviceName').html(request.singularResource);
 
+			var searchText = $('#searchText');
 
+			searchText.parent().on('keyup', '#searchText', function(evt) {
+				var currentValue = searchText.val();
+				var key = evt.keyCode || evt.which; 
 
+				if (key === 13) {
+			    	//window.location = 'http://localhost:'
+			    } else if (key === 9 || key === 32) {
+			     	if ($('#debug').find('div.column').length === 1) {
+			     		console.log($('#debug').find('div.column').length);
+			     		console.log('autocomplete');
+			     	}
+			    } else {
+			    	var matches = [];
+			    	User.roles.resources.map(function(item, ctr) {
+			    		if (item.path.includes(currentValue)) {
+			    		 	matches.push(item.path.replace(/\//g, ' > '));
+			    		} else {
+			    			return false;	
+			    		}
+			    		return true;
+			    	});
+
+			    	var suggestion = '';
+					matches.forEach(function(item, ctr) {
+						suggestion += '<div class="row"><div class="col-md-12 column">' + item + '</div></div>'
+					});
+
+			    	$('#debug').html($(suggestion)).find('div.column').styleSubtext({
+					 	subtext: [currentValue],
+					 	style: 'font-weight: bold; font-size: 28px; color: #020202'
+					});
+			    }
+			});
+			
 			//populate table
 			nsData[request.resource][request.singularResource].forEach(function(item, i) {
-
 				var row = $('<tr class="active"><td>' + i + '</td><td>' + item.name.replace('.js', '') + '</td><td><a class="modalSpawner" data-url="' + item.url + '" >Detail</a></td></tr>');
 
 				$('#results').append(row);
@@ -193,7 +238,6 @@
 			        dataType: 'html',
 			        type: 'GET',
 			        success: function(data) {
-
 			        	$('#modal-other').show();
 			            if (data) {
 			            	alert('sweet')	;
@@ -203,21 +247,9 @@
 			            } else {
 			                alert('no data');
 			            }
-
 			        }
 			    });
-
 		    });
-
-			$('#searchButton').click(function(evt) {
-				
-				evt.preventDefault();
-				if (!$('#searchText').val()) {
-					return;
-				}
-				updateQuerystring('name', $('#searchText').val());
-			});
-
 		});
 		
 		</script>

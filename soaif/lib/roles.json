@@ -11,12 +11,12 @@
 			"resources": 
 				[
 					{
-						"path": "entertaintment/artists",
+						"path": "entertainment/artists",
 						"ops": "r",
 						"role": "user"
 					},
 					{
-						"path": "entertaintment/movies",
+						"path": "entertainment/movies",
 						"ops": "r",
 						"role": "user"
 					},
@@ -29,7 +29,7 @@
 			"exceptions": 
 				[
 					{
-						"path" : "entertaintment/artists",
+						"path" : "entertainment/artists",
 						"ops": "c",
 						"role": "user"
 					}
