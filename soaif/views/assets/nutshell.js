@@ -51,7 +51,7 @@ $.fn.styleSubtext = function(opts) {
   //http://stackoverflow.com/questions/9794851/find-text-string-in-jquery-and-make-it-bold
   var tag = opts.tag || 'span'
     , subtext = opts.subtext || []
-    , regex = RegExp(subtext.join('|'), 'gi') // case insensitive
+    , regex = RegExp(subtext.join('|'), 'i') // case insensitive
     , style = opts.style || 'color:red'
     , replacement = '<'+ tag +' style="' + style + '">$&</'+ tag +'>';
 

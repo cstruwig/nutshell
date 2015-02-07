@@ -15,7 +15,9 @@ module.exports = {
 			});
 			
 			//validate
-			//nsReq.validateParameters();
+			//if (!nsReq.validInputs) {
+			// 	return next(new Error('Invalid inputs'), null);
+			//}
 			
 			//******************* process....		
 			//setup search filter

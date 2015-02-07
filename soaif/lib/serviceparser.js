@@ -58,6 +58,7 @@ exports.parse = function(nsReq, next) {
 
 			service.name = serviceName;
 
+			nsReq.request.url = tools.getURL(nsReq.req, { excludePath: true });
 			nsReq.request.path = nsReq.request.path.replace('{{service}}', serviceName);
 
 			try

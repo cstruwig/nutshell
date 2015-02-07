@@ -17,50 +17,32 @@
 				<div class="col-md-12 column">
 					<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
 						<div class="navbar-header navbar-nav">
-							 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-							 	<span class="sr-only">Toggle navigation</span>
-							 	<span class="icon-bar"></span>
-							 	<span class="icon-bar"></span>
-							 	<span class="icon-bar"></span>
-							 </button>
-							 	<a class="navbar-brand" href="#" style="color: #000; font-size: 25px; font-family: 'Trebuchet MS', Helvetica, sans-serif;"><strong>nut</strong>shell&nbsp;>&nbsp;<span class="small" id="link"></span></a>
+							<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+								<span class="sr-only">Toggle navigation</span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+							</button>
+							 <a class="navbar-brand" href="../" style="color: #000; font-size: 25px; font-family: 'Trebuchet MS', Helvetica, sans-serif;"><strong>nut</strong>shell&nbsp;>&nbsp;<span class="small" id="link"></span></a>
 							 	<div>
-									<ul class="dropdown-menu" style="margin-right: 10px; disaply: block">
-										<li>
-											<a href="#">ABC</a>
-										</li>
-										<li>
-											<a href="#">een-twee-drie</a>
-										</li>
-										<li class="divider">
-										</li>
-										<li>
-											<a href="#">sopkombuis</a>
-										</li>
-									</ul>
-								</div>
+							</div>
 						</div>
 						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 							<form class="navbar-form navbar-left" role="search">
-								<input id="searchText" maxlength="15" type="text" class="form-control" autocomplete="off" data-provide="typeahead" style="margin-left: -30px; width: 200%; padding: 4px; height: 34px; line-height: 34px; font-size:25px; font-family: 'Trebuchet MS', Helvetica, sans-serif;" />
-								
-
-<!-- <em class="glyphicon glyphicon-align-right"> -->
-<!--							<div class="btn-group btn-group-xs">
-									 <button class="btn btn-default" type="button">compound</button>
-									 <button class="btn btn-default" type="button">enterprise</button>
-									 <button class="btn btn-default" type="button">application</button>
-									 <button class="btn btn-default" type="button">soaif</button>
-								</div> -->
-
+								<ul class="nav navbar-nav navbar-right">
+									<li class="dropdown">
+										<input maxlength="50" id="searchBar" data-toggle="dropdown" maxlength="15" type="text" class="form-control " autocomplete="off" style="margin-left: -30px; width: 100%; padding: 4px; height: 34px; line-height: 34px; font-size:25px; font-family: 'Trebuchet MS', Helvetica, sans-serif;" />
+										<ul id="suggestions" class="dropdown-menu" role="menu" style="width: 100%">
+										</ul>
+									</li>
+								</ul>
 							</form>
-
 							<ul class="nav navbar-nav navbar-right">
 								<li class="dropdown">
 									<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 										<img style="margin-top: -10px; margin-bottom: -10px; width: 26px; margin-right: 6px" src="../../assets/nutshell.png"><strong style="margin-right: 8px" class="caret"></strong>
 									</a>
-									<ul class="dropdown-menu" style="margin-right: 10px">
+									<ul class="dropdown-menu" style="margin-right: 15px">
 										<li>
 											<a href="#modal-advancedFiltering" role="button" class="btn" data-toggle="modal">advanced filtering</a>
 										</li>
@@ -97,7 +79,7 @@
 						</tbody>
 					</table>
 
-					 <!-- <a id="modal-560698" href="#modal-container-560698" role="button" class="btn" data-toggle="modal">Launch demo modal</a> -->
+					<!-- <a id="modal-560698" href="#modal-container-560698" role="button" class="btn" data-toggle="modal">Launch demo modal</a> -->
 					
 					<div class="modal fade" id="modal-advancedFiltering" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 						<div class="modal-dialog">
@@ -161,68 +143,32 @@
 						    </div><!-- /.modal-content -->
 						</div><!-- /.modal-dialog -->
 					</div><!-- /.modal -->
-					
 				</div>
 			</div>
-
-			<div class="container-fluid" id="debug" style="border: 1px solid #000; height:400px; font-size: 25px; color: lightgray;"></div>
-
 		</div>
 
-		
+		<div class="container" id="debug" style="postion: absolute; top: 50px; border: 1px solid #000; height:400px; font-size: 25px; color: lightgray;"></div>		
 
 		<script type="text/javascript">
 		/* #nsData */
 
 		$('document').ready(function() {
 
-			var User = nsData.user;		//FIX! this will come from firebase
-			var request = parsePath(nsData);
-
+			var User = nsData.user;						//FIX! this will come from firebase
+			var request = parsePath(nsData);			//get service and resource
+			var suggestions = $('#suggestions');
+			var searchBar = $('#searchBar');
+			
 			if (!request) {
-				alert('damn!');
+				alert('there was an error! damn it...');
 			}
 			
-			//$('#link').html(' > ' + request.service + ' > ' + request.resource);
-			$('#searchText').attr('placeholder', request.service + ' > ' + request.resource);
+			//setup ui
+			searchBar.attr('placeholder', request.service + ' > ' + request.resource);
+			searchBar.focus();
+
+			//setup results table
 			$('#serviceName').html(request.singularResource);
-
-			var searchText = $('#searchText');
-
-			searchText.parent().on('keyup', '#searchText', function(evt) {
-				var currentValue = searchText.val();
-				var key = evt.keyCode || evt.which; 
-
-				if (key === 13) {
-			    	//window.location = 'http://localhost:'
-			    } else if (key === 9 || key === 32) {
-			     	if ($('#debug').find('div.column').length === 1) {
-			     		console.log($('#debug').find('div.column').length);
-			     		console.log('autocomplete');
-			     	}
-			    } else {
-			    	var matches = [];
-			    	User.roles.resources.map(function(item, ctr) {
-			    		if (item.path.includes(currentValue)) {
-			    		 	matches.push(item.path.replace(/\//g, ' > '));
-			    		} else {
-			    			return false;	
-			    		}
-			    		return true;
-			    	});
-
-			    	var suggestion = '';
-					matches.forEach(function(item, ctr) {
-						suggestion += '<div class="row"><div class="col-md-12 column">' + item + '</div></div>'
-					});
-
-			    	$('#debug').html($(suggestion)).find('div.column').styleSubtext({
-					 	subtext: [currentValue],
-					 	style: 'font-weight: bold; font-size: 28px; color: #020202'
-					});
-			    }
-			});
-			
 			//populate table
 			nsData[request.resource][request.singularResource].forEach(function(item, i) {
 				var row = $('<tr class="active"><td>' + i + '</td><td>' + item.name.replace('.js', '') + '</td><td><a class="modalSpawner" data-url="' + item.url + '" >Detail</a></td></tr>');
@@ -230,28 +176,103 @@
 				$('#results').append(row);
 			});
 
-			//http://stackoverflow.com/questions/20073618/using-bootstrap-3-0-modals-to-load-dynamic-remote-content-within-an-iframe
-			$('.modalSpawner').click(function() {
-				var url = $(this).data('url');
-				$.ajax({
-			        url: url,
-			        dataType: 'html',
-			        type: 'GET',
-			        success: function(data) {
-			        	$('#modal-other').show();
-			            if (data) {
-			            	alert('sweet')	;
-			            	//var $modal = $(data.dialog);
-			                //$('body').append($modal);
-			                //$modal.filter('.modal').modal();
-			            } else {
-			                alert('no data');
-			            }
-			        }
-			    });
-		    });
+			//http://stackoverflow.com/questions/20073618/using-bootstrap-3-0-modals-to-load-dynamic-remote-content-within-an-ifram
+
+			function parseSearchText(idiotText) {
+				var path = nsData.request.url;
+				return path + '/' + idiotText;
+			}			
+
+			function toggleSuggestions() {
+				if (searchBar.val() === '') {
+					suggestions.hide();
+				} else {
+					suggestions.show();
+				}
+			}
+
+			function isValidRequest() {
+				var result = false;
+				//if (searchBar.val() is valid) {
+					result = true;
+				//}
+				return result;
+			}
+
+			searchBar.keypress(function(evt) {
+				//check for special keys for autocompletion and submission
+				
+				var key = evt.keyCode || evt.which; 
+
+				if (key == 10 || key == 13) {			//ENTER=submit form
+					evt.preventDefault();
+					if (isValidRequest()) {
+						//alert(parseSearchText(searchBar.val()));
+						alert(searchBar.val());
+					}
+					
+			    	//window.location = 'http://localhost:'
+			    } else if (key === 32 || key === 9) {			//SPACE & TAB=autocomplete (AND submit)
+			    	//FIX! tab key being ignored!!!!
+					evt.preventDefault();
+			     	if (suggestions.find('.suggestion').length === 1) { //if only one option then autocomplete
+			     		//autocomplete
+			     		searchBar.val(suggestions.find('.suggestion').text());
+			     		suggestions.hide();
+			     	}
+			    }
+			});
+
+			searchBar.keyup(function(evt) {
+
+				var searchBarVal = searchBar.val();
+				var matches = [];
+
+				User.roles.resources.map(function(item, ctr) {
+					if (item.path.includes(searchBarVal)) {
+					 	//matches.push(item.path.replace(/\//g, ' > '));
+					 	matches.push(item.path);
+					} else {
+						return false;
+					}
+					return true;
+				});
+
+				var suggestionMarkup = '<li class="dropdown-header">suggestions...</li>';
+				matches.forEach(function(item, ctr) {
+
+					var matchingService = item.split('/')[0];// + ' >';
+					var matchingResource = item.split('/')[1];
+
+					// var suggestion = <a href="#" class="suggestion" style="color: #c0c0c0">' + matchingService + ' > ' + matchingResource + '</a>
+					
+					suggestionMarkup += '<li><a href="#" class="suggestion" style="color: #c0c0c0">' + matchingService + ' > ' + matchingResource + '</a></li>'
+				});
+
+				suggestionMarkup += '<li class="divider"></li><li><a href="#">help me</a></li>';
+
+				$('#suggestions').html($(suggestionMarkup)).find('li>a').styleSubtext({
+				  	subtext: [searchBarVal],
+				  	style: 'font-weight: bold; color: #000' //' font-size: 28px; color: #020202'
+				});
+
+				//   	$('#debug').html($(suggestion)).find('div.column').styleSubtext({
+				//  	subtext: [currentValue],
+				//  	style: 'font-weight: bold; font-size: 28px; color: #020202'
+				// });
+
+
+
+				toggleSuggestions();
+			});
+
+			searchBar.click(toggleSuggestions);
+			searchBar.blur(function() {
+				suggestions.hide();
+			});
+			
+			suggestions.html('<li><a href="#">crappppeeeeee</a></li>');
 		});
-		
 		</script>
 	</body>
 </html>
