@@ -215,8 +215,69 @@
 			}
 
 			function showHelp() {
-				alert('ssssssssssss');
+				console.log('display help');
 			}
+
+			searchBar.keyup(function(evt) {
+				var searchBarVal = searchBar.val();
+				var matches = [];
+
+				if (searchBarVal === '') {
+					console.log('exiting 1...');
+					toggleSuggestions();
+					return;
+				}
+
+				if ((evt.keyCode === 8 || evt.which == 8) && searchBarVal.endsWith(' >')) {							//BACKSPACE=8
+		    		//remove the ' > ' in one go
+		    		var pos = searchBarVal.indexOf(' >');
+		    		if (pos > 0) {
+		    			searchBar.val(searchBarVal.substring(0, pos));
+		    		}
+		    	}
+
+				//FIX! why not foreach?
+				User.roles.resources.map(function(item, ctr) {
+					var suggestionText = item.path.replace('/', ' > ');
+					if (suggestionText.includes(searchBarVal)) {
+						//console.log(item.path);
+					 	matches.push(suggestionText);
+					} else {
+						return false;
+					}
+					return true;
+				});
+
+				suggestionCount = matches.length;
+
+				// console.log('not exiting yet... [suggestionCount=' + suggestionCount + ']');
+
+				var suggestionText = (suggestionCount === 0) ? 'no suggestions' : 'suggestions';
+				var suggestionMarkup = '<li class="dropdown-header">' + suggestionText + '</li>';
+
+				matches.forEach(function(item, ctr) {
+					// console.log('item=' + item)
+					var matchingService = item.split(' > ')[0];
+					var matchingResource = item.split(' > ')[1];
+
+					suggestionMarkup += '<li><a href="#" class="suggestion" style="color: #c0c0c0">' + matchingService + ' > ' + matchingResource + '</a></li>';
+				});
+
+				suggestionMarkup += '<li class="divider"></li><li><a href="#"><strong>help me</strong></a></li>';
+
+				// //if theres only one option highlight everything!
+				// if (matches.length === 1) {
+				// 	console.log('jumping in here' + matches[0]);
+				// 	searchBarVal = matches[0].replace('/', ' > ');
+				// }
+
+				suggestions.html($(suggestionMarkup)).find('li>a').styleSubtext({
+				  	subtext: [searchBarVal],
+				  	style: 'font-weight: bold; color: #000' //' font-size: 28px; color: #020202'
+				});
+
+				toggleSuggestions();
+			});
 
 			searchBar.keypress(function(evt) {
 				//check for special keys for autocompletion and submission
@@ -258,14 +319,16 @@
 					// }
 					
 			    	//window.location = 'http://localhost:'
-			    } else if (key === 32 || key === 9) {			//SPACE & TAB=autocomplete (AND submit)
+		    	} else if (key === 62 || key === 46) {			//>=62 and .=46
+		    		evt.preventDefault();
+		    	} else if (key === 32 || key === 9) {			//SPACE & TAB=autocomplete (AND submit)
 			    	//FIX! tab key being ignored!!!!
 					evt.preventDefault();
 
 					if (suggestionCount === 0 || searchBar.val() === '') {
 						return;
 					} else if (suggestionCount === 1) { //if only one option then autocomplete
-			     		console.log('we can autocomplete!!!');
+			     		//console.log('we can autocomplete!!!');
 			     		searchBar.val(suggestions.find('.suggestion').text());
 			     		showHelp();
 			     		return;
@@ -274,8 +337,21 @@
 			     		//there are multiple suggestions...
 			     		//test for unique service names and then autocomplete that much
 
-			     		console.log(suggestions.find('.suggestion').length);
+			     		//console.log(suggestions.find('.suggestion').length);
 
+			     		var canAutoCompleteService = true;
+						suggestions.find('.suggestion').each(function(i, item) {
+							var $item = $(item);
+							if (!$item.text().startsWith(searchBar.val())) {
+								console.log('cant\'t autocomplete as diferent services...');
+								canAutoCompleteService = false;
+								return false;
+							}
+						});
+						
+						if (canAutoCompleteService) {
+							searchBar.val(suggestions.find('.suggestion').first().text().split(' > ')[0] + ' > ');
+						}
 			     	}
 
 
@@ -324,55 +400,10 @@
 			   //   		suggestions.hide();
 			   //   		$('#inputs').show();
 			   //   	}
+
+			    } else {
+			    	console.log(key);
 			    }
-			});
-
-			searchBar.keyup(function(evt) {
-
-				var searchBarVal = searchBar.val();
-				var matches = [];
-
-				if (searchBarVal === '') {
-					toggleSuggestions();
-					return;
-				}
-
-				//FIX! why not foreach?
-				User.roles.resources.map(function(item, ctr) {
-					if (item.path.includes(searchBarVal)) {
-					 	matches.push(item.path);
-					} else {
-						return false;
-					}
-					return true;
-				});
-
-				suggestionCount = matches.length;
-
-				var suggestionText = (suggestionCount === 0) ? 'no suggestions' : 'suggestions';
-				var suggestionMarkup = '<li class="dropdown-header">' + suggestionText + '</li>';
-
-				matches.forEach(function(item, ctr) {
-					var matchingService = item.split('/')[0];
-					var matchingResource = item.split('/')[1];
-
-					suggestionMarkup += '<li><a href="#" class="suggestion" style="color: #c0c0c0">' + matchingService + ' > ' + matchingResource + '</a></li>';
-				});
-
-				suggestionMarkup += '<li class="divider"></li><li><a href="#">help me</a></li>';
-
-				//if theres only one option highlight everything!
-				// if (matches.length === 1) {
-				// 	console.log('jumping in here' + matches[0]);
-				// 	searchBarVal = matches[0].replace('/', ' > ');
-				// }
-
-				$('#suggestions').html($(suggestionMarkup)).find('li>a').styleSubtext({
-				  	subtext: [searchBarVal],
-				  	style: 'font-weight: bold; color: #000' //' font-size: 28px; color: #020202'
-				});
-
-				toggleSuggestions();
 			});
 
 			searchBar.click(toggleSuggestions);
@@ -380,7 +411,7 @@
 				suggestions.hide();
 			});
 			
-			suggestions.html('<li><a href="#">crappppeeeeee</a></li>');
+			//suggestions.html('<li><a href="#">crappppeeeeee</a></li>');
 		});
 		</script>
 	</body>
