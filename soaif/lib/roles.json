@@ -21,7 +21,7 @@
 						"role": "user"
 					},
 					{
-						"path": "weather/forecasts",
+						"path": "weather/conditions",
 						"ops": "r",
 						"role": "demo"
 					}

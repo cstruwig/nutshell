@@ -55,10 +55,8 @@ exports.loadView = function(nsReq) {
 
 	try {
 
-		console.log('view=' + nsReq.options.view);
-
 		if (nsReq.options.view === 'default') {
-			console.log('view=default');
+			// console.log('view=default');
 			nsReq.options.view = nsReq.resource.name;
 		}
 
@@ -66,10 +64,10 @@ exports.loadView = function(nsReq) {
 		var path = __dirname + '/../views/' + nsReq.options.view + '.html';
 
 		if (fs.fileExists(path)) {
-			console.log('fileExists');
+			//console.log('fileExists');
 			contentBuffer = fs.readFile(path);
 		} else {
-			console.log('defaulting the view');
+			//console.log('defaulting the view');
 			contentBuffer = fs.readFile(__dirname + '/../views/default.html');	
 		}
 

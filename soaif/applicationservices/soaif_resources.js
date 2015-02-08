@@ -13,18 +13,14 @@ module.exports = {
 		var result = tools.collection('resources');
 
 		result.add({ name: 'services' });
-		result.add({ name: 'kwagga' });
+		//result.add({ name: 'kwagga' });
 
-		console.log('sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss');
-		result.each(function(i, item) {
-			console.log(i + '=' + item.name);
-		});
-		console.log('sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss');
+		// result.each(function(i, item) {
+		// 	console.log(i + '=' + item.name);
+		// });
 		
 		nsReq.response.data = result.data();
 		
 		next(nsReq);
 	}
 }
-
-

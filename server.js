@@ -150,9 +150,20 @@ var userFB = {};
 server.use(restify.queryParser());
 server.use(restify.authorizationParser());
 
-server.get({ path: '/nutshell/:service/:resource', name: 'nutshellRequest' }, [listener.authIt(), processRequest]);
-server.get({ path: /assets\/.*/, name: 'asset' }, restify.serveStatic({ directory: process.cwd() + '/soaif/views' }));
-server.get({ path: /guides\/.*/, name: 'guide' }, restify.serveStatic({ directory: process.cwd() + '/soaif/views/' }));
+var middleware = function(options) {
+
+	function _middleware(req, res, next) {
+		console.log(options + req.id());
+		return (next());
+	}
+
+	return (_middleware);
+}
+
+server.get({ path: /assets\/.*/, name: 'asset' }, [middleware('x'), restify.serveStatic({ directory: process.cwd() + '/soaif/views' }) ]);
+server.get({ path: /guides\/.*/, name: 'guide' }, [middleware('y'), restify.serveStatic({ directory: process.cwd() + '/soaif/views/' }) ]);
+server.get({ path: '/nutshell/:service/:resource', name: 'nutshellRequest' }, [middleware('ZZZZ'), listener.authIt(), processRequest]);
+
 server.get({ path:  /.*/, name: 'lander' }, 
 	function(req, res, next) { 
 		var roles = 'user';	//lookup from req.session.user or req.user._id;

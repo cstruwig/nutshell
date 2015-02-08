@@ -18,7 +18,12 @@ exports.searchArtists = function(filter, next) {
 			debug.log('some error' + err);
 			throw new Error('some error' + err);
 		} else {
-			var artists = JSON.parse(body).results.artistmatches.artist;
+			var artists = [];
+			var data = JSON.parse(body);
+
+			if (data && data.results && data.results.artistmatches) {
+				artists = JSON.parse(body).results.artistmatches.artist;
+			}
 
 			//FIX! validate
 			artists.makeArray().forEach(function(item) {

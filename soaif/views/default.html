@@ -28,15 +28,16 @@
 							</div>
 						</div>
 						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
 							<form class="navbar-form navbar-left" role="search">
 								<ul class="nav navbar-nav navbar-right">
 									<li class="dropdown">
-										<input maxlength="50" id="searchBar" data-toggle="dropdown" maxlength="15" type="text" class="form-control " autocomplete="off" style="margin-left: -30px; width: 100%; padding: 4px; height: 34px; line-height: 34px; font-size:25px; font-family: 'Trebuchet MS', Helvetica, sans-serif;" />
-										<ul id="suggestions" class="dropdown-menu" role="menu" style="width: 100%">
-										</ul>
+										<input maxlength="50" id="searchBar" data-toggle="dropdown" maxlength="15" type="text" class="form-control " autocomplete="off" style="margin-left: -30px; width: 200%; padding: 4px; height: 34px; line-height: 34px; font-size:25px; font-family: 'Trebuchet MS', Helvetica, sans-serif;" />
+										<ul id="suggestions" class="dropdown-menu" role="menu" style="width: 100%"></ul>
 									</li>
 								</ul>
 							</form>
+
 							<ul class="nav navbar-nav navbar-right">
 								<li class="dropdown">
 									<a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -158,6 +159,7 @@
 			var request = parsePath(nsData);			//get service and resource
 			var suggestions = $('#suggestions');
 			var searchBar = $('#searchBar');
+			var suggestionCount = 0;
 			
 			if (!request) {
 				alert('there was an error! damn it...');
@@ -167,8 +169,9 @@
 			searchBar.attr('placeholder', request.service + ' > ' + request.resource);
 			searchBar.focus();
 
-			//setup results table
+			//setup table heading
 			$('#serviceName').html(request.singularResource);
+
 			//populate table
 			nsData[request.resource][request.singularResource].forEach(function(item, i) {
 				var row = $('<tr class="active"><td>' + i + '</td><td>' + item.name.replace('.js', '') + '</td><td><a class="modalSpawner" data-url="' + item.url + '" >Detail</a></td></tr>');
@@ -177,10 +180,20 @@
 			});
 
 			//http://stackoverflow.com/questions/20073618/using-bootstrap-3-0-modals-to-load-dynamic-remote-content-within-an-ifram
-
 			function parseSearchText(idiotText) {
 				var path = nsData.request.url;
-				return path + '/' + idiotText;
+
+				return path + '/nutshell/' + searchBar.val().replace(' > ', '/');
+
+				// var resourcePart;
+
+				// if ($('#suggestions li a.suggestion').length === 1) {			//2 because "help" is also selected
+				// 	path += '/nutshell/' + $('#suggestions li a').first().text().replace(' > ', '/');
+				// } else {
+				// 	path = null;
+				// }
+
+				// return path;
 			}			
 
 			function toggleSuggestions() {
@@ -193,33 +206,124 @@
 
 			function isValidRequest() {
 				var result = false;
+
+				//FIX! check if nsData.roles exist!
 				//if (searchBar.val() is valid) {
 					result = true;
 				//}
 				return result;
 			}
 
+			function showHelp() {
+				alert('ssssssssssss');
+			}
+
 			searchBar.keypress(function(evt) {
 				//check for special keys for autocompletion and submission
-				
+
 				var key = evt.keyCode || evt.which; 
 
 				if (key == 10 || key == 13) {			//ENTER=submit form
 					evt.preventDefault();
-					if (isValidRequest()) {
-						//alert(parseSearchText(searchBar.val()));
-						alert(searchBar.val());
-					}
+					// if (isValidRequest()) {
+					// 	var path = parseSearchText(searchBar.val());
+					// 	console.log('is valid request' + path);
+					// 	if (path) {
+					// 		console.log('and we have a pth');
+					// 		//load the help me...
+
+					// 		$.get(path + '?educateme=1', function(data) {
+					// 			console.log('got education');
+					// 			if (data && data.education) {
+					// 				console.log('like for real!');
+					// 				for (var key in data.education) {
+
+					// 					console.log(key);
+					// 					var input = data.education[key];
+
+					// 					//
+					// 				}
+
+					// 				$('#inputs').html('<li><a href="#" class="suggestion" style="color: #c0c0c0">' + '{{{{{ KWAGGA }}}}}' + '</a></li>');
+
+					// 				//suggestionMarkup += '<li><a href="#" class="suggestion" style="color: #c0c0c0">' + matchingService + ' > ' + matchingResource + '</a></li>';
+
+					// 				$('#inputs').show();
+									
+					// 			}								
+					// 		});
+
+					// 		suggestions.hide();
+					// 	}
+					// }
 					
 			    	//window.location = 'http://localhost:'
 			    } else if (key === 32 || key === 9) {			//SPACE & TAB=autocomplete (AND submit)
 			    	//FIX! tab key being ignored!!!!
 					evt.preventDefault();
-			     	if (suggestions.find('.suggestion').length === 1) { //if only one option then autocomplete
-			     		//autocomplete
+
+					if (suggestionCount === 0 || searchBar.val() === '') {
+						return;
+					} else if (suggestionCount === 1) { //if only one option then autocomplete
+			     		console.log('we can autocomplete!!!');
 			     		searchBar.val(suggestions.find('.suggestion').text());
-			     		suggestions.hide();
+			     		showHelp();
+			     		return;
+			     		//we can autocomplete!!!
+			     	} else {
+			     		//there are multiple suggestions...
+			     		//test for unique service names and then autocomplete that much
+
+			     		console.log(suggestions.find('.suggestion').length);
+
 			     	}
+
+
+			   //   		//but can we autocomplete the service *OR* both the service+resource?
+
+			   //   		if (User.roles.resources.contains(searchBar.val().replace(' > ', ','))) {
+			   //   			alert('halle');
+			   //   		}
+
+
+
+			     		
+
+						// //if (isValidRequest()) {
+						// 	var path = parseSearchText(searchBar.val());
+						// 	console.log('is valid request' + path);
+						// 	if (path) {
+						// 		console.log('and we have a pth');
+						// 		//load the help me...
+
+						// 		$.get(path + '?educateme=1', function(data) {
+						// 			console.log('got education');
+						// 			if (data && data.education) {
+						// 				console.log('like for real!');
+						// 				for (var key in data.education) {
+
+						// 					console.log(key);
+						// 					var input = data.education[key];
+
+						// 					//
+						// 				}
+
+						// 				$('#inputs').html('<li><a href="#" class="suggestion" style="color: #c0c0c0">' + '{{{{{ KWAGGA }}}}}' + '</a></li>');
+
+						// 				//suggestionMarkup += '<li><a href="#" class="suggestion" style="color: #c0c0c0">' + matchingService + ' > ' + matchingResource + '</a></li>';
+
+						// 				$('#inputs').show();
+										
+						// 			}								
+						// 		});
+
+						// 		suggestions.hide();
+						// 	}
+						// //}
+
+			   //   		suggestions.hide();
+			   //   		$('#inputs').show();
+			   //   	}
 			    }
 			});
 
@@ -228,9 +332,14 @@
 				var searchBarVal = searchBar.val();
 				var matches = [];
 
+				if (searchBarVal === '') {
+					toggleSuggestions();
+					return;
+				}
+
+				//FIX! why not foreach?
 				User.roles.resources.map(function(item, ctr) {
 					if (item.path.includes(searchBarVal)) {
-					 	//matches.push(item.path.replace(/\//g, ' > '));
 					 	matches.push(item.path);
 					} else {
 						return false;
@@ -238,30 +347,30 @@
 					return true;
 				});
 
-				var suggestionMarkup = '<li class="dropdown-header">suggestions...</li>';
-				matches.forEach(function(item, ctr) {
+				suggestionCount = matches.length;
 
-					var matchingService = item.split('/')[0];// + ' >';
+				var suggestionText = (suggestionCount === 0) ? 'no suggestions' : 'suggestions';
+				var suggestionMarkup = '<li class="dropdown-header">' + suggestionText + '</li>';
+
+				matches.forEach(function(item, ctr) {
+					var matchingService = item.split('/')[0];
 					var matchingResource = item.split('/')[1];
 
-					// var suggestion = <a href="#" class="suggestion" style="color: #c0c0c0">' + matchingService + ' > ' + matchingResource + '</a>
-					
-					suggestionMarkup += '<li><a href="#" class="suggestion" style="color: #c0c0c0">' + matchingService + ' > ' + matchingResource + '</a></li>'
+					suggestionMarkup += '<li><a href="#" class="suggestion" style="color: #c0c0c0">' + matchingService + ' > ' + matchingResource + '</a></li>';
 				});
 
 				suggestionMarkup += '<li class="divider"></li><li><a href="#">help me</a></li>';
+
+				//if theres only one option highlight everything!
+				// if (matches.length === 1) {
+				// 	console.log('jumping in here' + matches[0]);
+				// 	searchBarVal = matches[0].replace('/', ' > ');
+				// }
 
 				$('#suggestions').html($(suggestionMarkup)).find('li>a').styleSubtext({
 				  	subtext: [searchBarVal],
 				  	style: 'font-weight: bold; color: #000' //' font-size: 28px; color: #020202'
 				});
-
-				//   	$('#debug').html($(suggestion)).find('div.column').styleSubtext({
-				//  	subtext: [currentValue],
-				//  	style: 'font-weight: bold; font-size: 28px; color: #020202'
-				// });
-
-
 
 				toggleSuggestions();
 			});
