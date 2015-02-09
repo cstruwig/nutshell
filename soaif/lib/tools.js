@@ -125,9 +125,6 @@ exports.getResources = function(nsReq, next) {
 
 exports.getFileList = function(path, next) {
 
-
-	console.log('FFFFFFFFFFFFFFFFFF: ' + path);
-
 	var result = exports.collection('files');
 	var files = fs.readdirSync(path);
 

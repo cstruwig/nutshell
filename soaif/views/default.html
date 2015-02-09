@@ -4,9 +4,11 @@
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 		<link rel="shortcut icon" href="/favicon.ico?v=1">
 		<title>nutshell</title>
+		<script src="http://twitter.github.com/hogan.js/builds/3.0.1/hogan-3.0.1.js"></script>
 		<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
 		<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+		<script src="https://cdn.firebase.com/js/client/2.1.2/firebase.js"></script>
 		<script src="../../assets/nutshell.js"></script>
 		<link rel="stylesheet" href="../../assets/nutshell.css">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
@@ -155,16 +157,21 @@
 
 		$('document').ready(function() {
 
-			var User = nsData.user;						//FIX! this will come from firebase
+			var User = new Firebase('https://nutshell.firebaseio.com/user/123321');
+			var userRoles = {};
+			//var User = nsData.user;						//FIX! this will come from firebase
 			var educateMe = {};
 			var request = parsePath(nsData);			//get service and resource
 			var suggestions = $('#suggestions')
 			var searchBar = $('#searchBar');
 			var suggestionCount = 0;
-			
+
 			if (!request) {
 				alert('there was an error! damn it...');
 			}
+
+			
+
 			
 			//setup ui
 			searchBar.val(request.service + ' > ' + request.resource);
@@ -184,22 +191,11 @@
 			//http://stackoverflow.com/questions/20073618/using-bootstrap-3-0-modals-to-load-dynamic-remote-content-within-an-ifram
 			function parseSearchText(idiotText) {
 				var path = nsData.request.url;
-
 				return path + '/nutshell/' + searchBar.val().replace(' > ', '/');
-
-				// var resourcePart;
-
-				// if ($('#suggestions li a.suggestion').length === 1) {			//2 because "help" is also selected
-				// 	path += '/nutshell/' + $('#suggestions li a').first().text().replace(' > ', '/');
-				// } else {
-				// 	path = null;
-				// }
-
-				// return path;
 			}			
 
 			function toggleSuggestions() {
-				if (searchBar.val() === '') {
+				if (searchBar.val() === '' || !userRoles || !userRoles.resources) {
 					suggestions.hide();
 				} else {
 					suggestions.show();
@@ -217,21 +213,23 @@
 			}
 
 			function generateSuggestions() {
-				console.log('running');
 				var searchBarVal = searchBar.val();
 				var matches = [];
 
-				if (searchBarVal === '') {
-					console.log('exiting 1...');
+				if (searchBarVal === '' || !userRoles || !userRoles.resources) {
+					console.log('problem');
 					toggleSuggestions();
 					return;
 				}
 
-				//FIX! why not foreach?
-				User.roles.resources.map(function(item, ctr) {
+				userRoles.resources.forEach(function(item, ctr) {
+
+					if (!item.ops.includes('c') && !item.ops.includes('r') && !item.ops.includes('u') && !item.ops.includes('d') ) {
+						return false;
+					}
+
 					var suggestionText = item.path.replace('/', ' > ');
 					if (suggestionText.includes(searchBarVal)) {
-						//console.log(item.path);
 					 	matches.push(suggestionText);
 					} else {
 						return false;
@@ -261,15 +259,18 @@
 				  	style: 'font-weight: bold; color: #000' //' font-size: 28px; color: #020202'
 				});
 
+/*
 				var education = $('<div id="education" class="container"></div>').hide();
 				
 				if ($('#education').length == 0) {
 					console.log('adding education!')
 					suggestions.append(education);
 				}
+*/				
 			}
 
 			function setupEducation() {
+				return;
 				var searchBarVal = searchBar.val();
 
 				var educationInfo = educateMe[searchBarVal];
@@ -402,6 +403,11 @@
 			// searchBar.blur(function() {
 			// 	suggestions.hide();
 			// });
+
+			User.on('value', function(data) {
+				userRoles = data.val() ? data.val().roles : [];
+				generateSuggestions();
+			});
 		});
 		</script>
 	</body>
