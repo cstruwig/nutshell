@@ -86,7 +86,7 @@ function processRequest(req, res, next) {
 
 	try {
 
-		debug.log('received request [url=' + req.path() + ']');
+//		debug.log('received request [url=' + req.path() + ']');
 
 		//nutshell.newRequest(req, res)
 		listener.setupRequest(req, res, function(err, nsReq) {
@@ -153,25 +153,25 @@ server.use(restify.authorizationParser());
 var middleware = function(options) {
 
 	function _middleware(req, res, next) {
-		console.log(options + req.id());
+		console.log('SERVING: ' + req.path() + ' (' + options + ')');
 		return (next());
 	}
 
 	return (_middleware);
 }
 
-server.get({ path: /assets\/.*/, name: 'asset' }, [middleware('x'), restify.serveStatic({ directory: process.cwd() + '/soaif/views' }) ]);
-server.get({ path: /guides\/.*/, name: 'guide' }, [middleware('y'), restify.serveStatic({ directory: process.cwd() + '/soaif/views/' }) ]);
-server.get({ path: '/nutshell/:service/:resource', name: 'nutshellRequest' }, [middleware('ZZZZ'), listener.authIt(), processRequest]);
-
+server.get({ path: '/favicon.ico', name: 'favicon' }, [middleware('favicon'), restify.serveStatic({ directory: process.cwd() + '/soaif/views/assets/' }) ]);
+server.get({ path: /assets\/.*/, name: 'asset' }, [middleware('asset'), restify.serveStatic({ directory: process.cwd() + '/soaif/views' }) ]);
+server.get({ path: /guides\/.*/, name: 'guide' }, [middleware('guide'), restify.serveStatic({ directory: process.cwd() + '/soaif/views' }) ]);
+server.get({ path: '/nutshell/:service/:resource', name: 'nutshellRequest' }, [middleware('nsReq'), listener.authIt(), processRequest]);
 server.get({ path:  /.*/, name: 'lander' }, 
 	function(req, res, next) { 
+		debug.log('*** REDIRECT! *** [url=' + req.path() + ']');
 		var roles = 'user';	//lookup from req.session.user or req.user._id;
 	    res.header('Location', '/nutshell/soaif/guides.view?type=' + roles);
-		res.send(302, 'ur_welcome...');
-		next();	
-	},
-	restify.serveStatic({ directory : process.cwd() + '/soaif/views', fileName: 'welcome.html' })
+		res.send(302, 'welcome to nutshell...');
+		return next();
+	}
 );
 
 function errorRequest(req, res, cb) {

@@ -114,8 +114,8 @@ exports.init = function(req, res) {
 		},
 		getParameter: function(parameterName, attributes) {
 			var attributes = {
-				name: parameterName.toLowerCase(),
-				typeName: attributes.typeName || 'string',
+				//name: parameterName.toLowerCase(),
+				inputType: attributes.typeName || 'string',
 				mandatory: attributes.mandatory || false,
 				options: attributes.options || [],
 				description: attributes.description || 'input value',
@@ -123,7 +123,11 @@ exports.init = function(req, res) {
 				value: req.params[parameterName] || ''
 			}
 
-			if 	( 
+			if (attributes.options.length > 0) {
+				attributes.inputType = 'list';
+			}
+
+			if 	(
 					(attributes.options.length > 0 && !attributes.options.contains(attributes.value)) 
 					||
 					(typeof attributes.value === 'undefined' || attributes.value === '') 

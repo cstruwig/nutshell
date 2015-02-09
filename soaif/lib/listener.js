@@ -33,7 +33,7 @@ exports.serveRequest = function(nsReq, next) {
 
 	try
 	{
-		debug.log('****** serving request' + nsReq.resource.functionName);
+		//debug.log('****** serving request' + nsReq.resource.functionName);
 		nsReq.service.module[nsReq.resource.functionName].call(nsReq.service.module, nsReq, function(nsReq) {
 			next(null, nsReq);
 		});
@@ -89,6 +89,8 @@ exports.authIt = function(options) {
 
 		//if authorized
 		//get user's roles PLUS their services and resources
+
+		debug.log('user is *** AUTHORISED ***');
 
 		req.userFB = require('./roles.json');
 

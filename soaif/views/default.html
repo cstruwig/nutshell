@@ -2,7 +2,8 @@
 <html>
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-		<title>title</title>
+		<link rel="shortcut icon" href="/favicon.ico?v=1">
+		<title>nutshell</title>
 		<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
 		<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
@@ -33,7 +34,8 @@
 								<ul class="nav navbar-nav navbar-right">
 									<li class="dropdown">
 										<input maxlength="50" id="searchBar" data-toggle="dropdown" maxlength="15" type="text" class="form-control " autocomplete="off" style="margin-left: -30px; width: 200%; padding: 4px; height: 34px; line-height: 34px; font-size:25px; font-family: 'Trebuchet MS', Helvetica, sans-serif;" />
-										<ul id="suggestions" class="dropdown-menu" role="menu" style="width: 100%"></ul>
+										<ul class="dropdown-menu" id="suggestions" role="menu" style="left: -30px; width: 200%">
+										</ul>
 									</li>
 								</ul>
 							</form>
@@ -148,16 +150,15 @@
 			</div>
 		</div>
 
-		<div class="container" id="debug" style="postion: absolute; top: 50px; border: 1px solid #000; height:400px; font-size: 25px; color: lightgray;"></div>		
-
 		<script type="text/javascript">
 		/* #nsData */
 
 		$('document').ready(function() {
 
 			var User = nsData.user;						//FIX! this will come from firebase
+			var educateMe = {};
 			var request = parsePath(nsData);			//get service and resource
-			var suggestions = $('#suggestions');
+			var suggestions = $('#suggestions')
 			var searchBar = $('#searchBar');
 			var suggestionCount = 0;
 			
@@ -166,6 +167,7 @@
 			}
 			
 			//setup ui
+			searchBar.val(request.service + ' > ' + request.resource);
 			searchBar.attr('placeholder', request.service + ' > ' + request.resource);
 			searchBar.focus();
 
@@ -214,11 +216,8 @@
 				return result;
 			}
 
-			function showHelp() {
-				console.log('display help');
-			}
-
-			searchBar.keyup(function(evt) {
+			function generateSuggestions() {
+				console.log('running');
 				var searchBarVal = searchBar.val();
 				var matches = [];
 
@@ -227,14 +226,6 @@
 					toggleSuggestions();
 					return;
 				}
-
-				if ((evt.keyCode === 8 || evt.which == 8) && searchBarVal.endsWith(' >')) {							//BACKSPACE=8
-		    		//remove the ' > ' in one go
-		    		var pos = searchBarVal.indexOf(' >');
-		    		if (pos > 0) {
-		    			searchBar.val(searchBarVal.substring(0, pos));
-		    		}
-		    	}
 
 				//FIX! why not foreach?
 				User.roles.resources.map(function(item, ctr) {
@@ -265,17 +256,96 @@
 
 				suggestionMarkup += '<li class="divider"></li><li><a href="#"><strong>help me</strong></a></li>';
 
-				// //if theres only one option highlight everything!
-				// if (matches.length === 1) {
-				// 	console.log('jumping in here' + matches[0]);
-				// 	searchBarVal = matches[0].replace('/', ' > ');
-				// }
-
 				suggestions.html($(suggestionMarkup)).find('li>a').styleSubtext({
 				  	subtext: [searchBarVal],
 				  	style: 'font-weight: bold; color: #000' //' font-size: 28px; color: #020202'
 				});
 
+				var education = $('<div id="education" class="container"></div>').hide();
+				
+				if ($('#education').length == 0) {
+					console.log('adding education!')
+					suggestions.append(education);
+				}
+			}
+
+			function setupEducation() {
+				var searchBarVal = searchBar.val();
+
+				var educationInfo = educateMe[searchBarVal];
+				if (educationInfo) {
+					for(var key in educationInfo) {
+						var inputInfo = educationInfo[key];
+						if (inputInfo.inputType === 'list') {
+							var input = $('<select id="' + key + '"></select>');
+
+							inputInfo.options.forEach(function(item, ctr) {
+								var selected = '';
+								if (inputInfo.defaultValue === item) {
+									selected = ' selected';
+								}
+								input.append('<option value="' + item + '" ' + selected + '>' + item + '</option>');
+							});
+							
+							$('#education').append('<label for="' + key + '">' + key + '</label>').append(input);
+
+							if (inputInfo.mandatory) {
+								$('#education').append('<span style="color:red">*</span>');
+							}
+
+						} else {
+							console.log(key + ' unknown type=' + inputInfo.inputType);
+						}
+						//var input = $();
+					}
+				}
+
+				$('#education').show();
+			}
+
+			function showHelp() {
+				console.log('display help');
+
+				var searchBarVal = searchBar.val();
+				var path = parseSearchText(searchBarVal);
+
+				if (path) {
+					if (!educateMe.hasOwnProperty(searchBarVal)) {
+						//get it and cache
+						$.get(path + '?educateme=1', function(data) {
+							if (data && data.education) {
+								//cache it!
+								educateMe[searchBarVal] = data.education;
+								setupEducation();
+							} else {
+								console.log('failed to get education!!!')
+							}
+						});
+					} else {
+						//get from cache
+						console.log('got from cache');
+						setupEducation();
+					}
+				} else {
+					console.log('invalid path [not present in nsData.roles')
+				}
+			}
+
+			searchBar.keyup(function(evt) {
+				var searchBar = $('#searchBar');
+	    		var searchBarVal = searchBar.val();
+				if ((evt.keyCode === 8 || evt.which == 8) && searchBarVal.endsWith(' >')) {							//BACKSPACE=8
+		    		//remove the ' > ' in one go
+		    		var pos = searchBarVal.indexOf(' >');
+		    		if (pos > 0) {
+		    			searchBar.val(searchBarVal.substring(0, pos));
+		    		}
+		    	}
+
+		    	if (evt.keyCode !== 32) {
+					generateSuggestions();
+		    	}
+				
 				toggleSuggestions();
 			});
 
@@ -284,41 +354,11 @@
 
 				var key = evt.keyCode || evt.which; 
 
-				if (key == 10 || key == 13) {			//ENTER=submit form
+				if (key == 10 || key == 13) {					//ENTER=submit form
 					evt.preventDefault();
-					// if (isValidRequest()) {
-					// 	var path = parseSearchText(searchBar.val());
-					// 	console.log('is valid request' + path);
-					// 	if (path) {
-					// 		console.log('and we have a pth');
-					// 		//load the help me...
-
-					// 		$.get(path + '?educateme=1', function(data) {
-					// 			console.log('got education');
-					// 			if (data && data.education) {
-					// 				console.log('like for real!');
-					// 				for (var key in data.education) {
-
-					// 					console.log(key);
-					// 					var input = data.education[key];
-
-					// 					//
-					// 				}
-
-					// 				$('#inputs').html('<li><a href="#" class="suggestion" style="color: #c0c0c0">' + '{{{{{ KWAGGA }}}}}' + '</a></li>');
-
-					// 				//suggestionMarkup += '<li><a href="#" class="suggestion" style="color: #c0c0c0">' + matchingService + ' > ' + matchingResource + '</a></li>';
-
-					// 				$('#inputs').show();
-									
-					// 			}								
-					// 		});
-
-					// 		suggestions.hide();
-					// 	}
-					// }
-					
-			    	//window.location = 'http://localhost:'
+					//if valid path and minimum inputs then...
+					//FIX! window.location = ...
+					console.log('"redirect" if valid path and minimum inputs then...');
 		    	} else if (key === 62 || key === 46) {			//>=62 and .=46
 		    		evt.preventDefault();
 		    	} else if (key === 32 || key === 9) {			//SPACE & TAB=autocomplete (AND submit)
@@ -332,13 +372,10 @@
 			     		searchBar.val(suggestions.find('.suggestion').text());
 			     		showHelp();
 			     		return;
-			     		//we can autocomplete!!!
 			     	} else {
 			     		//there are multiple suggestions...
-			     		//test for unique service names and then autocomplete that much
 
 			     		//console.log(suggestions.find('.suggestion').length);
-
 			     		var canAutoCompleteService = true;
 						suggestions.find('.suggestion').each(function(i, item) {
 							var $item = $(item);
@@ -353,65 +390,18 @@
 							searchBar.val(suggestions.find('.suggestion').first().text().split(' > ')[0] + ' > ');
 						}
 			     	}
-
-
-			   //   		//but can we autocomplete the service *OR* both the service+resource?
-
-			   //   		if (User.roles.resources.contains(searchBar.val().replace(' > ', ','))) {
-			   //   			alert('halle');
-			   //   		}
-
-
-
-			     		
-
-						// //if (isValidRequest()) {
-						// 	var path = parseSearchText(searchBar.val());
-						// 	console.log('is valid request' + path);
-						// 	if (path) {
-						// 		console.log('and we have a pth');
-						// 		//load the help me...
-
-						// 		$.get(path + '?educateme=1', function(data) {
-						// 			console.log('got education');
-						// 			if (data && data.education) {
-						// 				console.log('like for real!');
-						// 				for (var key in data.education) {
-
-						// 					console.log(key);
-						// 					var input = data.education[key];
-
-						// 					//
-						// 				}
-
-						// 				$('#inputs').html('<li><a href="#" class="suggestion" style="color: #c0c0c0">' + '{{{{{ KWAGGA }}}}}' + '</a></li>');
-
-						// 				//suggestionMarkup += '<li><a href="#" class="suggestion" style="color: #c0c0c0">' + matchingService + ' > ' + matchingResource + '</a></li>';
-
-						// 				$('#inputs').show();
-										
-						// 			}								
-						// 		});
-
-						// 		suggestions.hide();
-						// 	}
-						// //}
-
-			   //   		suggestions.hide();
-			   //   		$('#inputs').show();
-			   //   	}
-
 			    } else {
 			    	console.log(key);
 			    }
 			});
 
-			searchBar.click(toggleSuggestions);
-			searchBar.blur(function() {
-				suggestions.hide();
+			searchBar.click(function() {
+				generateSuggestions();
+				toggleSuggestions();
 			});
-			
-			//suggestions.html('<li><a href="#">crappppeeeeee</a></li>');
+			// searchBar.blur(function() {
+			// 	suggestions.hide();
+			// });
 		});
 		</script>
 	</body>
