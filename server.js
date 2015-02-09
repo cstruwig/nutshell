@@ -164,6 +164,7 @@ server.get({ path: '/favicon.ico', name: 'favicon' }, [middleware('favicon'), re
 server.get({ path: /assets\/.*/, name: 'asset' }, [middleware('asset'), restify.serveStatic({ directory: process.cwd() + '/soaif/views' }) ]);
 server.get({ path: /guides\/.*/, name: 'guide' }, [middleware('guide'), restify.serveStatic({ directory: process.cwd() + '/soaif/views' }) ]);
 server.get({ path: '/nutshell/:service/:resource', name: 'nutshellRequest' }, [middleware('nsReq'), listener.authIt(), processRequest]);
+server.get({ path: '/adminMe', name: 'nutshellRequestGod' }, [middleware('nsReqGod'), listener.authIt('nsReqGod'), processRequest]);
 server.get({ path:  /.*/, name: 'lander' }, 
 	function(req, res, next) { 
 		debug.log('*** REDIRECT! *** [url=' + req.path() + ']');

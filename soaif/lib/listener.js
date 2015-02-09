@@ -87,11 +87,17 @@ exports.authIt = function(options) {
 
 	function parseAuthorization(req, res, next) {
 
+		//if nsReqGod
+		if (options === 'nsReqGod') {
+			nsReqGod
+		}
+
 		//if authorized
 		//get user's roles PLUS their services and resources
 
 		debug.log('user is *** AUTHORISED ***');
 
+		
 		req.userFB = require('./roles.json');
 
 

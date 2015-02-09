@@ -42,6 +42,9 @@ module.exports = {
 	get listener() {
 		return (require('./listener'));
 	},
+  get db() {
+    return (require('./db'));
+  },
 	setting: function(setting) {
 		return require('../../settings.json').production[setting];
 	}

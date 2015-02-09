@@ -6,6 +6,7 @@ var fs = require('./filesystem');
 var util = require('util');
 var path = require('path');
 var tools = require('./tools');
+var db = require('./db');
 
 function nutshellIt(module) {
 	module.getResources = tools.getResources
@@ -63,17 +64,30 @@ exports.parse = function(nsReq, next) {
 
 			try
 			{
-				debug.lo('modulePath', service.modulePath);
-				service.module = require(service.modulePath);
+				var readStmt = { 
+					table: 'defaultView', 
+					path: nsReq.path,
+					dirty: true };		//FIX! maybe change db property to "cached" instead of "dirty"??
 
-				//"inherit" service functions...
-				if (service.serviceType !== 'soaif') { //for soaif_resources
-					nutshellIt(service.module);
-				}
+				//db.read(readStmt, function(err, data) {
+
+					// if (err)
+					// 	return (next(new Error('db read failure')));
+
+					//nsReq.fi data.defaultView
+					
+					debug.lo('modulePath', service.modulePath);
+					service.module = require(service.modulePath);
+
+					//"inherit" service functions...
+					if (service.serviceType !== 'soaif') { //for soaif_resources
+						nutshellIt(service.module);
+					}
+				//});
 			}
 			catch (err) {
 				debug.lo('invalid service or resource ' + err);
-				return next(err, null);
+				return next(err);
 			}
 			
 			//FIX! we can't set it valid here already... //nsReq.status = 'valid'; but probably shouldn't

@@ -100,7 +100,10 @@ exports.init = function(req, res) {
 			funcionName: '',
 			output: 'json'
 		},
-		request: {},
+		nsReqGod: false,
+		request: {
+			path: '{{service}}/{{resource}}/{{singularResource}}'			//FIX! move this one level up! why request!!!?
+		},
 		response: {
 			ref: null,
 			status: null, 

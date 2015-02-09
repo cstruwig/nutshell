@@ -194,8 +194,9 @@
 				return path + '/nutshell/' + searchBar.val().replace(' > ', '/');
 			}			
 
-			function toggleSuggestions() {
-				if (searchBar.val() === '' || !userRoles || !userRoles.resources) {
+			function toggleSuggestions(forceHide) {
+				
+				if (searchBar.val() === '' || forceHide) {
 					suggestions.hide();
 				} else {
 					suggestions.show();
@@ -301,7 +302,13 @@
 					}
 				}
 
-				$('#education').show();
+				//$('#education').show();
+			}
+
+			function setPath(path) {
+				var url = nsData.request.url + '/nutshell/' + path + '.view?educateme=1';
+				
+				window.location = url;
 			}
 
 			function showHelp() {
@@ -333,51 +340,97 @@
 			}
 
 			searchBar.keyup(function(evt) {
+
+				//FIX! simplify this muck!!!
+				//regen on change of text
+				//and
+				//dont show if text match path!
+
 				var searchBar = $('#searchBar');
 	    		var searchBarVal = searchBar.val();
-				if ((evt.keyCode === 8 || evt.which == 8) && searchBarVal.endsWith(' >')) {							//BACKSPACE=8
+	    		var key = evt.keyCode || evt.which;
+	    		var generatedPath = request.service + ' > ' + request.resource;
+
+	    		if ( (key == 27) && searchBarVal === '') {									//ESCAPE
+	    			searchBar.val(generatedPath);
+					searchBar.focus();
+					toggleSuggestions(true);
+	    		} else if ( (key == 8) && searchBarVal.endsWith(' >')) {					//BACKSPACE=8
 		    		//remove the ' > ' in one go
 		    		var pos = searchBarVal.indexOf(' >');
 		    		if (pos > 0) {
 		    			searchBar.val(searchBarVal.substring(0, pos));
 		    		}
-		    	}
-
-		    	if (evt.keyCode !== 32) {
+		    		
+		    	} else {
+		    		evt.preventDefault();
 					generateSuggestions();
+					
+		    		if ( (searchBarVal !== '') && (searchBarVal !== generatedPath) ) {
+
+		    			if (key === 9 || key === 32 || key === 10 || key === 13) {
+							if (suggestionCount === 1) {
+			    				toggleSuggestions(true);		//force hide
+			    			} else {
+			    				toggleSuggestions();
+			    			}
+		    			} else {
+			    			console.log('regen suggests and show it! [key=' + key + ']')
+			    			
+		    				toggleSuggestions();
+		    			}
+		    			
+						
+					} else if (searchBarVal !== generatedPath) {
+						console.log('hide the suggg....');
+					}
 		    	}
-				
-				toggleSuggestions();
 			});
 
-			searchBar.keypress(function(evt) {
+			//searchBar.keypress(function(evt) {
+			searchBar.parent().on('keydown', '#searchBar', function(evt) {				
 				//check for special keys for autocompletion and submission
+				var key = evt.keyCode || evt.which;
 
-				var key = evt.keyCode || evt.which; 
-
-				if (key == 10 || key == 13) {					//ENTER=submit form
-					evt.preventDefault();
-					//if valid path and minimum inputs then...
-					//FIX! window.location = ...
-					console.log('"redirect" if valid path and minimum inputs then...');
+				// if (key == 10 || key == 13) {					//ENTER=submit form
+				// 	evt.preventDefault();
+				// 	//if valid path and minimum inputs then...
+				// 	//FIX! window.location = ...
+				// 	console.log('"redirect" if valid path and minimum inputs then...');
+				// } else 
+				if (key === 27) {						//ESCAPE
+					searchBar.val(request.service + ' > ' + request.resource);
+					searchBar.focus();
+					toggleSuggestions(true);
+		    		evt.preventDefault();
+		    		return false;
 		    	} else if (key === 62 || key === 46) {			//>=62 and .=46
 		    		evt.preventDefault();
-		    	} else if (key === 32 || key === 9) {			//SPACE & TAB=autocomplete (AND submit)
-			    	//FIX! tab key being ignored!!!!
+		    	} else if (key === 32 || key === 9 || key == 10 || key == 13) {			//SPACE & TAB & ENTER=autocomplete (AND submit)
 					evt.preventDefault();
 
 					if (suggestionCount === 0 || searchBar.val() === '') {
-						return;
+						console.log('weird exit here');
+						return false;
 					} else if (suggestionCount === 1) { //if only one option then autocomplete
+						console.log('only one option so autocomplete and exit');
 			     		//console.log('we can autocomplete!!!');
 			     		searchBar.val(suggestions.find('.suggestion').text());
-			     		showHelp();
+			     		toggleSuggestions(true);
+
+			     		if (key === 10 || key === 13) {
+			     			console.log('now instead of autocomplete we submit!!');
+			     			setPath(suggestions.find('.suggestion').text().replace(' > ', '/'));
+			     			return false;
+			     		}
+			     		
 			     		return;
 			     	} else {
 			     		//there are multiple suggestions...
 
 			     		//console.log(suggestions.find('.suggestion').length);
 			     		var canAutoCompleteService = true;
+
 						suggestions.find('.suggestion').each(function(i, item) {
 							var $item = $(item);
 							if (!$item.text().startsWith(searchBar.val())) {
@@ -386,8 +439,9 @@
 								return false;
 							}
 						});
-						
-						if (canAutoCompleteService) {
+
+						if (canAutoCompleteService && !searchBar.val().includes('>')) {
+							//if we dont check for the ">" we overwrite everything after the ">""
 							searchBar.val(suggestions.find('.suggestion').first().text().split(' > ')[0] + ' > ');
 						}
 			     	}
