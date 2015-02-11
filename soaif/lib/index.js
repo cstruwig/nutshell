@@ -9,7 +9,6 @@ logging - 	http://blog.nodejs.org/2012/03/28/service-logging-in-json-with-bunyan
 XML2JSON - 	https://thomashunter.name/blog/node-js-convert-json-to-xml-and-pluralize/
 jade - 		http://jade-lang.com/tutorial/
 
-
 installation - https://github.com/npm/npm/issues/5584 AND sudo curl -L http://npmjs.org/install.sh | sh
 */
 // require('nodetime').profile({
@@ -50,64 +49,112 @@ module.exports = {
 	}
 }
 
-Object.prototype.makeArray = function() {
-	var result = [];
+if (!Object.prototype.makeArray) {
+  Object.defineProperty(Object.prototype, 'makeArray', {
+    enumerable: false,
+    configurable: false,
+    writable: false,
+    value: function() {
+      var result = [];
 
-	if (require('util').isArray(this)) {
-		result = this;
-	} else {
-		result.push(this);	
-	}
-	
-	return result;
-}
-
-Object.prototype.count = function() {
-    var result = 0;
-    for(property in this) {
-        if(this.hasOwnProperty(property)) {
-            result++;
-        }
-    }
-    return result;
-};
-
-Object.prototype.isArray = function() {
-	return require('util').isArray(this);
-}
-
-Object.prototype.hasValue = function() {
-    var result = false;
- 	if (typeof this !== 'undefined') {
-		result = this.count() > 0;
-	}
-    return result;
-};
-
-String.prototype.hasValue = function() {
-    var result = false;
-	if (typeof this !== 'undefined') {
-		result = this.trim() !== '';
-	}
-	return result;
-};
-
-Array.prototype.distinctValues = function() {
-   var u = {}
-   var result = [];
-   
-   for(var i=0; i<this.length; ++i) {
-      if(u.hasOwnProperty(this[i])) {
-         continue;
+      if (require('util').isArray(this)) {
+        result = this;
+      } else {
+        result.push(this);  
       }
-      result.push(this[i]);
-      u[this[i]] = 1;
-   }
-   return result;
+      return result;
+    }
+  });
 }
 
-Array.prototype.contains = function(obj) {
-	return (this.indexOf(obj) > -1);
+if (!Object.prototype.count) {
+  Object.defineProperty(Object.prototype, 'count', {
+    enumerable: false,
+    configurable: false,
+    writable: false,
+    value: function() {
+      var result = 0;
+      for(property in this) {
+        if(this.hasOwnProperty(property)) {
+          result++;
+        }
+      }
+      return result; 
+    }
+  });
+}
+
+if (!Object.prototype.isArray) {
+  Object.defineProperty(Object.prototype, 'isArray', {
+    enumerable: false,
+    configurable: false,
+    writable: false,
+    value: function() {
+      return require('util').isArray(this);
+    }
+  });
+}
+
+if (!Object.prototype.hasValue) {
+  Object.defineProperty(Object.prototype, 'hasValue', {
+    enumerable: false,
+    configurable: false,
+    writable: false,
+    value: function() {
+      var result = false;
+      if (typeof this !== 'undefined') {
+       result = this.count() > 0;
+      }
+      return result;
+    }
+  });
+}
+
+if (!String.prototype.hasValue) {
+  Object.defineProperty(String.prototype, 'hasValue', {
+    enumerable: false,
+    configurable: false,
+    writable: false,
+    value: function() {
+      var result = false;
+      if (typeof this !== 'undefined') {
+        result = this.trim() !== '';
+      }
+      return result;
+    }
+  });
+}
+
+if (!Array.prototype.distinctValues) {
+  Object.defineProperty(Array.prototype, 'distinctValues', {
+    enumerable: false,
+    configurable: false,
+    writable: false,
+    value: function() {
+      var u = {}
+      var result = [];
+       
+      for(var i=0; i<this.length; ++i) {
+        if(u.hasOwnProperty(this[i])) {
+          continue;
+        }
+        result.push(this[i]);
+        u[this[i]] = 1;
+      }
+      return result;
+    }
+  });
+}
+
+if (!Array.prototype.contains) {
+  Object.defineProperty(Array.prototype, 'contains', {
+    enumerable: false,
+    configurable: false,
+    writable: false,
+    value: function(value) {
+      return (this.indexOf(value) > -1);
+    }
+  });
 }
 
 if (!String.prototype.includes) {
@@ -141,22 +188,3 @@ if (!String.prototype.endsWith) {
     }
   });
 }
-/*
-Number.prototype.hasValue = function() {
-    var that = this;
-    var result = false;
-    
- 	result = typeof that !== 'undefined';
-	
-    return result;
-};
-
-Boolean.prototype.hasValue = function() {
-    var that = this;
-    var result = false;
-    
- 	result = typeof that !== 'undefined';
-	
-    return result;
-};
-*/

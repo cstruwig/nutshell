@@ -5,6 +5,7 @@ var fs = require('./filesystem');
 var inflection = require('inflection');
 var debug = require('./debug');
 var tools = require('./tools');
+var db = require('./db');
 
 exports.setupRequest = function(req, res, next) {
 
@@ -67,12 +68,10 @@ exports.loadView = function(nsReq) {
 			//console.log('fileExists');
 			contentBuffer = fs.readFile(path);
 		} else {
-			//console.log('defaulting the view');
+			console.log('view doesn\'t exist, using default instead [requested=' + nsReq.options.view + ']');
 			contentBuffer = fs.readFile(__dirname + '/../views/default.html');	
 		}
 
-		nsReq.response.data.peach = function() { alert('x'); };
-		
 		viewSource = contentBuffer.toString();
 		viewData = viewSource.replace('/* #nsData */', 'var nsData = ' + JSON.stringify(nsReq.response.data) + ';');
 
@@ -87,60 +86,31 @@ exports.authIt = function(options) {
 
 	function parseAuthorization(req, res, next) {
 
+		var userId = -1;
+
 		//if nsReqGod
 		if (options === 'nsReqGod') {
-			nsReqGod
+			//nsReqGod
 		}
+
+		//req.userFB = require('./roles.json');
 
 		//if authorized
 		//get user's roles PLUS their services and resources
+		var email = 'japie@company.co.za';			//FIX! this will be available once login function is finalized!
 
-		debug.log('user is *** AUTHORISED ***');
+		// db.read({ table: 'user' }, function(data) {
+		// 	userId = 123321;
+			
+		// 	debug.log('user is *** AUTHORISED ***');
+		// 	debug.sho(data);
+			
+		// 	//set the userId from FB
+		// 	req.userId = userId;
+			
+			return (next());
+		// });
 
-		
-		req.userFB = require('./roles.json');
-
-
-		// //setup for demo!
-		// userFB = { //FIX! get firebase
-		// 	id: 123,
-		// 	roles: ['demo'],
-		// 	services: {	//FYI!
-		// 		service: [ {
-		// 			resources: {
-		// 				resource: []
-		// 			}
-		// 		}]
-		// 	}
-		// };
-
-		// //authorised roles
-		// userFB.roles = tools.collection('roles');;
-		// userFB.roles.add({ name: 'demo'});
-
-		// userFB.services = tools.collection('services');
-		// //userFB.roles.each(function(ctr, item) {
-		// 	console.log('s][]q[we]qweoqiwuyiwquehqwlehqwkjeqwlkjehqwlkjehqwelkjhqwelkjqwhe');
-		// 	tools.getFileList('./soaif/enterpriseservices/', function(err, list) {
-		// 		console.log('ppp' + JSON.stringify(list));
-		// 	});
-
-		// 	//FIX! add resolveResources(userFB.roles)
-		// 	// userFB.services.add({ name: 'entertainment' });
-		// 	// userFB.services.add({ name: 'weather' });
-		// 	// userFB.services.add({ name: 'socialmedia' });
-		// 	// //userFB.services.add({ name: 'insurance' });
-		// //});
-
-		// // userFB.services = tools.collection('services');
-
-		// // userFB.roles.each(function(ctr, item) {
-		// // 	console.log(item);
-		// // });
-
-		
-
-		return (next());
 	}
 
 	return (parseAuthorization);

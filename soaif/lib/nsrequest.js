@@ -1,3 +1,5 @@
+'use strict'	//??
+
 require('longjohn');
 
 //nsRequest.js
@@ -38,7 +40,7 @@ exports.parse = function(nsReq, next) {
 			require('./serviceparser').parse(nsReq, function(err, nsReq) {
 				if (err) {
 					debug.log('failed to parse service [' + err + ']');
-					next(err, null);					
+					next(err, null);
 				} else {
 					require('./paramparser').parse(nsReq, function(err, nsReq) {
 						if (err) {
@@ -102,6 +104,7 @@ exports.init = function(req, res) {
 		},
 		nsReqGod: false,
 		request: {
+			url: 'http://{{host:port}}/nutshell/',
 			path: '{{service}}/{{resource}}/{{singularResource}}'			//FIX! move this one level up! why request!!!?
 		},
 		response: {
@@ -117,43 +120,60 @@ exports.init = function(req, res) {
 		},
 		getParameter: function(parameterName, attributes) {
 			var attributes = {
-				//name: parameterName.toLowerCase(),
+				name: parameterName.toLowerCase(),
 				inputType: attributes.typeName || 'string',
 				mandatory: attributes.mandatory || false,
 				options: attributes.options || [],
 				description: attributes.description || 'input value',
-				defaultValue: attributes.defaultValue || getDefaultValueForType(this.typeName),
+				defaultValue: attributes.defaultValue || getDefaultValueForType(this.inputType), //typeName),
 				value: req.params[parameterName] || ''
 			}
 
 			if (attributes.options.length > 0) {
 				attributes.inputType = 'list';
+
+				// //FIX! we need support for multiple input params!!!!!
+				// //for lists verify that all specified options are valid
+				// if (attributes.value.includes(',')) {
+				// 	var validateOptions = [];
+				// 	attributes.value.split(',').forEach(function(specifiedOption) {
+				// 		if (attributes.options.contains(specifiedOption)) {
+				// 			validateOptions.push(specifiedOption);
+				// 		}
+				// 	});
+
+				// 	var validateOptions2 = attributes.value.split(',').map(function(specifiedOption) {
+				// 		if (attributes.options.contains(specifiedOption)) {
+				// 			return specifiedOption;
+				// 		}
+				// 	}).distinctValues();
+				// }
+
+				// console.log('valid options are ' + validateOptions.join(' and '));
+				// console.log('2valid options are ' + validateOptions2.join('.'));
 			}
 
-			if 	(
-					(attributes.options.length > 0 && !attributes.options.contains(attributes.value)) 
-					||
-					(typeof attributes.value === 'undefined' || attributes.value === '') 
-				) {
-				
-				//FIX! if mandatory don't serve response!!!
-				console.log('defaulting parameter [param=' + attributes.name + ', supplied=' + attributes.value + ', default=' + attributes.defaultValue + ']');
+			//base validation
+			var invalidListOption = ( (attributes.options.length > 0) && (!attributes.options.contains(attributes.value)) );
+			var emptyParamOption = (typeof attributes.value === 'undefined' || attributes.value === '');
+
+			if 	(invalidListOption || emptyParamOption) {
+				console.log('defaulting value... [parameter=' + parameterName + ']');
 				attributes.value = attributes.defaultValue;
 			}
 
-			this.parameters[parameterName.toLowerCase()] = attributes.value;
+			this.parameters[attributes.name] = attributes.value;
 			this.education[parameterName] = attributes;
 
-			var result = this.parameters[parameterName];
-			
+			var result = attributes.value;
+/*
 			//FIX!
-/*			if (attributes.mandatory && ) {
-				
+			if (attributes.mandatory && ) {				
 			}
-*/
 
 			//if mandatory and no value...
-			
+			//FIX! what then?
+*/			
 			return result;
 		}
 	}

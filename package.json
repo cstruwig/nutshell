@@ -21,9 +21,10 @@
     "underscore": "*",
     "guid": "*",
     "longjohn": "*",
-    "firebase": "*",
+    "mongodb": "^1.4.3",
     "twitter": "*",
-    "youtube-node": "*"
+    "youtube-node": "*",
+    "google": "^0.6.0"
   },
   "devDependencies": {
     "grunt": "^0.4.5"

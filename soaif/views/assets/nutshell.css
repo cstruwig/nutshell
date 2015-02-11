@@ -9,3 +9,31 @@ body {
 	background-repeat: no-repeat;
 	background-size: 58px 9px;
 }
+
+.nsService {
+	spacing: 20px;
+}
+
+.noBullets {
+	list-style: none;
+}
+
+.jumbotron {
+	background-color: #FFF3CA;
+}
+
+.btn-primary {
+	background-image: linear-gradient(to bottom, #FFE694 0, #F2C314 100%);	
+	background-color: #F2C314;
+	border-color: #c0c0c0; /* #806100; */
+}
+
+.btn-primary:hover {
+	background-color: #F2C314;
+	border-color: #ffffff; /* #806100; */
+}
+
+.btn-primary:visited {
+	background-color: #F2C314;
+	border-color: #c0c0c0; /* #806100; */
+}

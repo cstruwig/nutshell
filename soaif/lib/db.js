@@ -5,39 +5,53 @@ var fs = require('./filesystem');
 var inflection = require('inflection');
 var debug = require('./debug');
 var tools = require('./tools');
-//var Firebase = require('firebase');
-//var nsDB = new Firebase('https://nutshell.firebaseio.com/');
 
-function x(options) {
+var MongoClient = require('mongodb').MongoClient;
+var format = util.format;
 
-	throw new Error('')
-}
+var CONN_STRING = 'mongodb://127.0.0.1:27017/test';
 
 exports.create = function(options, next) {
 
-	var options = {
-		table: options.table || '',
-		data: options.data || {}
-	}
+  var options = {
+    table: options.table || 'data',
+    data: options.data || { testProperty: 'testValue' }
+  }
 
-	try {
+	MongoClient.connect(CONN_STRING, function(err, db) {
+    if(err) throw err;
 
-	}
-	catch (err) {
+    var collection = db.collection(options.table);
 
-	}
-
-	return next();
+    collection.insert(options.data, function(err, docs) {
+      if(err) throw err;
+      return next();
+    });
+  })
 }
 
 exports.read = function(options, next) {
-	return next();
-}
 
-exports.update = function(options, next) {
-	return next();
-}
+  var options = {
+    table: options.table || 'data',
+    query: options.query || {}
+  }
 
-exports.delete = function(options, next) {
-	return next();
+  MongoClient.connect(CONN_STRING, function(err, db) {
+    if(err) throw err;
+ 
+    var collection = db.collection(options.table);
+
+    collection.find(options.query).toArray(function(err, results) {
+      if (err) {
+        console.log('errrrrrrr while reading from db:');
+        debug.sho(options.query);
+        throw err;
+      }
+      
+      db.close();
+
+      return next(results);
+    });
+  })
 }

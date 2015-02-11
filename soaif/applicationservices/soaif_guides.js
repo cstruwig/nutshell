@@ -26,11 +26,11 @@ function getGuideList(audience, next) {
 }
 
 module.exports = {
+
 	//=== generate point for add service stub
 	getGuides: function(nsReq, next) {
 		
 		try {
-			
 			//******************* setup filters....
 			var audience = nsReq.getParameter('audience', {
 				typeName: 'list',
@@ -50,7 +50,6 @@ module.exports = {
 			var guidePath = tools.getURL(nsReq.req, { excludePath: true });
 
 			tools.getFileList(process.cwd() + '/soaif/views/guides/' + audience, function(err, list) {
-
 				list.each(function(ctr, item) {
 					result.add({ name: item.name, url: guidePath + '/guides/' + audience + '/' + item.name });
 				});

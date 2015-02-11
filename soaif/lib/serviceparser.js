@@ -30,7 +30,6 @@ exports.parse = function(nsReq, next) {
 			//	break;
 			case 'soaif': 	//are these not application services? eg. 'application'
 				//FIX!
-				console.log('=====================================****************');
 				service.modulePath = process.cwd() + '/soaif/applicationservices/soaif_' + inflection.pluralize(resource) + '.js';
 				service.serviceType = 'soaif';
 				serviceFound = fs.fileExists(service.modulePath);
@@ -41,7 +40,6 @@ exports.parse = function(nsReq, next) {
 				}
 				break;
 			default:
-			console.log('----------------------------****************');
 				service.modulePath = process.cwd() + '/soaif/enterpriseservices/' + serviceName + '.js';
 				//service.modulePath = __dirname + '/../enterpriseservices/' + serviceName + '.js'; //__dirname + '/../../enterprise/' + serviceName + '.js';
 				if (fs.fileExists(service.modulePath)) {
@@ -59,23 +57,30 @@ exports.parse = function(nsReq, next) {
 
 			service.name = serviceName;
 
-			nsReq.request.url = tools.getURL(nsReq.req, { excludePath: true });
+			nsReq.request.url = tools.getURL(nsReq.req, { excludePath: true }); // + '/nutshell/';
 			nsReq.request.path = nsReq.request.path.replace('{{service}}', serviceName);
 
 			try
 			{
 				var readStmt = { 
 					table: 'defaultView', 
-					path: nsReq.path,
-					dirty: true };		//FIX! maybe change db property to "cached" instead of "dirty"??
+					query: {
+						path: nsReq.request.path
+					}
+				};
 
-				//db.read(readStmt, function(err, data) {
+				if (nsReq.output === 'html') {
 
-					// if (err)
-					// 	return (next(new Error('db read failure')));
-
-					//nsReq.fi data.defaultView
+				} else {
 					
+				}
+
+				db.read(readStmt, function(data) {
+					if (data && data.length > 0) {	// && data[0].view.name !== ''
+						console.log('found specific view for resource [path=' + readStmt.query.path + ', name=' + data[0].view.name + ']');
+						nsReq.options.view = data[0].view.name;
+					}
+
 					debug.lo('modulePath', service.modulePath);
 					service.module = require(service.modulePath);
 
@@ -83,13 +88,15 @@ exports.parse = function(nsReq, next) {
 					if (service.serviceType !== 'soaif') { //for soaif_resources
 						nutshellIt(service.module);
 					}
-				//});
+
+					return next(null, nsReq);
+				});
 			}
 			catch (err) {
 				debug.lo('invalid service or resource ' + err);
 				return next(err);
 			}
-			
+
 			//FIX! we can't set it valid here already... //nsReq.status = 'valid'; but probably shouldn't
 		} else {
 			return next(new Error('invalid or missing service name specified'), null);
@@ -103,5 +110,5 @@ exports.parse = function(nsReq, next) {
 		return next(err, nsReq);
  	}
 
-	next(null, nsReq);
+	//next(null, nsReq);
 }

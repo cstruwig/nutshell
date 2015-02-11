@@ -1,6 +1,7 @@
 /*
-o fok...
+TODO...
 --------
+nutshell navbar
 service catalogue
 settings
 logs
@@ -9,10 +10,8 @@ views
 
 create compound service
 */
-
-
 //if (process.env.NODE_ENV !== 'production'){
-//	require('longjohn');
+require('longjohn');
 //}
 
 var restify = require('restify');
@@ -23,7 +22,6 @@ var listener = ns.listener;
 function serveResponse(nsReq, options, next) {
 
 	try {
-
 		options = {
 			code: options.code || 200,
 			content: options.content || '<html><body>sunfork</body></html>',
@@ -43,7 +41,7 @@ function serveResponse(nsReq, options, next) {
 		nsReq.response.data.request.size = 222;
 		nsReq.response.data.request.params = nsReq.parameters;
 
-		nsReq.response.data.user = nsReq.req.userFB;
+//		nsReq.response.data.user = nsReq.req.userFB;
 	
 		//FIX! options-from-service-override-mechanism goes here... i.e. call from service : nsReq.override('output', 'html'); to override options.contentType below...
 		switch (nsReq.resource.output) {
@@ -91,8 +89,9 @@ function processRequest(req, res, next) {
 		//nutshell.newRequest(req, res)
 		listener.setupRequest(req, res, function(err, nsReq) {
 			if (err) {
+				debug.log('8888888888888888888888888888');
 				debug.log('failed to setup request [' + err + ']');
-				//...unsupported protocol (or unauthorized?)
+				//...unsupported protocol (unauthorized, or unknown path)
 				serveResponse(nsReq, { content: 'BAD_REQUEST' }, function() {
 					next(err, null);
 				});
@@ -160,6 +159,34 @@ var middleware = function(options) {
 	return (_middleware);
 }
 
+var logIt = function(message) {
+
+	function _logIt(req, res, next) {
+		console.log('SERVING: ' + req.path() + ' (' + message + ')');
+		return (next());
+	}
+
+	return (_logIt);
+}
+
+var redirect = function(options) {
+
+	var options = {
+		url: options.url || '/nutshell/soaif/guides.view'
+	};
+
+	function _redirect(req, res, next) { 
+		//debug.log('*** REDIRECTING FROM "' + req.path() + '"');
+		var roles = 'user';	//lookup from req.session.user or req.user._id;
+	    res.header('Location', options.url + '/?type=' + roles);
+		res.send(302, 'welcome to nutshell...');
+		return next();
+	}
+
+	return (_redirect);
+}
+
+
 server.get({ path: '/favicon.ico', name: 'favicon' }, [middleware('favicon'), restify.serveStatic({ directory: process.cwd() + '/soaif/views/assets/' }) ]);
 server.get({ path: /assets\/.*/, name: 'asset' }, [middleware('asset'), restify.serveStatic({ directory: process.cwd() + '/soaif/views' }) ]);
 server.get({ path: /guides\/.*/, name: 'guide' }, [middleware('guide'), restify.serveStatic({ directory: process.cwd() + '/soaif/views' }) ]);
@@ -195,3 +222,29 @@ server.on('InternalError', errorRequest);
 server.listen(8080, '127.0.0.1', function() {
 	console.log('nutshell RESTful listener started...\naccepting requests @ %s\n', server.url);
 });
+
+
+
+
+				
+//var db = ns.db;
+// var options = {
+// 	table: 'user',
+// 	data: { 
+// 		userId: 1234,
+// 		name: 'kevnin'
+// 	}
+// }
+
+// db.create(options, function() {
+// 	console.log('with:');
+// 	process.exit(1);
+// });
+
+// var options = {
+// 	table: 'user'
+// }
+
+// db.read(options, function() {
+// 	process.exit(1);
+// });

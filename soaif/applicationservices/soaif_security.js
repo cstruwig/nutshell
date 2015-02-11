@@ -13,16 +13,9 @@ module.exports = {
 		try {
 			
 			//******************* setup filters....
-			var type = nsReq.getParameter('type', {
-				typeName: 'string',
-				description: 'service type to retrieve',
-				defaultValue: 'enterprise',
-				options: ['application', 'enterprise', 'compound', 'soaif']
-			});
-
 			var name = nsReq.getParameter('name', {
 				typeName: 'string',
-				description: 'partial service name to search',
+				description: 'partial role name to search',
 				defaultValue: ''
 			});
 
@@ -34,69 +27,11 @@ module.exports = {
 			
 			//get the data
 			var result = tools.collection('roles');
-			var path;
-			var showSOAIF = false;
 
-			//db.get
-
-	// 		switch (type.toLowerCase()) {
-	// 			case 'soaif':
-	// 				path = process.cwd() + '/soaif/applicationservices/';
-	// 				showSOAIF = true;
-	// 				break;
-	// 			case 'application':
-	// 				path = process.cwd() + '/soaif/applicationservices/';
-	// 				break;
-	// 			case 'compound':
-	// 				path = process.cwd() + '/soaif/compoundservices/';
-	// 				break;
-	// 			case 'enterprise':
-	// 			default:
-	// 				path = process.cwd() + '/soaif/enterpriseservices/';
-	// 				break;
-	// 		}
-
-	// 		var files = fs.readdirSync(path);
-
-	// 		files.makeArray().forEach(function(item) {
-	// 			//console.log(util.inspect(item, { showHidden: true, depth: null }));
-	// 			var file = fs.lstatSync(path + item);
-
-	// 			var tempParams = nsReq.parameters;
-	// 			tempParams.name = item.replace('.js', '');
-
-	// 			var service = { 
-	// 				name: item,
-	// 				url:  '/' + nsReq.service.name + '/' + nsReq.resource.name + '.' + nsReq.resource.output + '?' + require('querystring').stringify(nsReq.parameters)
-	// 			}
-
-	// 			console.log(require('path').normalize(service.url));
-
-	// 			//console.log(util.inspect(file, { showHidden: true, depth: null }));
-	// 			if (file && file.isFile() && item.endsWith('.js')) {
-	// 				if (showSOAIF) {
-	// 					if (item.startsWith('soaif_')) {
-	// 						if (name === '') {
-	// 							result.add(service);
-	// 						} else {
-	// 							if (item.includes(name)) {
-	// 								result.add(service);
-	// 							}
-	// 						}
-	// 					}
-	// 				} else {
-	// 					if (!item.startsWith('soaif_')) {
-	// 						if (name === '') {
-	// 							result.add(service);
-	// 						} else {
-	// 							if (item.includes(name)) {
-	// 								result.add(service);
-	// 							}
-	// 						}
-	// 					}
-	// 				}					
-	// 			};
-	// 		});
+			result.add({ name: 'user' });
+			result.add({ name: 'admin' });
+			result.add({ name: 'demo' });
+			result.add({ name: 'security' });
 
 	// 		nsReq.response.data = result.data();
 	// 		nsReq.response.status = 'valid';

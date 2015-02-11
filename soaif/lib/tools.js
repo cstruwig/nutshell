@@ -3,15 +3,6 @@ require('longjohn');
 var inflection = require('inflection');
 var fs = require('fs');
 
-exports.makeArray = function(obj) {
-	if (!obj.isArray()) {
-		var result = [];
-		result.push(obj);
-		obj = result;
-	}
-	return obj;
-}
-
 exports.guid = function(val) {
 	var guid = require('guid').create();
 	if (!guid) {
@@ -128,8 +119,7 @@ exports.getFileList = function(path, next) {
 	var result = exports.collection('files');
 	var files = fs.readdirSync(path);
 
-	files = files.makeArray();
-	files.forEach(function(item) {
+	files.makeArray().forEach(function(item) {
 		if (!item.startsWith('.'))
 			result.add({ name: item });
 	});

@@ -10,14 +10,13 @@ module.exports = {
 	getServices: function(nsReq, next) {
 		
 		try {
-			
 			//******************* setup filters....
 			var type = nsReq.getParameter('type', {
 				typeName: 'string',
 				description: 'service type to retrieve',
 				defaultValue: 'enterprise',
 				options: ['application', 'enterprise', 'compound', 'soaif']
-			});
+			}).toLowerCase();
 
 			var name = nsReq.getParameter('name', {
 				typeName: 'string',
@@ -36,7 +35,7 @@ module.exports = {
 			var path;
 			var showSOAIF = false;
 
-			switch (type.toLowerCase()) {
+			switch (type) {
 				case 'soaif':
 					path = process.cwd() + '/soaif/applicationservices/';
 					showSOAIF = true;
@@ -53,6 +52,8 @@ module.exports = {
 					break;
 			}
 
+			console.log('path=' + path);
+
 			var files = fs.readdirSync(path);
 
 			files.makeArray().forEach(function(item) {
@@ -63,21 +64,22 @@ module.exports = {
 				tempParams.name = item.replace('.js', '');
 
 				var service = { 
-					name: item,
-					url:  '/' + nsReq.service.name + '/' + nsReq.resource.name + '.' + nsReq.resource.output + '?' + require('querystring').stringify(nsReq.parameters)
+					name: item.replace('soaif_', '').replace('.js', ''),
+					type: type,
+					url:  '/nutshell/' + nsReq.service.name + '/' + nsReq.resource.name + '.' + nsReq.resource.output + '?' + require('querystring').stringify(nsReq.parameters)
 				}
 
-				console.log(require('path').normalize(service.url));
+				//console.log(require('path').normalize(service.url));
 
 				//console.log(util.inspect(file, { showHidden: true, depth: null }));
-				if (file && file.isFile() && item.endsWith('.js')) {
+				if (file && file.isFile() && item.endsWith('.js') && !item.startsWith('.')) {
 					if (showSOAIF) {
 						if (item.startsWith('soaif_')) {
 							if (name === '') {
-								result.add(service);
+								result.add(service);		//.replace('soaif_', '')
 							} else {
 								if (item.includes(name)) {
-									result.add(service);
+									result.add(service);	//.replace('soaif_', '')
 								}
 							}
 						}
