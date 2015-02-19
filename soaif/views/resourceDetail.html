@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<slink rel="shortcut icon" href="/favicon.ico?v=1">
+		<title>nutshell</title>
+		<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+		<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+		<script src="https://cdn.firebase.com/js/client/2.1.2/firebase.js"></script>
+		<script src="../../assets/nutshell.js?v=1"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="../../assets/nutshell.css">
+<!-- 
+		<script src="../../assets/jquery-1.11.2.min.js"></script>
+		<script src="../../assets/jquery-migrate-1.2.1.min.js"></script>
+		<script src="../../assets/bootstrap.min.js"></script>
+		<script src="../../assets/firebase.js"></script>
+		<script src="../../assets/nutshell.js?v=1"></script>
+		<link rel="stylesheet" href="../../assets/bootstrap.min.css">
+		<link rel="stylesheet" href="../../assets/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="../../assets/nutshell.css?v=1">
+		 -->
+	</head>
+	<body>
+		<div class="container" style="margin-top: 70px">
+			<div class="row clearfix">
+				<div class="col-md-6 column">
+					<div class="container">
+						<div class="resourceList"></div>
+					</div>
+
+
+				</div>
+				<div class="col-md-6 column">
+					
+					<div class="panel-group" id="panel-632991">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								 <a class="panel-title" data-toggle="collapse" data-parent="#panel-632991" href="#panel-element-906036">resources</a>
+							</div>
+							<div id="panel-element-906036" class="panel-collapse in">
+								<div class="panel-body resourceList"></div>
+							</div>
+						</div>
+						
+					</div>
+
+					
+
+					
+				</div>
+				
+			</div>
+		</div>
+
+		<script type="text/javascript">
+			/* #nsData */
+			
+			$('document').ready(nutshell(function() {
+
+				
+				$('#invokeService').click(function() {
+					//
+				});
+
+				var serviceUrl = nsData.request.url + '/nutshell/' + parsePath(nsData).service + '/';
+
+				function renderEducation(data, resourceName) {
+
+					var title = '<strong>nut</strong>shell > ' + parsePath(nsData).service + ' > ' + resourceName;
+					$('#myModalLabel').html(title);
+
+					var educationHtml = $('<form class="form-horizontal" role="form"></form>');
+
+					var ctr = 0;
+					for(var key in data) {
+						var input = data[key];
+				
+						var inputHtml = '<div class="form-group">';
+						inputHtml += '<label for="input' + key + ctr + '" class="col-sm-2 control-label">' + key + '</label>';
+						inputHtml += '<div class="col-sm-10">';
+						inputHtml += '<input type="email" class="form-control" id="input' + key + ctr + '" />';
+						inputHtml += '</div>';
+						inputHtml += '</div>';
+						
+						educationHtml.append(inputHtml);					
+					}
+
+					$('#education').find('.modal-body').html(educationHtml);
+					$('#education').modal('show');
+				}
+
+				nsData.resources.resource.forEach(function(item) {
+					var resource = $('<span>' + item.name + '</span>');
+					resource.click(function() {
+						var educationUrl = ''
+						if (!resource.data('education')) {
+							$('#educateme').html('<span>loading</span>');
+							$.get(serviceUrl + item.name + '?educateme=1', function(data) {
+								resource.data('education', data.education);
+								renderEducation(data.education, item.name);
+							});
+						} else {
+							renderEducation(resource.data('education'));
+						}
+					});
+					resource.hover(function() {
+						$(this).css('cursor', 'pointer');
+					}, function() {
+						$(this).css('cursor', 'default');
+					});
+					$('.resourceList').append(resource).append('<br/>');
+				});
+
+				//listServices('soaif');
+
+				// $('#compound-services-tab').tab('show');
+			}));
+		</script>
+	</body>
+</html>

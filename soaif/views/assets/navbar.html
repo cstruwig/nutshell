@@ -9,24 +9,24 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-					 <a class="navbar-brand" href="../" style="color: #000; font-size: 25px; font-family: 'Trebuchet MS', Helvetica, sans-serif;"><strong>nut</strong>shell&nbsp;>&nbsp;<span class="small" id="link"></span></a>
-					 	<div>
-					</div>
+					 <a class="navbar-brand" href="../" style="color: #000; font-size: 25px;"><strong>nut</strong>shell&nbsp;>&nbsp;<span class="small" id="link"></span></a>
 				</div>
+				
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-
 					<form class="navbar-form navbar-left" role="search">
 						<ul class="nav navbar-nav navbar-right">
 							<li class="dropdown">
-								<input maxlength="50" id="searchBar" data-toggle="dropdown" maxlength="15" type="text" class="form-control " autocomplete="off" style="margin-left: -30px; width: 200%; padding: 4px; height: 34px; line-height: 34px; font-size:25px; font-family: 'Trebuchet MS', Helvetica, sans-serif;" />
+								<input maxlength="50" id="searchBar" data-toggle="dropdown" maxlength="15" type="text" class="form-control " autocomplete="off" style="margin-left: -30px; width: 100%; padding: 4px; height: 34px; line-height: 34px; font-size:25px; width: 125%;" />
 								<ul class="dropdown-menu" id="suggestions" role="menu" style="left: -30px; width: 200%">
 								</ul>
 							</li>
 						</ul>
 					</form>
-
 					<ul class="nav navbar-nav navbar-right">
-						<li class="dropdown">
+						<button type="button" class="btn btn-primary navbar-btn"><span class="glyphicon glyphicon-star" aria-hidden="true"></span></button>
+						<button type="button" class="btn btn-default navbar-btn">info <span class="badge">3</span></button>
+				
+						<!-- <li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 								<img style="margin-top: -10px; margin-bottom: -10px; width: 26px; margin-right: 6px" src="../../assets/nutshell.png"><strong style="margin-right: 8px" class="caret"></strong>
 							</a>
@@ -46,73 +46,31 @@
 									<a href="#modal-other" role="button" class="btn" data-toggle="modal">funcn()</a>
 								</li>
 							</ul>
-						</li>
+						</li> -->
 					</ul>
 				</div>
 			</nav>
 			
-			<div class="modal fade" id="modal-advancedFiltering" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal fade" id="nsmodal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header">
-							 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+							 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 							<h4 class="modal-title" id="myModalLabel">
-								advanced filtering
+								loading...
 							</h4>
 						</div>
 						<div class="modal-body">
-							...
+							
 						</div>
 						<div class="modal-footer">
-							 <button type="button" class="btn btn-default" data-dismiss="modal">cancel</button> <button type="button" class="btn btn-primary">search</button>
+							 <button type="button" class="btn btn-default" data-dismiss="modal">cancel</button> <button type="button" id="invokeService" class="btn btn-primary">invoke</button>
 						</div>
 					</div>
+					
 				</div>
+				
 			</div>
-
-			<div class="modal fade" id="modal-other" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
-							<h4 class="modal-title" id="myModalLabel">
-								advanced OTHER
-							</h4>
-						</div>
-						<div class="modal-body">
-							...
-						</div>
-						<div class="modal-footer">
-							 <button type="button" class="btn btn-default" data-dismiss="modal">cancel</button> <button type="button" class="btn btn-primary">search</button>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-				<div class="modal-dialog">
-				    <div class="modal-content">
-				        <div class="modal-header">
-				            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-				            <h3>Dialog</h3>
-				        </div>
-				        <div class="modal-body">
-				            <form role="form"  class="form-horizontal">
-				                <div class="form-group">
-				                    <label class="col-sm-3 control-label" for="mutual">Example: </label>
-				                    <div class="col-sm-6">
-				                        <input type="text" id="example-form" value="" class="form-control">
-				                    </div>
-				                </div>
-				            </form>
-				        </div>
-				        <div class="modal-footer">
-				            <button id="edit-form"  data-id-mutual="" class="btn btn-primary">Save</button>
-				            <button class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Cancel</button>
-				        </div>
-				    </div><!-- /.modal-content -->
-				</div><!-- /.modal-dialog -->
-			</div><!-- /.modal -->
 		</div>
 	</div>
 </div>

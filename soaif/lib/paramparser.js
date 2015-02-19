@@ -1,3 +1,5 @@
+require('longjohn');
+
 var debug = require('./debug');
 
 function getDistinctValues(value) {
@@ -29,8 +31,13 @@ exports.parse = function(nsReq, next) {
 		var params = nsReq.req.query;
 		
 		for (key in params) {
+			key = key.toLowerCase();
 			if (params[key].hasValue()) {
-				switch (key.toLowerCase()) {
+				switch (key) {
+					case 'model' :
+						nsReq.options.model = getFirstValue(params[key]);
+						debug.lo('model', nsReq.options.model);
+						break;
 					case 'pagesize' :
 					case 'size' :															
 						nsReq.options.pageSize = getFirstValue(params[key]);
@@ -58,8 +65,9 @@ exports.parse = function(nsReq, next) {
 						break;						
 					default:
 						//other params
-						nsReq.parameters[key.toLowerCase()] = getDistinctValues(params[key]);
-						debug.lo(key.toLowerCase(), nsReq.parameters[key.toLowerCase()]);
+						nsReq.filter[key] = getDistinctValues(params[key]);
+						//console.log('nsReq.filter["' + key + '"] = "' + nsReq.filter[key] + '"');
+						debug.lo(key, nsReq.filter[key]);
 						break;
 				}
 			}
@@ -67,7 +75,7 @@ exports.parse = function(nsReq, next) {
 	}
 	catch (err) {
 		nsReq.status = 'invalid';
-		debug.log('*** error while parsing service [' + err + ']');
+		debug.log('*** error while parsing parameters [' + err + ']');
 		next(err, null);
 	}
 

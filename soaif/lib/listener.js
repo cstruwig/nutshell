@@ -34,12 +34,25 @@ exports.serveRequest = function(nsReq, next) {
 
 	try
 	{
-		//debug.log('****** serving request' + nsReq.resource.functionName);
-		nsReq.service.module[nsReq.resource.functionName].call(nsReq.service.module, nsReq, function(nsReq) {
+		var functionName = '';
+		var serviceName = '';
+
+		if (nsReq.options.model !== '') {
+			serviceName = nsReq.service.name + '.' + nsReq.resource.functionName;
+			functionName = nsReq.options.model;
+		} else {
+			serviceName = nsReq.service.name;
+			functionName = nsReq.resource.functionName;
+		}
+
+		nsReq.service.module[functionName].call(nsReq.service.module, nsReq, function(nsReq) {
 			next(null, nsReq);
 		});
 	}
 	catch (err) {
+		if (err == 'TypeError: Cannot call method \'call\' of undefined') {
+			err = new Error('InvalidResourceError: Cannot call \'' + functionName + '\' of \'' + serviceName + '\'. make sure it exists and/or check your spelling...', 'a', 'b');
+		}
 		debug.log('failed to serve request [' + err + ']');
 		next(err, null);
 	}
@@ -55,10 +68,9 @@ exports.loadView = function(nsReq) {
 	var viewSource;
 
 	try {
-
 		if (nsReq.options.view === 'default') {
-			// console.log('view=default');
-			nsReq.options.view = nsReq.resource.name;
+			nsReq.options.view = nsReq.service.name + '_' + nsReq.resource.name;
+			console.log('defaulting view : ', nsReq.options.view);
 		}
 
 		//var path = '../views/' + nsReq.options.view + '.html';

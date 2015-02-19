@@ -1,4 +1,6 @@
 /*
+Q promises: http://strongloop.com/strongblog/promises-in-node-js-with-q-an-alternative-to-callbacks/
+
 SOA framework - http://geddyjs.org/ also look for "GO"???
 read this question - http://stackoverflow.com/questions/16433992/node-js-soa-with-json-web-services-configuration
 
@@ -17,8 +19,8 @@ installation - https://github.com/npm/npm/issues/5584 AND sudo curl -L http://np
 // });
 
 module.exports = {
-	get promise() {
-		return (require('promise'));
+	get Q() {
+		return (require('q'));
 	},
 	get util() {
 		return (require('util'));
@@ -46,7 +48,10 @@ module.exports = {
   },
 	setting: function(setting) {
 		return require('../../settings.json').production[setting];
-	}
+	},
+  get metrics() {
+    return require('./metrics');  
+  }
 }
 
 if (!Object.prototype.makeArray) {
@@ -146,6 +151,34 @@ if (!Array.prototype.distinctValues) {
   });
 }
 
+// if (![].includes) {
+//   Array.prototype.includes = function(searchElement /*, fromIndex*/ ) {'use strict';
+//     var O = Object(this);
+//     var len = parseInt(O.length) || 0;
+//     if (len === 0) {
+//       return false;
+//     }
+//     var n = parseInt(arguments[1]) || 0;
+//     var k;
+//     if (n >= 0) {
+//       k = n;
+//     } else {
+//       k = len + n;
+//       if (k < 0) {k = 0;}
+//     }
+//     var currentElement;
+//     while (k < len) {
+//       currentElement = O[k];
+//       if (searchElement === currentElement ||
+//          (searchElement !== searchElement && currentElement !== currentElement)) {
+//         return true;
+//       }
+//       k++;
+//     }
+//     return false;
+//   };
+// }
+
 if (!Array.prototype.contains) {
   Object.defineProperty(Array.prototype, 'contains', {
     enumerable: false,
@@ -158,7 +191,7 @@ if (!Array.prototype.contains) {
 }
 
 if (!String.prototype.includes) {
-  String.prototype.includes = function() {'use strict';
+  String.prototype.includes = function() {
     return String.prototype.indexOf.apply(this, arguments) !== -1;
   };
 }

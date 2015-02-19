@@ -59,37 +59,30 @@ exports.parse = function(nsReq, next) {
 
 			nsReq.request.url = tools.getURL(nsReq.req, { excludePath: true }); // + '/nutshell/';
 			nsReq.request.path = nsReq.request.path.replace('{{service}}', serviceName);
-
 			try
 			{
-				var readStmt = { 
-					table: 'defaultView', 
-					query: {
-						path: nsReq.request.path
-					}
-				};
+				// if (nsReq.output === 'html') {
+				// } else {
+				// }
 
-				if (nsReq.output === 'html') {
+				db.open(function(err, connection) {
+					if (err) return next(null);	//FIX! set error n nsReq
+					connection.collection('defaultView').findOne({ path: nsReq.request.path }, function(err, results) {
+						if (results && results.view.name !== '') {
+							console.log('found specific view for resource [path=' + nsReq.request.path + ', name=' + results.view.name + ']');
+							nsReq.options.view = results.view.name;
+						}
 
-				} else {
-					
-				}
+						connection.close();
+						service.module = require(service.modulePath);
 
-				db.read(readStmt, function(data) {
-					if (data && data.length > 0) {	// && data[0].view.name !== ''
-						console.log('found specific view for resource [path=' + readStmt.query.path + ', name=' + data[0].view.name + ']');
-						nsReq.options.view = data[0].view.name;
-					}
+						//"inherit" service functions...
+						if (service.serviceType !== 'soaif') { //for soaif_resources
+							nutshellIt(service.module);
+						}
 
-					debug.lo('modulePath', service.modulePath);
-					service.module = require(service.modulePath);
-
-					//"inherit" service functions...
-					if (service.serviceType !== 'soaif') { //for soaif_resources
-						nutshellIt(service.module);
-					}
-
-					return next(null, nsReq);
+						return next(null, nsReq);
+					});
 				});
 			}
 			catch (err) {

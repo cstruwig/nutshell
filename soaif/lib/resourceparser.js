@@ -1,3 +1,5 @@
+require('longjohn');
+
 var debug = require('./debug');
 var inflection = require('inflection');
 
@@ -41,11 +43,12 @@ exports.parse = function(nsReq, next) {
 		}
 
 		nsReq.resource.name = inflection.pluralize(resource);
+		
 		nsReq.resource.functionName = crud + inflection.titleize(nsReq.resource.name);
 		nsReq.resource.output = output;
 		nsReq.request.path = '{{service}}/' + nsReq.resource.name + '/' + inflection.singularize(resource);
 		debug.lo('output', output);
-		debug.lo('calculatedResource', nsReq.resource.name);				
+		debug.lo('calculatedResource', nsReq.resource.functionName);
 	}
 	catch (err) {
 		nsReq.status = 'invalid';

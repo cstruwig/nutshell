@@ -1,14 +1,35 @@
 /*
 TODO...
 --------
-nutshell navbar
-service catalogue
+we spoke about soa and how sunfork delivers this in a practical and simple way.
+we spoke of a SOAIF which governs and manages everything in your SOA arsenal.
+
+so let's look at nutshell...
+
+first the typical stuff
+
 settings
 logs
+
+service catalogue (self documenting)
+
 diagnostics/testing
 views
 
+security
+
 create compound service
+
+practical example
+
+technology stack
+	nodejs
+	restify (based on express)
+	mongodb & firebase (managed by mongofb)
+	statsd (and graphite)
+	jquery (currently exploring meteorjs and reactjs)
+	grafana (or commercial options include appfirst and geckoboard)
+
 */
 //if (process.env.NODE_ENV !== 'production'){
 require('longjohn');
@@ -18,8 +39,18 @@ var restify = require('restify');
 var ns = require('./soaif/lib');		//require('nuthselljs');
 var debug = ns.debug;
 var listener = ns.listener;
+var db = ns.db;
 
 function serveResponse(nsReq, options, next) {
+
+	//ns.metrics.addCounter('servingResponse');
+	// ns.metrics.getCounterNames(function(results) {
+	// 	results.forEach(function(item) {
+	// 		ns.metrics.getCounter(item, function(counter) {
+	// 			console.log('yo', counter);
+	// 		});
+	// 	});
+	// });
 
 	try {
 		options = {
@@ -33,13 +64,14 @@ function serveResponse(nsReq, options, next) {
 
 		//modify response for request options eg. educateme...
 		if (nsReq.options.educateme) {
+			console.log('...about to school your ass!');
 			nsReq.response.data['education'] = nsReq.education;
 		}
 
 		nsReq.response.data.request = nsReq.request;
 		nsReq.response.data.request.time = 2;
 		nsReq.response.data.request.size = 222;
-		nsReq.response.data.request.params = nsReq.parameters;
+		nsReq.response.data.request.params = nsReq.filter;
 
 //		nsReq.response.data.user = nsReq.req.userFB;
 	
@@ -83,32 +115,27 @@ function serveResponse(nsReq, options, next) {
 function processRequest(req, res, next) {
 
 	try {
-
-//		debug.log('received request [url=' + req.path() + ']');
-
-		//nutshell.newRequest(req, res)
 		listener.setupRequest(req, res, function(err, nsReq) {
 			if (err) {
-				debug.log('8888888888888888888888888888');
 				debug.log('failed to setup request [' + err + ']');
 				//...unsupported protocol (unauthorized, or unknown path)
 				serveResponse(nsReq, { content: 'BAD_REQUEST' }, function() {
+					ns.metrics.addCounter('badRequestReceived');
 					next(err, null);
 				});
 			} else {
 				if (!nsReq.authorized || nsReq.status !== 'valid') {
-					debug.log('request unauthorized or invalid');
 					serveResponse(nsReq, { content: 'INVALID_REQUEST' }, function() {
+						ns.metrics.addCounter('unauthorizedRequestReceived');
 						next(null, req.id());
-					});
-					
+					});	
 				} else {
 					listener.serveRequest(nsReq, function(err, nsReq) {
 						if (err) {
 							debug.log('a runtime error occurred [' + err + ']');
 							//...runtime errors
 							
-							//ALWAYS SERVE!? (non-serviam)
+							//ALWAYS SERVE!? (non-serviam - hehe)
 							/*serveResponse(nsReq, {}, function(err, nsReq) {
 								next(null, req.id());
 							});*/
@@ -118,8 +145,10 @@ function processRequest(req, res, next) {
 							//served request :)
 							serveResponse(nsReq, {}, function(err, nsReq) {
 								if (err) {
+									ns.metrics.addCounter('serveResponseFailed');
 									debug.log('crap [' + err + ']');
 								} else {
+									ns.metrics.addCounter('responseServed');
 									next(null, req.id());
 								}
 							});
@@ -134,6 +163,7 @@ function processRequest(req, res, next) {
 		// 	next(err, null);
 		// });
 		res.content = 'unexpected error [err=' + err + ']';
+		ns.metrics.addCounter('unexpectedErrorOccurred');
 		errorRequest(req, res, next);
 	}
 }
@@ -151,9 +181,27 @@ server.use(restify.authorizationParser());
 
 var middleware = function(options) {
 
+	//ns.metrics.addCounter('receivedRequest');
+	
 	function _middleware(req, res, next) {
 		console.log('SERVING: ' + req.path() + ' (' + options + ')');
-		return (next());
+		//ns.metrics.addCounter(req.path());
+
+		var stat = { 
+			table: 'request',
+			data: { 
+				path: req.path().replace(/\/nutshell/gi, ''),
+				date: new Date()
+			} 
+		};
+
+		// var StatsD = require('node-statsd'),
+	 //    client = new StatsD();
+	 //  	client.timing('response_time', 42);
+
+		// db.create(stat, function() {
+		 	return (next());	
+		// });
 	}
 
 	return (_middleware);
@@ -198,6 +246,7 @@ server.get({ path:  /.*/, name: 'lander' },
 		var roles = 'user';	//lookup from req.session.user or req.user._id;
 	    res.header('Location', '/nutshell/soaif/guides.view?type=' + roles);
 		res.send(302, 'welcome to nutshell...');
+		ns.metrics.addCounter('redirected');
 		return next();
 	}
 );
@@ -222,29 +271,3 @@ server.on('InternalError', errorRequest);
 server.listen(8080, '127.0.0.1', function() {
 	console.log('nutshell RESTful listener started...\naccepting requests @ %s\n', server.url);
 });
-
-
-
-
-				
-//var db = ns.db;
-// var options = {
-// 	table: 'user',
-// 	data: { 
-// 		userId: 1234,
-// 		name: 'kevnin'
-// 	}
-// }
-
-// db.create(options, function() {
-// 	console.log('with:');
-// 	process.exit(1);
-// });
-
-// var options = {
-// 	table: 'user'
-// }
-
-// db.read(options, function() {
-// 	process.exit(1);
-// });

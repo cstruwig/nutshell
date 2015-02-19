@@ -12,9 +12,19 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
 		<link rel="stylesheet" href="../../assets/nutshell.css">
+<!-- 
+		<script src="../../assets/jquery-1.11.2.min.js"></script>
+		<script src="../../assets/jquery-migrate-1.2.1.min.js"></script>
+		<script src="../../assets/bootstrap.min.js"></script>
+		<script src="../../assets/firebase.js"></script>
+		<script src="../../assets/nutshell.js?v=1"></script>
+		<link rel="stylesheet" href="../../assets/bootstrap.min.css">
+		<link rel="stylesheet" href="../../assets/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="../../assets/nutshell.css?v=1">
+		 -->
 	</head>
 	<body>
-		<div class="container-fluid" style="margin-top: 60px">
+		<div class="container-fluid" style="margin-top: 70px">
 			<table class="table table-default table-condensed table-hover">
 				<thead>
 					<tr>
@@ -34,7 +44,15 @@
 		<script type="text/javascript">
 			/* #nsData */
 			$('document').ready(nutshell(function() {
-				
+
+				//setup table heading
+				$('#serviceName').html(request.singularResource);
+
+				//populate table
+				nsData[request.resource][request.singularResource].forEach(function(item, i) {
+					var row = $('<tr class="active"><td>' + i + '</td><td>' + item.name + '</td><td><a class="modalSpawner" data-url="' + item.url + '" >Detail</a></td></tr>');
+					$('#results').append(row);
+				});
 			}));
 		</script>
 	</body>

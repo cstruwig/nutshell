@@ -1,5 +1,3 @@
-'use strict'	//??
-
 require('longjohn');
 
 //nsRequest.js
@@ -65,6 +63,7 @@ exports.parse = function(nsReq, next) {
 }
 
 exports.init = function(req, res) {
+
 	return {
 		req: req,
 		res: res,
@@ -87,7 +86,8 @@ exports.init = function(req, res) {
 			view: 'default',
 			save: false,
 			debug: false,
-			educateme: false
+			educateme: false,
+			model: ''
 		},
 		service: {
 			name: null,
@@ -95,7 +95,7 @@ exports.init = function(req, res) {
 			modulePath: null,
 			module: {}
 		},
-		parameters: {},
+		filter: {},
 		education: {},
 		resource: {
 			name: null,
@@ -115,8 +115,15 @@ exports.init = function(req, res) {
 		addMessage: function(message) {
 			this._messages.push[message];
 		},
-		optionsForParameter: function(parameterName) {
-			return this.education[parameterName].options;
+		invalidFilter: function() {
+			//FIX!
+			// for (var key in this.filter) {
+			// 	if (this.filter[key].mandatory) {
+
+			// 	}
+			// }
+
+			return false;
 		},
 		getParameter: function(parameterName, attributes) {
 			var attributes = {
@@ -127,8 +134,9 @@ exports.init = function(req, res) {
 				description: attributes.description || 'input value',
 				defaultValue: attributes.defaultValue || getDefaultValueForType(this.inputType), //typeName),
 				value: req.params[parameterName] || ''
+				//maxValue: attributes.max || 5000
 			}
-
+			
 			if (attributes.options.length > 0) {
 				attributes.inputType = 'list';
 
@@ -157,16 +165,19 @@ exports.init = function(req, res) {
 			var invalidListOption = ( (attributes.options.length > 0) && (!attributes.options.contains(attributes.value)) );
 			var emptyParamOption = (typeof attributes.value === 'undefined' || attributes.value === '');
 
-			if 	(invalidListOption || emptyParamOption) {
-				console.log('defaulting value... [parameter=' + parameterName + ']');
+			if (invalidListOption || emptyParamOption) {
+				console.log('defaulting value... [parameter=' + parameterName + ', invalidListOption=' + invalidListOption + ', emptyParamOption=' + emptyParamOption + ']');
 				attributes.value = attributes.defaultValue;
 			}
 
-			this.parameters[attributes.name] = attributes.value;
-			this.education[parameterName] = attributes;
+			this.filter[attributes.name] = attributes.value;
+			this.education[attributes.name] = attributes;
 
+			//FIX! validate and set attributes.value according to type, maxValue, etc...
 			var result = attributes.value;
+
 /*
+
 			//FIX!
 			if (attributes.mandatory && ) {				
 			}

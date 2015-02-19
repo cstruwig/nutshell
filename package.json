@@ -17,14 +17,16 @@
     "bunyan": "^1.2.3",
     "restify": "^2.8.4",
     "js2xmlparser": "*",
-    "promise": "*",
     "underscore": "*",
     "guid": "*",
     "longjohn": "*",
     "mongodb": "^1.4.3",
     "twitter": "*",
     "youtube-node": "*",
-    "google": "^0.6.0"
+    "google": "^0.6.0",
+    "q": "^1.1.2",
+    "node-ddg-api": "*",
+    "node-statsd": "*"
   },
   "devDependencies": {
     "grunt": "^0.4.5"

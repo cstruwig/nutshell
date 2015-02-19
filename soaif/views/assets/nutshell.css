@@ -2,6 +2,14 @@ body {
 	font-family: "Trebuchet MS", Helvetica, sans-serif;
 }
 
+.x {
+	overflow-y: scroll
+}
+
+.searchBar {
+	width: 200%; /* 250px; */
+}
+
 .sunfork {
 	height: 42px;
 	background-image: url('sunforky.png');
@@ -22,6 +30,24 @@ body {
 	background-color: #FFF3CA;
 }
 
+/*
+.tabbable {
+	background-color: #FFF3CA;
+	height: 200px;
+}
+
+#applicationServices {
+	overflow: scroll;
+}
+
+#tabs-979518 > ul > li.active > a {
+	background-color: #FFF3CA;
+}
+
+#tabs-979518 > ul {
+	background-color: #FFF;
+}
+*/
 .btn-primary {
 	background-image: linear-gradient(to bottom, #FFE694 0, #F2C314 100%);	
 	background-color: #F2C314;
@@ -37,3 +63,15 @@ body {
 	background-color: #F2C314;
 	border-color: #c0c0c0; /* #806100; */
 }
+
+/* .navbar-btn {
+	background-color: #F2C314;
+	border-color: #c0c0c0; / * #806100; * /	
+} */
+
+/* @media (min-width: 1200px) {
+    .container{
+        max-width: 670px;
+    }
+} */
+

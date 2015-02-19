@@ -20,9 +20,9 @@ exports.collection = function(name) {
 	var result = {
 		add: function(obj) {
 			//FIX! support adding multiples...
-			if (false) { //obj.isArray()) {
+			if (obj.isArray()) {
 				obj.forEach(function(item) {
-					this[plural][singular].push(item);
+					result[plural][singular].push(item);
 				});
 			} else {
 				this[plural][singular].push(obj);			

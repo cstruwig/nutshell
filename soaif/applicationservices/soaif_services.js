@@ -60,7 +60,7 @@ module.exports = {
 				//console.log(util.inspect(item, { showHidden: true, depth: null }));
 				var file = fs.lstatSync(path + item);
 
-				var tempParams = nsReq.parameters;
+				var tempParams = nsReq.filter;	//.parameters;
 				tempParams.name = item.replace('.js', '');
 
 				var service = { 

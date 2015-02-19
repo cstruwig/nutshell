@@ -21,7 +21,7 @@ $.fn.styleSubtext = function(opts) {
 };
 
 if (!String.prototype.includes) {
-  String.prototype.includes = function() {'use strict';
+  String.prototype.includes = function() {
     return String.prototype.indexOf.apply(this, arguments) !== -1;
   };
 }
@@ -52,7 +52,20 @@ if (!String.prototype.endsWith) {
   });
 }
 
+if (!Array.prototype.contains) {
+  Object.defineProperty(Array.prototype, 'contains', {
+    enumerable: false,
+    configurable: false,
+    writable: false,
+    value: function(value) {
+      return (this.indexOf(value) > -1);
+    }
+  });
+}
+
 function nutshell(next) {
+
+  $('#nsmodal').modal({ show: false });
 
   function _nutshell(next) {
 
@@ -78,18 +91,11 @@ function nutshell(next) {
       
       //setup ui
       searchBar.val(request.service + ' > ' + request.resource);
-      searchBar.attr('placeholder', request.service + ' > ' + request.resource);
+      //searchBar.attr('placeholder', request.service + ' > ' + request.resource);
+      searchBar.attr('placeholder', 'service > resource');
       //searchBar.focus(function() { $(this).select(); }).focus();
       searchBar.focus();
 
-      //setup table heading
-      $('#serviceName').html(request.singularResource);
-
-      //populate table
-      nsData[request.resource][request.singularResource].forEach(function(item, i) {
-        var row = $('<tr class="active"><td>' + i + '</td><td>' + item.name + '</td><td><a class="modalSpawner" data-url="' + item.url + '" >Detail</a></td></tr>');
-        $('#results').append(row);
-      });
 
       //http://stackoverflow.com/questions/20073618/using-bootstrap-3-0-modals-to-load-dynamic-remote-content-within-an-ifram
       function parseSearchText(idiotText) {
@@ -138,7 +144,16 @@ function nutshell(next) {
           } else {
             return false;
           }
-          return true;
+
+          // //add "resources"
+          // var resourceItem = item.path.split('/')[0] + ' > resources';
+          // console.log(resourceItem);
+          // if (!matches.contains(resourceItem)) {
+          //   console.log('adding!');
+          //   matches.push(resourceItem);
+          // } else {
+          //   return false;
+          // }
         });
 
         suggestionCount = matches.length;
@@ -197,7 +212,7 @@ function nutshell(next) {
 
             } else {
               console.log(key + ' unknown type=' + inputInfo.inputType);
-            }
+            } 
             //var input = $();
           }
         }
@@ -304,19 +319,20 @@ function nutshell(next) {
           // } else if (key === 62 || key === 46) {     //>=62 and .=46
 
           } else if (key === 32 || key === 9 || key === 10 || key === 13 || key === 62 || key === 46) {     //SPACE & TAB & ENTER=autocomplete (AND submit)
-          evt.preventDefault();
+            evt.preventDefault();
 
-          if (suggestionCount === 0 || searchBar.val() === '') {
-            console.log('weird exit here... there are no suggestions and the searchBar is empty');
-            return false;
-          } else if (suggestionCount === 1) { //if only one option then autocomplete
-            console.log('only one option so autocomplete and exit');
+            if (suggestionCount === 0 || searchBar.val() === '') {
+              console.log('weird exit here... there are no suggestions and the searchBar is empty');
+              return false;
+            } else if (suggestionCount === 1) { //if only one option then autocomplete
+              console.log('only one option so autocomplete and exit');
               //console.log('we can autocomplete!!!');
               searchBar.val(suggestions.find('.suggestion').text());
               toggleSuggestions(true);
 
               if (key === 10 || key === 13) {
                 console.log('now instead of autocomplete we submit!!');
+
                 var urlPath = suggestions.find('.suggestion').text().replace(' > ', '/');
 
                 if (!nsData.request.path.startsWith(urlPath)) {     //don't submit same request!
@@ -334,19 +350,19 @@ function nutshell(next) {
               //console.log(suggestions.find('.suggestion').length);
               var canAutoCompleteService = true;
 
-            suggestions.find('.suggestion').each(function(i, item) {
-              var $item = $(item);
-              if (!$item.text().startsWith(searchBar.val())) {
-                console.log('can\'t autocomplete as diferent services...');
-                canAutoCompleteService = false;
-                return false;
-              }
-            });
+              suggestions.find('.suggestion').each(function(i, item) {
+                var $item = $(item);
+                if (!$item.text().startsWith(searchBar.val())) {    //WHY NOT STARTSWITH!? FIX! to use includes()
+                  console.log('can\'t autocomplete as diferent services...');
+                  canAutoCompleteService = false;
+                  return false;
+                }
+              });
 
-            if (canAutoCompleteService && !searchBar.val().includes('>')) {
-              //if we dont check for the ">" we overwrite everything after the ">""
-              searchBar.val(suggestions.find('.suggestion').first().text().split(' > ')[0] + ' > ');
-            }
+              if (canAutoCompleteService && !searchBar.val().includes('>')) {
+                //if we dont check for the ">" we overwrite everything after the ">""
+                searchBar.val(suggestions.find('.suggestion').first().text().split(' > ')[0] + ' > ');
+              }
             }
           } else {
             console.log(key);

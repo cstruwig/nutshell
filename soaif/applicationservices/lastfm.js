@@ -15,8 +15,7 @@ exports.searchArtists = function(filter, next) {
 	
 	ns.request(url, function (err, response, body) {
 		if (err || response.statusCode !== 200) {
-			debug.log('some error' + err);
-			throw new Error('some error' + err);
+			return next(err);
 		} else {
 			var artists = [];
 			var data = JSON.parse(body);

@@ -1,7 +1,6 @@
 require('longjohn');
 
 var ns = require('../lib');
-
 var debug = ns.debug;
 var tools = ns.tools;
 
@@ -14,13 +13,28 @@ exports.searchMovies = function(filter, next) {
 
 	var result = tools.collection('movies');
 
+	if (!filter.name || filter.name === '') {
+		next(new Error('invalid or empty name specified'));
+	}
+
 	ns.request(url, function (err, response, body) {
 		if (err || response.statusCode !== 200) {
-			debug.log('some error' + err);
-			throw new Error('some error' + err);
+			return next(err);
 		} else {
 
-			var movies = JSON.parse(body).Search;
+
+			console.log(err);
+			var movies;
+
+			try {
+				//if (response )
+				movies = JSON.parse(body).Search;
+			} catch (err) {
+				console.log(err);
+				movies = {};
+			}
+
+			console.log(movies, '1111');
 
 			// //FIX! validate
 			movies.makeArray().forEach(function(item) {

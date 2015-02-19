@@ -5,37 +5,34 @@ var debug = ns.debug;
 var tools = ns.tools;
 var google = require('google');
 
-exports.searchGoogle = function(filter, next) {
+exports.search = function(filter, next) {
 
-	var filter = {
-		query: filter.query || ''
-	}
-
-	var result = tools.collection('googleLinks');
+	var query = filter.query || 'i must work hard because';
+	var maxResults = filter.maxResults || 50;		//FIX! filter.extract()...
+	
+	var result = tools.collection('results');
 	var nextCounter = 0;
 
 	google.resultsPerPage = 25;
-	google(filter.query, function(err, otherNext, links) {
-		if (err) console.error(err);
+	google(query, function(err, next2, links) {
+		if (err) return next(err);
 
 		for (var i = 0; i < links.length; ++i) {
-
-			var gLink = {
+			var googleResult = {
 				title: links[i].title,
 				description: links[i].description,
-				url: links[i].link
-			}
+				link: links[i].link
+			};
 
-			result.add(gLink);
+			result.add(googleResult);
 		}
 
-		//return after 4
-		if (nextCounter < 4) {
-			nextCounter += 1;
-			//if (otherNext) otherNext();
-			return next();
-		}
-
-		return next(null, result);
+		//run 4 times
+		//FIX! limit as per maxResults
+		// if (nextCounter < 4) {
+		// 	nextCounter += 1;
+			//if (next2) next2();
+			return next(null, result);
+		//}
 	});
 };
