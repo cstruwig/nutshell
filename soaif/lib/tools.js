@@ -98,14 +98,31 @@ exports.getResources = function(nsReq, next) {
 	var result = exports.collection('resources');
 
 	for (var name in nsReq.service.module) {
+
+		var nameFilter = nsReq.getParameter('name', {
+			inputType: 'string',
+			mandatory: false,
+			description: 'partial name to filter education infos'
+		});
+
 		obj = nsReq.service.module[name];
-		if (!!(obj && obj.constructor && obj.call && obj.apply) && name !== 'getResources') {
-			console.log('lllllllllll========' + name);
+		if (!!(obj && obj.constructor && obj.call && obj.apply) ) { //} && name !== 'getResources') {
 			//its a function, now lets check for the CRUDs
+
 			if (name.startsWith('get') || name.startsWith('add') || name.startsWith('update') || name.startsWith('delete')) {
 				var resource = name.replace('get', '').replace('add', '').replace('udpate', '').replace('delete', '').toLowerCase();
-				result.add({ name: resource });
+
+				if (nameFilter && resource.includes(nameFilter)) {
+					result.add({ name: resource });	
+				} else if (!nameFilter) {
+					result.add({ name: resource });	
+				}
 			}
+		} else {
+			// if (name === 'getResources') {
+			// 	var resource = name.replace('get', '').replace('add', '').replace('udpate', '').replace('delete', '').toLowerCase();
+			// 	result.add({ name: resource });				
+			// }
 		}
 	}
 

@@ -68,9 +68,18 @@ exports.loadView = function(nsReq) {
 	var viewSource;
 
 	try {
+		console.log('x', nsReq.options.view);
 		if (nsReq.options.view === 'default') {
-			nsReq.options.view = nsReq.service.name + '_' + nsReq.resource.name;
-			console.log('defaulting view : ', nsReq.options.view);
+			console.log('xx', nsReq.options.educateme);
+			if (nsReq.options.educateme) {
+				console.log('xxx');
+				nsReq.options.view = 'default_education';		//FIX! this can be overriden when a default is loaded from db
+			} else {
+				console.log('xxss');
+				nsReq.options.view = nsReq.service.name + '_' + nsReq.resource.name;	
+				console.log('defaulting view name : ', nsReq.options.view);
+			}
+			console.log('xyz');
 		}
 
 		//var path = '../views/' + nsReq.options.view + '.html';
@@ -81,11 +90,11 @@ exports.loadView = function(nsReq) {
 			contentBuffer = fs.readFile(path);
 		} else {
 			console.log('view doesn\'t exist, using default instead [requested=' + nsReq.options.view + ']');
-			contentBuffer = fs.readFile(__dirname + '/../views/default.html');	
+			contentBuffer = fs.readFile(__dirname + '/../views/default.html');		
 		}
 
 		viewSource = contentBuffer.toString();
-		viewData = viewSource.replace('/* #nsData */', 'var nsData = ' + JSON.stringify(nsReq.response.data) + ';');
+		viewData = viewSource.replace('/** #nsData */', 'var nsData = ' + JSON.stringify(nsReq.response.data) + ';');
 
 		return viewData;
 	}

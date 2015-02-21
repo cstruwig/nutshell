@@ -2,54 +2,137 @@
 <html>
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-		<slink rel="shortcut icon" href="/favicon.ico?v=1">
+		<link rel="shortcut icon" href="/favicon.ico?v=1" />
 		<title>nutshell</title>
 		<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
 		<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 		<script src="https://cdn.firebase.com/js/client/2.1.2/firebase.js"></script>
 		<script src="../../assets/nutshell.js?v=1"></script>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
-		<link rel="stylesheet" href="../../assets/nutshell.css">
-<!-- 
-		<script src="../../assets/jquery-1.11.2.min.js"></script>
-		<script src="../../assets/jquery-migrate-1.2.1.min.js"></script>
-		<script src="../../assets/bootstrap.min.js"></script>
-		<script src="../../assets/firebase.js"></script>
-		<script src="../../assets/nutshell.js?v=1"></script>
-		<link rel="stylesheet" href="../../assets/bootstrap.min.css">
-		<link rel="stylesheet" href="../../assets/bootstrap-theme.min.css">
-		<link rel="stylesheet" href="../../assets/nutshell.css?v=1">
- -->
+		<script src="../../assets/navbar.js?v=1"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css" />
+		<link rel="stylesheet" href="../../assets/nutshell.css" />
+		<style type="text/css">
+   			.border {
+   				padding: 20px;
+
+
+border: 1px solid #ccc;
+				border: 1px solid rgba(0,0,0,.15);
+
+				/*background-color: #fff;
+				-webkit-background-clip: padding-box;
+				background-clip: padding-box;
+				
+				border-radius: 4px;
+				-webkit-box-shadow: 0 2px 6px rgba(0,0,0,.175);
+				box-shadow: 0 2px 6px rgba(0,0,0,.175);*/
+
+background-image: linear-gradient(to bottom,#fff 0,#f8f8f8 100%);
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff8f8f8', GradientType=0);
+filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+background-repeat: repeat-x;
+border-radius: 4px;
+-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
+box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
+
+
+   			}
+ 		</style>
 	</head>
 	<body>
-		<div class="container" style="margin-top: 70px">
-			<div class="row clearfix">
-				<div class="col-md-12 column">
-					<div class="row clearfix">
-						<div class="col-md-6 column slot0">
-							x
-						</div>
-						<div class="col-md-6 column slot1">
-y
+		<div class="container" id="nsView" style="margin-top: 70px">
+			<div class="container">
+				<div class="row clearfix">
+					<div class="col-md-5 border column">
+						<div class="slot0">
+
 						</div>
 					</div>
-					<div class="row clearfix">
-						<div class="col-md-12 column auto">
-z
+					<div class="col-md-5 col-md-offset-2 border column">
+						<div class="slot1"></div>
+					</div>
+				</div>
+				<div class="row clearfix">
+					<div class="col-md-12 column">
+						&nbsp;
+					</div>
+				</div>
+				<div class="row clearfix">
+					<div class="col-md-12 column border">
+						<div class="tabbable detail" id="tabs-597688">
+							<ul class="nav nav-pills">
+								<li>
+									<a href="#options-123" class="options" data-toggle="tab"><span class="glyphicon glyphicon-cog"></span></a>
+								</li>
+							</ul>
+							<div class="tab-content">
+								<div class="tab-pane" id="options-123">
+									<p>
+										<br>
+										welcome!
+									</p>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>	
+				<!-- <div class="row clearfix">
+					<div class="col-md-12 column">
+						&nbsp;
+					</div>
+				</div> -->
+			</div>
 		</div>
-
 		<script type="text/javascript">
-			/* #nsData */
+			/** #nsData */	
 
+			function nsView(obj) {
+				var result = {};
+				if (obj) {
+					result = $(obj).find('[id^="nsView"]:first');
+				} else {
+					result = $('[id^="nsView"]:first');
+				}
+
+				if (!result || result.length > 1) {
+					console.log('cannot find a view! or multiple nsView exist! ...make sure the container has id "nsView"');
+					return null;
+				}
+
+				var vid = result.data('vid');
+				if (!vid) {
+					vid = nsData.request.ref || guid();
+					result.data('vid', vid);
+				} else {
+					console.log('oops', vid);
+				}
+
+				var objId = result.attr('id');
+				if (objId && !objId.endsWith(vid)) {
+					result.attr('id', objId + vid);
+				} else {
+					console.log('poops', objId);
+				}
+
+				return result;
+			}
+
+			function nsGet(selector) {
+				console.log('nsGET!!!');
+				var vid = $('[id^="nsParent_"]:last').data('vid');	//FIX! maybe ":first" :)
+				var result = $(selector + vid);
+				if (result) {
+					return result;
+				} else {
+					return $(selector);
+				}
+			}
+ 
 			var ns = {
 				getLayout: function(user) {
-				//db.select(query, function(err, results) {
+					//FIX! db.select(query, function(err, results) {
 					return {
 						name: 'itView',
 						_slots: {
@@ -61,6 +144,10 @@ z
 								{
 									id: 'slot1',
 									description: 'topRight'
+								},
+								{
+									id: 'detail',
+									description: 'bottom'
 								}
 							]
 						},
@@ -72,57 +159,167 @@ z
 				getViews: function(user) {
 					// gets users views/urls plus options
 					return {
-				 		description: 'default service view',
+				 		description: 'views of hardus@sunfork.com',
 						_views: {
 							view: [
 								{
+									description: 'services view (default)',
 									url: 'http://localhost:8080/nutshell/soaif/services.view',
 									location: 'slot0'
-								}
+								},
+								{
+									description: 'education view (default)',
+									url: 'http://localhost:8080/nutshell/entertainment/artists.view?educateme=1&view=default_education',
+									location: 'slot1'
+								},
+								{
+									description: 'XYZ',
+									url: 'http://localhost:8080/nutshell/soaif/metrics?model=getCounterNames',
+									location: 'detail'
+								},
+								{
+									url: 'http://localhost:8080/nutshell/soaif/metrics',
+									location: 'detail'
+								},
+								
 							]
 						},
 						get views() {
-							return this._views.view.map(function(item) {
-								item.load = function() {
-									$('.' + item.location).load(item.url)
-									console.log('ss', this);
-								};
-								return item;
-							}); //FIX! create and use .makeArray();
-						},
-						getBySlotId: function(id) {
-							var result;
-							this.views.forEach(function(view) {
-								if (view.location === id) {
-									console.log('matchy', view.load);
-									result = view;
-									return false;
-								}
-							});
+							function popupMenu() {
 
-							if (!result) {
-								console.log('not_matchy', this.views[0]);
-								result = this.views[0];	
+								var popupHtml = $('<div class="btn-group btn-group-xs pull-right popupMenu" />');
+								var buttonGroupHtml = $('<button data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>');
+
+								popupHtml.append(buttonGroupHtml);
+
+								var optionsHtml = $('<ul class="dropdown-menu" />');
+
+								var options = [ 
+									{
+										caption: 'change view'
+									},
+									{
+										class: 'divider'
+									},
+									{
+										caption: 'report a bug',
+										class: 'disabled'
+									},
+									{
+										caption: 'request a change',
+										class: 'disabled'
+									}
+								];
+							
+								options.forEach(function(option) {
+									var optionHtml = $('<li class="' + option.class + '"><a href="#">' + option.caption + '</a></li>');
+									optionsHtml.append(optionHtml);
+								});
+
+								popupHtml.append(optionsHtml);
+
+								return popupHtml;
 							}
 
-							return result;
+							return this._views.view.map(function(item) {
+
+
+								item.load = function() {
+
+									var target = $('.' + item.location);	//eg. slot4
+
+									if (item.location === 'detail') {
+										//tabs
+									 	var id = 'view-' + guid();
+										var tab = $('.tabbable.detail');
+
+										tab.find('ul>li:first').before('<li><a href="#' + id + '" data-toggle="tab">' + (item.description || 'view') + '</a></li>');
+										tab.find('.tab-content').append('<div class="tab-pane" id="' + id + '"></div>');
+										$('#' + id).load(item.url);
+
+										// var menu = popupMenu();
+										// menu.attr('id', 'menu_' + id);
+
+										// tab.prepend(menu);
+
+										tab.children('ul.nav.nav-pills').children(':first').click(function() {
+											var $this = $(this);
+											if (!$this.hasClass('options')) {
+												console.log($this.find('a').attr('href'));
+											}
+										}).click();
+
+										//if ($('#popupMenu').length === 0) {
+											//target.parent().prepend(popupMenu());
+									 	//}
+
+									} else {
+										
+										//add heading
+										target.parent().prepend('<h5 id="viewHeading">opened from ' + nsData.request.path + '...</h5>');
+
+										//and menu
+										target.parent().prepend(popupMenu());
+
+										//load the view
+										target.load(item.url, function() {
+
+											var slotElement = $(this);
+											var view = nsView(slotElement);
+
+											//console.log(slotElement.find('script:last'));
+
+											//set the title
+											$('#viewHeading').text(nsData.request.path);
+
+											// //remove the navbar space
+											// //FIX! check if it has a navbar parent and then remove add space rather
+											view.css('margin-top', '0');
+										});										
+									}
+								};
+								return item;
+							}); //FIX! use .makeArray();
 						}
+						// getBySlotId: function(id) {
+						// 	var userViews = this.views;
+						// 	var result;
+
+						// 	userViews.forEach(function(view) {
+						// 		if (view.location === id) {
+						// 			result = view;
+						// 			return false;
+						// 		}
+						// 	});
+
+						// 	if (!result) {
+						// 		//use the first view out of desperation
+						// 		//FIX! if you find that the wrong view is updated, it is using the first one
+						// 		result = this.views[0];	
+						// 	}
+
+						// 	return result;
+						// }
 					}
 				}
 			}
 
-			$('document').ready(nutshell(function() {
+			$('document').ready(function() {
 				var user = {};
 				var layoutInfo = ns.getLayout(user);
 				var views = ns.getViews(user);
 
-				layoutInfo.slots.forEach(function(slot) {
-					console.log('many', slot);
-					var view = views.getBySlotId(slot.id);
-					console.log(view);
+				views.views.forEach(function(view) {
 					view.load();
 				});
-			}));
+
+				return;
+				// layoutInfo.slots.forEach(function(slot) {
+				// 	var view = views.getBySlotId(slot.id);
+				// 	console.log('loading view', slot.id);
+				// 	if (view) view.load(slot);		//FIX! maybe... slot.load(view);
+				// });
+			});
 		</script>
 	</body>
 </html>

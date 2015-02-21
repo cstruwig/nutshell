@@ -66,9 +66,11 @@ function serveResponse(nsReq, options, next) {
 		if (nsReq.options.educateme) {
 			console.log('...about to school your ass!');
 			nsReq.response.data['education'] = nsReq.education;
+			nsReq.response.data['options'] = nsReq.options;
 		}
 
 		nsReq.response.data.request = nsReq.request;
+		nsReq.response.data.request.ref = nsReq.ref;
 		nsReq.response.data.request.time = 2;
 		nsReq.response.data.request.size = 222;
 		nsReq.response.data.request.params = nsReq.filter;

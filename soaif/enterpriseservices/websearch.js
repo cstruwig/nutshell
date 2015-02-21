@@ -40,7 +40,6 @@ module.exports = {
 
 		allPromise.then(function(allResults) {
 			//success
-
 			var allPromiseResults = allResults[0].results.result.concat(allResults[1].results.result);
 			var finalResult = ns.tools.collection('results');
 

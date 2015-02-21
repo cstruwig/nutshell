@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<link rel="shortcut icon" href="/favicon.ico?v=1" />
+	<title>nutshell</title>
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+	<script src="https://cdn.firebase.com/js/client/2.1.2/firebase.js"></script>
+	<script src="../../assets/nutshell.js?v=1"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css" />
+	<link rel="stylesheet" href="../../assets/nutshell.css" />
+</head>
+<body>
+	<div class="container-fluid education" id="nsView" style="margin-top: 70px" />
+	<script type="text/javascript">
+		/** #nsData */
+
+
+
+		function populateEducation() {
+			
+			var educationHtml = $('<form role="form"></form>');
+			
+			var ctr = 0;
+
+			for(var key in nsData.education) {
+				var inputHtml = '';
+
+				var input = nsData.education[key];
+
+				// if (input.options && input.options.length > 0) {
+				// 	input.inputType = 'list';
+				// }
+
+				switch (input.inputType) {
+					case 'boolean' :
+						inputHtml += '<div class="checkbox">';
+						inputHtml += '<label><input id="input' + key + ctr + '" type="checkbox" />' + key + '</label>';
+						inputHtml += '</div>';
+						break;
+					case 'list' :
+						inputHtml += '<div class="form-group">';
+						inputHtml +=   '<label for="input' + key + ctr + '">' + key + '</label>';
+						inputHtml +=   '<select class="form-control" id="input' + key + ctr + '">';
+						for (var ctr=0; ctr<input.options.length; ctr++) {
+							var selected = (input.value === input.options[ctr]) ? 'selected' : '';
+							inputHtml += '<option value="' + input.options[ctr] + '" ' + selected + ' >' + input.options[ctr] + '</option>';
+						}
+						inputHtml +=   '</select>';
+						inputHtml += '</div>';
+						break;
+					case 'string' :
+					default:
+						inputHtml += '<div class="form-group">';
+						inputHtml +=   '<label for="input' + key + ctr + '">' + key + '</label>';
+						inputHtml +=   '<input type="text" class="form-control" placeholder="' + input.description + '" id="input' + key + ctr + '" />';
+						inputHtml += '</div>';
+						break;
+				}
+
+				console.log('count me');
+				educationHtml.append(inputHtml);
+			}
+
+			educationHtml.append($('<button disabled id="submit' + key + ctr + '" class="btn btn-default">process</button>'));
+			educationHtml.append($('<form onkeypress="return event.keyCode != 13;">'));
+
+			$('#submit' + key + ctr).click(function(evt) {
+				evt.preventDefault();
+			});
+
+			$('#submit' + key + ctr).keyup(function(evt) {
+
+				var keyCode = evt.keyCode || evt.which;
+
+				if (key === 10 || key === 13) {
+					evt.preventDefault();
+					console.log('asdasds', keyCode);
+				}
+			});
+
+			$('#submit' + key + ctr).parent().on('keydown', '#submit' + key + ctr, function(evt) {
+
+				var keyCode = evt.keyCode || evt.which;
+
+				if (key === 10 || key === 13) {
+					evt.preventDefault();
+					console.log('sss', keyCode);
+				}
+
+			});
+
+			return educationHtml;
+		}
+
+		$('document').ready(function() {
+		// $('document').ready(nutshell({ navBar: false }, function() {
+			//console.log(nsData);
+			$('.education').html(populateEducation());
+		});
+	</script>
+</body>

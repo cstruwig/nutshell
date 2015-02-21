@@ -21,6 +21,16 @@ var logger = bunyan.createLogger({
     ]
 });
 
+function assert(condition, message) {
+    if (!condition) {
+        message = message || 'Assertion failed';
+        if (typeof Error !== 'undefined') {
+            throw new Error(message);
+        }
+        throw message; // Fallback
+    }
+}
+
 //http://stackoverflow.com/questions/14172455/get-name-and-line-of-calling-function-in-node-js
 //https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
 Object.defineProperty(global, '$nsstack', {

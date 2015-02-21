@@ -100,7 +100,7 @@ exports.init = function(req, res) {
 		resource: {
 			name: null,
 			funcionName: '',
-			output: 'json'
+			output: 'json'				//FIX! move output to options
 		},
 		nsReqGod: false,
 		request: {
@@ -168,7 +168,11 @@ exports.init = function(req, res) {
 			if (invalidListOption || emptyParamOption) {
 				console.log('defaulting value... [parameter=' + parameterName + ', invalidListOption=' + invalidListOption + ', emptyParamOption=' + emptyParamOption + ']');
 				attributes.value = attributes.defaultValue;
+				if (attributes.mandatory) {
+					this.filter.valid = false;		//FIX! kep keywords or namespace them...
+				}
 			}
+
 
 			this.filter[attributes.name] = attributes.value;
 			this.education[attributes.name] = attributes;
