@@ -15,23 +15,23 @@
 		<link rel="stylesheet" href="../../assets/nutshell.css" />
 	</head>
 	<body>
-		<div class="container" id="nsView">
-			<div class="row clearfix">
-				<div class="col-md-12 column">
-					<!-- <h3><small><strong>nut</strong>shell result viewer</small></h3> -->
-					<div class="container">
-							<pre class="nsJSON" id="nsData">
-						</pre>
-					</div>
-
-				</div>
-			</div>	
+		<div class="container-fluid" id="nsView" style="margin-top: 70px">
+			HI THERE...<br>
+			:)
 		</div>
 		<script type="text/javascript">
 			/** #nsData */
 
-			$('document').ready(nutshell({ navbar: true }, function() {
-				ns('#nsData').html(nsHTML.printJSON(nsData));
+			$('document').ready(nutshell({}, function() {
+
+				//setup table heading
+				// $('#serviceName').html(request.singularResource);
+
+				// //populate table
+				// nsData[request.resource][request.singularResource].forEach(function(item, i) {
+				// 	var row = $('<tr class="active"><td>' + i + '</td><td>' + item.name + '</td><td><a class="modalSpawner" data-url="' + item.url + '" >Detail</a></td></tr>');
+				// 	$('#results').append(row);
+				// });
 			}));
 		</script>
 	</body>

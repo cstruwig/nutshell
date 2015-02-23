@@ -16,29 +16,39 @@
 		<style type="text/css">
    			.border {
    				padding: 20px;
-
-
-border: 1px solid #ccc;
+				border: 1px solid #ccc;
 				border: 1px solid rgba(0,0,0,.15);
-
 				/*background-color: #fff;
 				-webkit-background-clip: padding-box;
 				background-clip: padding-box;
-				
 				border-radius: 4px;
 				-webkit-box-shadow: 0 2px 6px rgba(0,0,0,.175);
 				box-shadow: 0 2px 6px rgba(0,0,0,.175);*/
-
-background-image: linear-gradient(to bottom,#fff 0,#f8f8f8 100%);
-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff8f8f8', GradientType=0);
-filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-background-repeat: repeat-x;
-border-radius: 4px;
--webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
-box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
-
-
+				background-image: linear-gradient(to bottom,#fff 0,#f8f8f8 100%);
+				filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff8f8f8', GradientType=0);
+				filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+				background-repeat: repeat-x;
+				border-radius: 4px;
+				-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
+				box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
    			}
+
+
+			.nav-pills>li.active>a, .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover {
+				background-color: #F2C314;
+			}
+
+.nav>li>a:focus, .nav>li>a:hover {
+background-color: #F2C314;
+}
+
+.btn-primary.active, .btn-primary:active {
+background-color: #F2C314;
+}
+
+
+
+
  		</style>
 	</head>
 	<body>
@@ -64,7 +74,7 @@ box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
 						<div class="tabbable detail" id="tabs-597688">
 							<ul class="nav nav-pills">
 								<li>
-									<a href="#options-123" class="options" data-toggle="tab"><span class="glyphicon glyphicon-cog"></span></a>
+									<a href="#options-123" class="btn-primary options" data-toggle="tab"><span class="glyphicon glyphicon-cog"></span></a>
 								</li>
 							</ul>
 							<div class="tab-content">
@@ -87,50 +97,8 @@ box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
 		</div>
 		<script type="text/javascript">
 			/** #nsData */	
-
-			function nsView(obj) {
-				var result = {};
-				if (obj) {
-					result = $(obj).find('[id^="nsView"]:first');
-				} else {
-					result = $('[id^="nsView"]:first');
-				}
-
-				if (!result || result.length > 1) {
-					console.log('cannot find a view! or multiple nsView exist! ...make sure the container has id "nsView"');
-					return null;
-				}
-
-				var vid = result.data('vid');
-				if (!vid) {
-					vid = nsData.request.ref || guid();
-					result.data('vid', vid);
-				} else {
-					console.log('oops', vid);
-				}
-
-				var objId = result.attr('id');
-				if (objId && !objId.endsWith(vid)) {
-					result.attr('id', objId + vid);
-				} else {
-					console.log('poops', objId);
-				}
-
-				return result;
-			}
-
-			function nsGet(selector) {
-				console.log('nsGET!!!');
-				var vid = $('[id^="nsParent_"]:last').data('vid');	//FIX! maybe ":first" :)
-				var result = $(selector + vid);
-				if (result) {
-					return result;
-				} else {
-					return $(selector);
-				}
-			}
  
-			var ns = {
+			var nsTools = {
 				getLayout: function(user) {
 					//FIX! db.select(query, function(err, results) {
 					return {
@@ -164,7 +132,7 @@ box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
 							view: [
 								{
 									description: 'services view (default)',
-									url: 'http://localhost:8080/nutshell/soaif/services.view',
+									url: 'http://localhost:8080/nutshell/soaif/services.view?view=json',
 									location: 'slot0'
 								},
 								{
@@ -174,7 +142,7 @@ box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
 								},
 								{
 									description: 'XYZ',
-									url: 'http://localhost:8080/nutshell/soaif/metrics?model=getCounterNames',
+									url: 'http://localhost:8080/nutshell/soaif/metrics?model=getCounterNames&view=json',
 									location: 'detail'
 								},
 								{
@@ -197,6 +165,9 @@ box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
 								var options = [ 
 									{
 										caption: 'change view'
+									},
+									{
+										caption: 'other action'
 									},
 									{
 										class: 'divider'
@@ -222,20 +193,31 @@ box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
 							}
 
 							return this._views.view.map(function(item) {
-
-
 								item.load = function() {
+//debugger;
+									var viewContainer = ns('.' + item.location);	//eg. slot4
 
-									var target = $('.' + item.location);	//eg. slot4
-
+									if (viewContainer.length === 0 || viewContainer.length > 1) {
+//										debugger;
+									}
+									
 									if (item.location === 'detail') {
 										//tabs
+									 	
+									 	
 									 	var id = 'view-' + guid();
 										var tab = $('.tabbable.detail');
 
 										tab.find('ul>li:first').before('<li><a href="#' + id + '" data-toggle="tab">' + (item.description || 'view') + '</a></li>');
 										tab.find('.tab-content').append('<div class="tab-pane" id="' + id + '"></div>');
-										$('#' + id).load(item.url);
+										$('#' + id).load(item.url, function() {
+											//
+											var view = nsView($(this));
+
+											console.log($(this));
+											console.log(view);
+
+										});
 
 										// var menu = popupMenu();
 										// menu.attr('id', 'menu_' + id);
@@ -252,74 +234,46 @@ box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
 										//if ($('#popupMenu').length === 0) {
 											//target.parent().prepend(popupMenu());
 									 	//}
-
+									 	
 									} else {
-										
+
 										//add heading
-										target.parent().prepend('<h5 id="viewHeading">opened from ' + nsData.request.path + '...</h5>');
+										viewContainer.parent().prepend('<h5 id="viewHeading">opened from ' + nsData.request.path + '...</h5>');
 
 										//and menu
-										target.parent().prepend(popupMenu());
+										viewContainer.parent().prepend(popupMenu());
 
 										//load the view
-										target.load(item.url, function() {
+										viewContainer.load(item.url, function() {
 
-											var slotElement = $(this);
-											var view = nsView(slotElement);
-
+											//var slotElement = $(this);
+											//var view = nsView($(this));
 											//console.log(slotElement.find('script:last'));
-
 											//set the title
-											$('#viewHeading').text(nsData.request.path);
+											ns('#viewHeading').text(nsData.request.path);
 
 											// //remove the navbar space
 											// //FIX! check if it has a navbar parent and then remove add space rather
-											view.css('margin-top', '0');
+											//view.css('margin-top', '0');
 										});										
 									}
 								};
 								return item;
 							}); //FIX! use .makeArray();
 						}
-						// getBySlotId: function(id) {
-						// 	var userViews = this.views;
-						// 	var result;
-
-						// 	userViews.forEach(function(view) {
-						// 		if (view.location === id) {
-						// 			result = view;
-						// 			return false;
-						// 		}
-						// 	});
-
-						// 	if (!result) {
-						// 		//use the first view out of desperation
-						// 		//FIX! if you find that the wrong view is updated, it is using the first one
-						// 		result = this.views[0];	
-						// 	}
-
-						// 	return result;
-						// }
 					}
 				}
 			}
 
-			$('document').ready(function() {
-				var user = {};
-				var layoutInfo = ns.getLayout(user);
-				var views = ns.getViews(user);
+			$('document').ready(nutshell({ navbar: true }, function() {
+
+				var layoutInfo = nsTools.getLayout(nsData.user);
+				var views = nsTools.getViews(nsData.user);
 
 				views.views.forEach(function(view) {
 					view.load();
 				});
-
-				return;
-				// layoutInfo.slots.forEach(function(slot) {
-				// 	var view = views.getBySlotId(slot.id);
-				// 	console.log('loading view', slot.id);
-				// 	if (view) view.load(slot);		//FIX! maybe... slot.load(view);
-				// });
-			});
+			}));
 		</script>
 	</body>
 </html>

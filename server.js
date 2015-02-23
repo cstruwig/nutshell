@@ -71,10 +71,10 @@ function serveResponse(nsReq, options, next) {
 
 		nsReq.response.data.request = nsReq.request;
 		nsReq.response.data.request.ref = nsReq.ref;
-		nsReq.response.data.request.time = 2;
-		nsReq.response.data.request.size = 222;
+		nsReq.response.data.request.time = 2;			//FIX! DEMO HACK!!
+		nsReq.response.data.request.size = 222;			//FIX! DEMO HACK!!
 		nsReq.response.data.request.params = nsReq.filter;
-
+		nsReq.response.data.request.user = { ref: 123321, account: 'hardus@sunfork.com' };			//FIX! DEMO HACK!!
 //		nsReq.response.data.user = nsReq.req.userFB;
 	
 		//FIX! options-from-service-override-mechanism goes here... i.e. call from service : nsReq.override('output', 'html'); to override options.contentType below...
