@@ -61,7 +61,6 @@ module.exports = {
   				{ upsert: true },
   				function() {
   					connection.close();
-					console.log('dan ek tjoen');
 				}
 			);
 		});

@@ -57,14 +57,14 @@ module.exports = {
 				nsReq.response.data = result.data();
 				nsReq.response.status = 'valid';
 
-				next(nsReq);
+				next(null, nsReq);
 			});
 		}
 		catch (err) {
 			console.log(err);
 			nsReq.response.status = 'invalid';
 			//nsReq.setError(err);
-			next(nsReq);
+			next(err, nsReq);
 		}
 	}
 }

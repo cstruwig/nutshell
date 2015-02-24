@@ -7,8 +7,6 @@ var ns = require('../lib');
 var debug = ns.debug;
 var google = require('../applicationservices/google');
 var duckduckgo = require('../applicationservices/duckduckgo');
-// var bing = require('../applicationservices/bing');
-// var yahoo = require('../applicationservices/yahoo');
 
 module.exports = {
 	getResults: function(nsReq, next) {
@@ -48,13 +46,13 @@ module.exports = {
 			nsReq.response.status = 'valid';
 			nsReq.response.data = finalResult.data();
 
-			return next(nsReq);	
+			return next(null, nsReq);	
 		}, function() {
 			//error
 			nsReq.response.status = 'invalid';
 			nsReq.response.data = ns.tools.collection('results');
 			
-			return next(nsReq);	
+			return next(null, nsReq);	
 		});
 	}
 }

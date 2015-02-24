@@ -30,25 +30,33 @@ exports.parse = function(nsReq, next) {
 			//	break;
 			case 'soaif': 	//are these not application services? eg. 'application'
 				//FIX!
+				debug.lo('service type', 'SOAIF');
 				service.modulePath = process.cwd() + '/soaif/applicationservices/soaif_' + inflection.pluralize(resource) + '.js';
 				service.serviceType = 'soaif';
 				serviceFound = fs.fileExists(service.modulePath);
 				if (!serviceFound) {
-					throw new Error('invalid soaif resource');
+					throw new Error('soaif service not found or invalid');
 				} else {
-					console.log('valid soaif resource [name=soaif_' + inflection.pluralize(resource) + '.js]');
+					debug.lo('service physicalName', 'soaif_' + inflection.pluralize(resource) + '.js');
 				}
 				break;
 			default:
 				service.modulePath = process.cwd() + '/soaif/enterpriseservices/' + serviceName + '.js';
 				//service.modulePath = __dirname + '/../enterpriseservices/' + serviceName + '.js'; //__dirname + '/../../enterprise/' + serviceName + '.js';
 				if (fs.fileExists(service.modulePath)) {
+					debug.lo('service type', 'ENTERPRISE');
 					service.serviceType = 'enterprise';
 					serviceFound = true;
 				} else {
+					debug.lo('service type', 'COMPOUND (or non existing...)');
 					service.modulePath = process.cwd() + '/soaif/compoundservices/' + serviceName + '.js';
 					//service.modulePath = __dirname + '/../../compound/' + serviceName + '.js';
 					service.serviceType = 'compound';
+
+					//remove the 'get' and otjer CRUD prefixes for custom models
+					debug.log(nsReq.ref + ' compound service intricacies - before:' + nsReq.resource.functionName);
+					nsReq.resource.functionName = nsReq.resource.name;
+					debug.log(nsReq.ref + ' compound service intricacies - after:' + nsReq.resource.functionName);
 				}
 				break;
 		}
@@ -69,7 +77,7 @@ exports.parse = function(nsReq, next) {
 					if (err) return next(null);	//FIX! set error n nsReq
 					connection.collection('defaultView').findOne({ path: nsReq.request.path }, function(err, results) {
 						if (results && results.view.name !== '') {
-							console.log('found specific view for resource [path=' + nsReq.request.path + ', name=' + results.view.name + ']');
+							debug.lo('found DB view', results.view.name);
 							nsReq.options.view = results.view.name;
 						}
 
@@ -92,6 +100,7 @@ exports.parse = function(nsReq, next) {
 
 			//FIX! we can't set it valid here already... //nsReq.status = 'valid'; but probably shouldn't
 		} else {
+			debug.lo('service fail', 'doesn\'t exist')
 			return next(new Error('invalid or missing service name specified'), null);
 			//FIX! remove
 			//delete result.modulePath;
@@ -99,7 +108,7 @@ exports.parse = function(nsReq, next) {
 	}
 	catch (err) {
 		nsReq.status = 'invalid';
-		debug.log('*** error while parsing service [' + err + ']');
+		debug.log(nsReq.ref + ' error while parsing service [' + err + ']');
 		return next(err, nsReq);
  	}
 

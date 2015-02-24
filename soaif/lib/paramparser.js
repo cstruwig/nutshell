@@ -29,8 +29,10 @@ exports.parse = function(nsReq, next) {
 	try
 	{
 		var params = nsReq.req.query;
-		
+		var paramCount = 0;
+
 		for (key in params) {
+			paramCount++;
 			key = key.toLowerCase();
 			if (params[key].hasValue()) {
 				switch (key) {
@@ -50,18 +52,21 @@ exports.parse = function(nsReq, next) {
 						break;
 					case 'view' :
 						nsReq.options.view = getFirstValue(params[key]);
+						nsReq.resource.output = 'view';			//FIX force view if viewname specified
+						debug.lo('overriding output', 'view');
 						debug.lo('view', nsReq.options.view);
 						break;
 					case 'save' :
 						nsReq.options.save = getFirstValue(params[key]);
 						debug.lo('save', nsReq.options.save);
 						break;
-					case 'debug' :
-						nsReq.options.debug = getFirstValue(params[key]);
-						debug.lo('debug', nsReq.options.debug);
-						break;		
+					// case 'debug' :
+					// 	nsReq.options.debug = getFirstValue(params[key]);
+					// 	debug.lo('debug', nsReq.options.debug);
+					// 	break;		
 					case 'educateme' :
 						nsReq.options.educateme = true;
+						debug.lo('educateme', true);
 						break;						
 					default:
 						//other params
@@ -72,6 +77,8 @@ exports.parse = function(nsReq, next) {
 				}
 			}
 		}
+
+		debug.lo('param count', paramCount.toString());
 	}
 	catch (err) {
 		nsReq.status = 'invalid';

@@ -6,9 +6,15 @@ var tools = ns.tools;
 var fs = require('fs');
 var util = require('util');
 
+
+//FIX! IMPLEMENT PROMISES
+
 module.exports = {
 	getServices: function(nsReq, next) {
 		
+		var path;
+		var showSOAIF = false;					//this is used to in/exclude the SOAIF_ prefix in the results
+
 		try {
 			//******************* setup filters....
 			var type = nsReq.getParameter('type', {
@@ -32,9 +38,7 @@ module.exports = {
 			
 			//get the data
 			var result = tools.collection('service');
-			var path;
-			var showSOAIF = false;
-
+			
 			switch (type) {
 				case 'soaif':
 					path = process.cwd() + '/soaif/applicationservices/';
@@ -52,8 +56,6 @@ module.exports = {
 					break;
 			}
 
-			console.log('path=' + path);
-
 			var files = fs.readdirSync(path);
 
 			files.makeArray().forEach(function(item) {
@@ -63,15 +65,14 @@ module.exports = {
 				var tempParams = nsReq.filter;	//.parameters;
 				tempParams.name = item.replace('.js', '');
 
+				//main result
 				var service = { 
 					name: item.replace('soaif_', '').replace('.js', ''),
 					type: type,
 					url:  '/nutshell/' + nsReq.service.name + '/' + nsReq.resource.name + '.' + nsReq.resource.output + '?' + require('querystring').stringify(nsReq.parameters)
 				}
 
-				//console.log(require('path').normalize(service.url));
-
-				//console.log(util.inspect(file, { showHidden: true, depth: null }));
+				//FIX! surely this can be shortenened!!!
 				if (file && file.isFile() && item.endsWith('.js') && !item.startsWith('.')) {
 					if (showSOAIF) {
 						if (item.startsWith('soaif_')) {
@@ -100,13 +101,17 @@ module.exports = {
 			nsReq.response.data = result.data();
 			nsReq.response.status = 'valid';
 
-			next(nsReq);
+			next(null, nsReq);
 		}
 		catch (err) {
 			console.log(err);
 			nsReq.response.status = 'invalid';
 			//nsReq.setError(err);
-			next(nsReq);
+			next(err, nsReq);
+		}
+		finally
+		{
+
 		}
 	},
 	addServices: function(nsReq, next) {
@@ -137,14 +142,14 @@ module.exports = {
 			//******************* process....		
 			//setup search filter
 			
-			next(nsReq);
+			next(null, nsReq);
 		
 		}
 		catch (err) {
 			console.log(err);
 			nsReq.response.status = 'invalid';
 			//nsReq.setError(err);
-			next(nsReq);
+			next(err, nsReq);
 		}
 	}
 }

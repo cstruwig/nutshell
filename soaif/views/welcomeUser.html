@@ -9,12 +9,13 @@
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 		<script src="https://cdn.firebase.com/js/client/2.1.2/firebase.js"></script>
 		<script src="../../assets/nutshell.js?v=1"></script>
+		<script src="../../assets/navbar.js?v=1"></script>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css" />
 		<link rel="stylesheet" href="../../assets/nutshell.css" />
 	</head>
 	<body>
-		<div class="container" id="nsView" style="margin-top: 70px">
+		<div class="container" id="nsView">
 			<div class="row clearfix">
 				<div class="col-md-12 column">
 					<div class="jumbotron">
@@ -25,7 +26,7 @@
 							<strong>nut</strong>shell puts you in control. SOA in a box blah blah.
 						</p>
 						<p>
-							<a class="btn btn-primary btn-large" href="#">read more</a>
+							<a class="btn btn-primary btn-large readMore" href="#">read more</a>
 						</p>
 					</div>
 					<div class="row clearfix">
@@ -79,29 +80,22 @@
 								</ul>
 								<div class="tab-content">
 									<div class="tab-pane active" id="panel-resources">
-										<br>
+										<div class="col-md-2 column">
+											<h2>
+												<span class="glyphicon glyphicon-menu-right"></span>
+											</h2>
+										</div>
+										<div class="col-md-10 column">
+											<br>
 										<div class="resourceList">
+										</div>
+										
 											
 										</div>
 									</div>
 								
 								</div>
 							</div>
-
-
-<!--
-							
-								<div class="panel-group" id="panel-632991">
-									<div class="panel panel-primary">
-										<div class="panel-heading">
-											 <a class="panel-title" data-toggle="collapse" data-parent="#panel-632991" href="#panel-element-906036">resources</a>
-										</div>
-										<div id="panel-element-906036" class="panel-collapse in">
-											<div class="panel-body resourceList"></div>
-										</div>
-									</div>
-								</div>
-							-->
 							
 						</div>
 					</div>
@@ -118,9 +112,7 @@
 
 
 			function populateEducation(education) {
-				var title = '<strong>nut</strong>shell > ' + parsePath(nsData).service + ' > ' + 'resourceName';
-				$('#myModalLabel').html(title);
-
+				
 				var educationHtml = $('<form class="form-horizontal" role="form"></form>');
 
 				var ctr = 0;
@@ -137,8 +129,7 @@
 					educationHtml.append(inputHtml);					
 				}
 
-				$('#nsmodal').find('.modal-body').html(educationHtml);
-				$('#nsmodal').modal('show');
+				return educationHtml.html();
 			}
 
 			function populateResources(data, serviceName) {
@@ -160,11 +151,14 @@
 					).click(function() {
 						if (!resource.education) {
 							$.get(resourceUrl, function(data) {
-								
 								resource.education = data.education;
 								delete resource.education.request;
 
 								populateEducation(resource.education);
+								nsModal({
+									titleHtml: '',
+									messageHtml: populateEducation(resource.education)
+								});
 
 								// var title = '<strong>nut</strong>shell > ' + parsePath(nsData).service + ' > ' + 'resourceName';
 								// $('#myModalLabel').html(title);
@@ -193,6 +187,11 @@
 						} else {
 							console.log('xxxx in cache');
 							populateEducation(resource.education);
+							debugger;
+							nsModal({
+								messageHtml: '<p>' + 1 + '</p>'
+							});
+
 						}
 					});
 
@@ -243,12 +242,19 @@
 				});
 			}
 
-			$('document').ready(nutshell({}, function() {
+			$('document').ready(nutshell({ navbar : true }, function() {
 				listServices('compound');
 				listServices('enterprise');
 				listServices('application');
 				listServices('soaif');
 			}));
+
+			$('.readMore').click(function() {
+				nsModal({
+					titleHtml: 'Hi',
+					messageHtml: '<p>Hello<br>aaa<br><br>aaa<br><br>aaa<br><br>aaa<br><br>aaa<br><br>aaa<br><br>aaa<br><br>aaa<br><br>aaa<br><br>aaa<br><br>aaa<br><br>aaa<br><br>aaa<br><br>aaa<br><br>aaa<br><br>aaa<br><br>aaa<br><br>aaa<br><br>aaa<br><br>aaa<br><br>aaa<br><br>aaa<br><br>aaa<br></p>'
+				});
+			});
 		</script>
 	</body>
 </html>

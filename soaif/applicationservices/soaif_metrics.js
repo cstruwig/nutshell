@@ -34,7 +34,7 @@ module.exports = {
 			nsReq.response.data = result.data();
 			nsReq.response.status = 'valid';
 
-			next(nsReq);
+			next(null, nsReq);
 		});
 	},
 	getMetrics: function(nsReq, next) {
@@ -63,7 +63,7 @@ module.exports = {
 			nsReq.response.data = result.data();
 			nsReq.response.status = 'valid';
 
-			next(nsReq);
+			next(null, nsReq);
 		});		
 	}
 	//FIX! consider implementing addCount()...
@@ -87,6 +87,6 @@ module.exports = {
 	// 	//nsReq.response.data = result.data();
 	// 	nsReq.response.status = 'valid';
 
-	// 	next(nsReq);
+	// 	next(null, nsReq);
 	// }
 }

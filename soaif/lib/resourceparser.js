@@ -43,7 +43,6 @@ exports.parse = function(nsReq, next) {
 		}
 
 		nsReq.resource.name = inflection.pluralize(resource);
-		
 		nsReq.resource.functionName = crud + inflection.titleize(nsReq.resource.name);
 		nsReq.resource.output = output;
 		nsReq.request.path = '{{service}}/' + nsReq.resource.name + '/' + inflection.singularize(resource);
@@ -52,9 +51,9 @@ exports.parse = function(nsReq, next) {
 	}
 	catch (err) {
 		nsReq.status = 'invalid';
-		debug.log('*** error while parsing resource [' + err + ']');
-		return next(err, null);
+		debug.log(nsReq.ref + ' error while parsing resource [' + err + ']');
+		return next(err);
 	}
 	
-	next(null, nsReq);
+	return next(null, nsReq);
 }

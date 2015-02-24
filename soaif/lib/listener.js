@@ -7,17 +7,16 @@ var debug = require('./debug');
 var tools = require('./tools');
 var db = require('./db');
 
-exports.setupRequest = function(req, res, next) {
+exports.setupRequest = function(req, next) {
 
 	var nsRequest = require('./nsrequest');
-	var nsReq = nsRequest.init(req, res);
+	var nsReq = nsRequest.init(req);
 
 	//nsReq.host = options.host || 'n/a';
 	
 	nsRequest.parse(nsReq, function(err, result) {
 		if (err) {
-			debug.log('failed to parse request [' + err + ']');
-			next(err, null);
+			next(err);
 		} else {
 			next(null, nsReq);
 		}
@@ -25,12 +24,14 @@ exports.setupRequest = function(req, res, next) {
 }
 
 exports.preServeRequest = function(nsReq, next) {
-	next();
+	return next();
 }
 
 exports.serveRequest = function(nsReq, next) {
 	//cb will called from ???
 	//nsReq.callback = next;
+
+	var timer = Date.now();
 
 	try
 	{
@@ -40,26 +41,37 @@ exports.serveRequest = function(nsReq, next) {
 		if (nsReq.options.model !== '') {
 			serviceName = nsReq.service.name + '.' + nsReq.resource.functionName;
 			functionName = nsReq.options.model;
+			debug.lo('custom model specified', serviceName + '.' + functionName + '()');
 		} else {
 			serviceName = nsReq.service.name;
 			functionName = nsReq.resource.functionName;
 		}
 
-		nsReq.service.module[functionName].call(nsReq.service.module, nsReq, function(nsReq) {
-			next(null, nsReq);
+		nsReq.service.module[functionName].call(nsReq.service.module, nsReq, function(err, nsReq) {
+			debug.lo('result', 'OK');
+			return next(null, nsReq);
 		});
 	}
 	catch (err) {
+		debug.lo('result', 'FAILED!');
 		if (err == 'TypeError: Cannot call method \'call\' of undefined') {
+			//FIX! hack!
 			err = new Error('InvalidResourceError: Cannot call \'' + functionName + '\' of \'' + serviceName + '\'. make sure it exists and/or check your spelling...', 'a', 'b');
 		}
-		debug.log('failed to serve request [' + err + ']');
-		next(err, null);
+		
+		debug.log(nsReq.ref + ' failed to serve request [' + err + ']');
+		return next(err, nsReq);
+	}
+	finally
+	{
+		timer = Date.now() - timer;
+		debug.lo('elpased time', timer + 'ms');
+		debug.log(nsReq.ref + ' invoked service');
 	}
 }
 
 exports.postServeRequest = function(nsReq, next) {
-	next();
+	return next();
 }
 
 exports.loadView = function(nsReq) {

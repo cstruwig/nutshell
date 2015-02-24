@@ -21,27 +21,25 @@ exports.searchArtists = function(filter, next) {
 			var data = JSON.parse(body);
 
 			if (data && data.results && data.results.artistmatches) {
-				artists = JSON.parse(body).results.artistmatches.artist;
-			}
+				artists = data.results.artistmatches.artist;
 
-			//FIX! validate
+				artists.makeArray().forEach(function(item) {
+					
+					var artist = {
+						name: item.name,
+						url: item.url,
+						image: ''
+					};
+					
+					item.image.forEach(function(image) {
+						if (image['#text'] !== '' && image.size === 'mega') {
+							artist.image = image['#text'];
+						}
+					});
 
-			artists.makeArray().forEach(function(item) {
-				
-				var artist = {
-					name: item.name,
-					url: item.url,
-					image: ''
-				};
-				
-				item.image.forEach(function(image) {
-					if (image['#text'] !== '' && image.size === 'mega') {
-						artist.image = image['#text'];
-					}
+					result.add(artist);
 				});
-
-				result.add(artist);
-			});
+			}
 
 			return next(null, result);
 		}

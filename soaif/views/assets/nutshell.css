@@ -111,6 +111,10 @@ border-color: #eee;
 	border-color: #c0c0c0; /* #806100; */
 }
 
+#bs-example-navbar-collapse-1 > ul {
+    padding-right: 30px;
+}
+
 /* .navbar-btn {
 	background-color: #F2C314;
 	border-color: #c0c0c0; / * #806100; * /	

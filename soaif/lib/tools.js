@@ -1,5 +1,6 @@
 require('longjohn');
 
+var Q = require('q');
 var inflection = require('inflection');
 var fs = require('fs');
 
@@ -97,38 +98,48 @@ exports.getResources = function(nsReq, next) {
 
 	var result = exports.collection('resources');
 
-	for (var name in nsReq.service.module) {
+	var deferred = Q.defer();
 
-		var nameFilter = nsReq.getParameter('name', {
-			inputType: 'string',
-			mandatory: false,
-			description: 'partial name to filter education infos'
-		});
+	try {
 
-		obj = nsReq.service.module[name];
-		if (!!(obj && obj.constructor && obj.call && obj.apply) ) { //} && name !== 'getResources') {
-			//its a function, now lets check for the CRUDs
+		for (var name in nsReq.service.module) {
 
-			if (name.startsWith('get') || name.startsWith('add') || name.startsWith('update') || name.startsWith('delete')) {
-				var resource = name.replace('get', '').replace('add', '').replace('udpate', '').replace('delete', '').toLowerCase();
+			var nameFilter = nsReq.getParameter('name', {
+				inputType: 'string',
+				mandatory: false,
+				description: 'partial name to filter resources'
+			});
 
-				if (nameFilter && resource.includes(nameFilter)) {
-					result.add({ name: resource });	
-				} else if (!nameFilter) {
-					result.add({ name: resource });	
+			obj = nsReq.service.module[name];
+			if (!!(obj && obj.constructor && obj.call && obj.apply) ) { //} && name !== 'getResources') {
+				//its a function, now lets check for the CRUDs
+
+				if (name.startsWith('get') || name.startsWith('add') || name.startsWith('update') || name.startsWith('delete')) {
+					var resource = name.replace('get', '').replace('add', '').replace('udpate', '').replace('delete', '').toLowerCase();
+
+					if (nameFilter && resource.includes(nameFilter)) {
+						result.add({ name: resource });	
+					} else if (!nameFilter) {
+						result.add({ name: resource });	
+					}
 				}
+			} else {
+				// if (name === 'getResources') {
+				// 	var resource = name.replace('get', '').replace('add', '').replace('udpate', '').replace('delete', '').toLowerCase();
+				// 	result.add({ name: resource });				
+				// }
 			}
-		} else {
-			// if (name === 'getResources') {
-			// 	var resource = name.replace('get', '').replace('add', '').replace('udpate', '').replace('delete', '').toLowerCase();
-			// 	result.add({ name: resource });				
-			// }
 		}
+
+		nsReq.response.data = result.data();
+
+		deferred.resolve(nsReq);
+	}
+	catch (err) {
+		deferred.reject(err);
 	}
 
-	nsReq.response.data = result.data();
-	
-	next(nsReq);
+	return deferred.promise.nodeify(next);
 }
 
 exports.getFileList = function(path, next) {

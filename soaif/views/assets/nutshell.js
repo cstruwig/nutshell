@@ -67,6 +67,44 @@
 
     return result;
   }
+  this.nsRedirect = function(options) {
+    var options = {
+      url: options.url || 'http://www.sunfork.com'
+    }
+    window.location = options.url;
+  }
+
+  this.nsModal = function(options) {
+    var options = {
+      message: options.message || 'hi...',
+      messageHtml: options.messageHtml || '<p>' + options.message + '</p>',
+      title: options.title || 'title',
+      titleHtml: options.titleHtml || 'title',
+      buttons: options.buttons || 'default',
+      size: options.size || 'normal'
+    }
+
+    var $nsModal = $('#nsModal');
+    $nsModal.find('.modal-dialog').removeClass('modal-lg').removeClass('modal-sm');
+
+    switch (options.size) {
+      case 'small':
+        $nsModal.find('.modal-dialog').addClass('modal-sm');
+        break;
+      case 'large':
+        $nsModal.find('.modal-dialog').addClass('modal-lg');
+        break;
+      // default:
+      //   break;
+    }
+    //'<strong>nut</strong>shell > ' + parsePath(nsData).service + ' > ' + 'resourceName'
+
+    //$('#your-modal').removeData('bs.modal');
+    var title = '<strong>nut</strong>shell > ' + parsePath(nsData).service + ' > ' + 'resourceName';
+    $('#nsModalTitle').html(options.titleHtml);
+    $nsModal.find('.modal-body').html('').append($(options.messageHtml));
+    $nsModal.modal('show');
+  }
 
 }());
 

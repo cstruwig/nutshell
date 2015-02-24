@@ -7,7 +7,6 @@ var suggestedOptions = [];
 
 function setPath(path) {
   var url = nsData.request.url + '/nutshell/' + path + '.view?educateme=1';
-  
   window.location = url;
 }
 
@@ -185,6 +184,10 @@ function initEvents() {
     var key = evt.keyCode || evt.which;
 
     //FIX! if someone types the > or . then make it " > " use key === 46 || key === 62!
+    if (key === 27) {
+      //showSuggestions(false);
+      return;
+    }
 
     if (key === 9 || key === 10 || key === 13 || key === 32) {      
       if (suggestedOptions.length === 1) {    //only one option so autocomplete
@@ -195,6 +198,9 @@ function initEvents() {
         if (key === 13) {
           //the user hit enter
           console.log('doo the enter baby!');
+          var url = nsData.request.url + '/nutshell/' + searchBar.val().replace(' > ', '/') + '.view?educateme=1';
+          console.log(url);
+          //nsRedirect({ url: url });
         }
 
         evt.preventDefault();
@@ -212,8 +218,12 @@ function initEvents() {
   });      
 
   searchBar.click(function() {
-    calculateSuggestions();
-    showSuggestions();
+    searchBarVal = searchBar.val();
+    console.log(searchBarVal, '===', (nsPathInfo().service + ' > ' + nsPathInfo().resource) );
+    if (searchBarVal !== (nsPathInfo().service + ' > ' + nsPathInfo().resource) ) {
+      calculateSuggestions();
+      showSuggestions();  
+    }
   });
 
   searchBar.blur(function() {
@@ -230,25 +240,18 @@ function setupNavbar(options, next) {
   if ($('#nsNav').length === 0) {
 
     //add the navbar
-    $('body').append($('<div id="nsNav"></div>'));
+    $('body').append('<div id="nsNav"></div>');
 
     //load up the html
     $('#nsNav').load('../../assets/navbar.html', function() {
-
-      //default view logic starts here...
       initUI();
-
       initEvents();
-
-      
-
     });
 
-    console.log('setupNavbar calling back!!!'); //, this.parsePath());
     return next();
 
   } else {
-    console.log('navbar already added');
+
     return next();
   }
 }

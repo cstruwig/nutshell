@@ -27,55 +27,59 @@ function getDefaultValueForType(typeName) {
 
 exports.parse = function(nsReq, next) {
 
-	nsReq.ref = nsReq.req.id();
-
 	//check service exists
 	require('./resourceparser').parse(nsReq, function(err, nsReq) {
 		if (err) {
-			debug.log('failed to parse resource [' + err + ']');
-			next(err, null);
-		} else {
-			require('./serviceparser').parse(nsReq, function(err, nsReq) {
-				if (err) {
-					debug.log('failed to parse service [' + err + ']');
-					next(err, null);
-				} else {
-					require('./paramparser').parse(nsReq, function(err, nsReq) {
-						if (err) {
-							debug.log('failed to parse parameters [' + err + ']');
-							next(err, null);
-						} else {
-							require('./authorize').authorize(nsReq, function(err, nsReq) {
-								if (err) {
-									debug.log('failed to authorize [' + err + ']');
-									next(err, null);
-								} else {
-									nsReq.status = 'valid';			//only then...
-									next(null, {});				
-								}
-							});
-						}
-					});
-				}
-			})
+			debug.log(nsReq.ref + ' failed to parse resource [' + err + ']');
+			return next(err, null);
 		}
+
+		debug.log(nsReq.ref + ' parsed resource OK');
+		require('./serviceparser').parse(nsReq, function(err, nsReq) {
+			if (err) {
+				debug.log(nsReq.ref + ' failed to parse service [' + err + ']');
+				return next(err, null);
+			}
+
+			debug.log(nsReq.ref + ' parsed service OK');
+			require('./paramparser').parse(nsReq, function(err, nsReq) {
+				if (err) {
+					debug.log(nsReq.ref + ' failed to parse parameters [' + err + ']');
+					return next(err, null);
+				}
+
+				debug.log(nsReq.ref + ' parsed parameters OK');
+				require('./authorize').authorize(nsReq, function(err, nsReq) {
+					if (err) {
+						debug.log(nsReq.ref + ' failed to authorize [' + err + ']');
+						return next(err, null);
+					}
+
+					debug.log(nsReq.ref + ' the request is authorized and 100% valid');
+					nsReq.status = 'valid';			//only then...
+					next(null, {});				
+				});
+
+			});
+		});
 	});
 }
 
-exports.init = function(req, res) {
-
+exports.init = function(req) {
 	return {
 		req: req,
-		res: res,
-		ref: null,
+		ref: req.id(),
 		host: 'n/a',
-		date: new Date(),
+		date: Date.now(),
 		status: null,
 		authorized: false,
 		_messages: [],
 		get messages() {
 			return _messages;
 		},
+		// get data() {
+		// 	return response.data;
+		// },
 		consumer: {
 			consumerId: null,
 			token: null
@@ -116,13 +120,6 @@ exports.init = function(req, res) {
 			this._messages.push[message];
 		},
 		invalidFilter: function() {
-			//FIX!
-			// for (var key in this.filter) {
-			// 	if (this.filter[key].mandatory) {
-
-			// 	}
-			// }
-
 			return false;
 		},
 		getParameter: function(parameterName, attributes) {
@@ -133,11 +130,12 @@ exports.init = function(req, res) {
 				options: attributes.options || [],
 				description: attributes.description || 'input value',
 				defaultValue: attributes.defaultValue || getDefaultValueForType(this.inputType), //typeName),
-				value: req.params[parameterName] || ''
+				value: req.params[parameterName] || attributes.value || '',
 				//maxValue: attributes.max || 5000
 			}
-			
-			if (attributes.options.length > 0) {
+
+			//console.log('attributes.value [' + parameterName + ']', attributes.value);
+			if (attributes.options && attributes.options.length > 0) {
 				attributes.inputType = 'list';
 
 				// //FIX! we need support for multiple input params!!!!!
@@ -173,15 +171,11 @@ exports.init = function(req, res) {
 				}
 			}
 
-
 			this.filter[attributes.name] = attributes.value;
 			this.education[attributes.name] = attributes;
-
 			//FIX! validate and set attributes.value according to type, maxValue, etc...
 			var result = attributes.value;
-
 /*
-
 			//FIX!
 			if (attributes.mandatory && ) {				
 			}
