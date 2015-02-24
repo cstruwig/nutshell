@@ -1,34 +1,110 @@
 require('longjohn');
 
-var ns = require('../soaif/nutshelljs/0.0.1/package');
-//var lastfm = require('../application/lastfm');
+var ns = require('../lib');
+var debug = ns.debug;
+var tia = require('../applicationservices/m&f/tia');
 
-module.exports = {
-	getClaims: function(nsReq) {
-		//nsReq.logInfo('function started');
+exports.getClaims = function(nsReq, next) {
 
-		/*lastfm.getArtists('cher', function(data) {
-			nsReq.req.log.info('done with last fm');
-		});*/
+	var result = ns.tools.collection('claims');
 
-//		var nsRes = ns.listener.newResponse(nsReq);
-		//ns.debug.log('hi. inside getClaims');
-		//ns.debug.stop(nsReq.id);
-		var nsRes = ns.listener.newResponse(nsReq);
-		nsRes.data = {
-			result: 'got the claim'
-		}
-		return nsReq.callback(nsRes);
-	},
-	getPolicies: function(nsReq, cb) {
-		//ns.debug.log('yo... inside getPolicies');
-		//res.write('xyz/123321');
-		//res.header('x', 'sa');
-		//ns.debug.log('done()');
-		var nsRes = ns.listener.newResponse(nsReq);
-		nsRes.data = {
-			result: 'got the policy'
-		}
-		return nsReq.callback(nsRes);
+	//******************* setup filters....
+	var claimNo = nsReq.getParameter('claimno', { 
+		typeName: 'number', 
+		mandatory: true, 
+		description: 'claim number to retrieve'
+	});
+
+	var policyNo = nsReq.getParameter('policyno', { 
+		typeName: 'number', 
+		mandatory: false, 
+		description: 'policy number of claims to retrieve',
+	});
+
+	var deferred = ns.Q.defer();
+
+	//******************* validate filters
+	// if (nsReq.helping) {
+	// 	return next(nsReq.education);
+	// }
+
+	if (nsReq.invalidFilter()) {
+		//return epty results
+		nsReq.response.data = result.data();
+		nsReq.response.status = 'invalid';
+		deferred.resolve(nsReq);
+	} else {
+		//******************* process....		
+		//setup search filter
+		var filter = { ref: claimNo, policyNo: policyNo };
+		//get the data
+		tia.loadClaim(filter, function(err, claims) {
+			
+			if (err) {
+				deferred.reject(err);
+			} else {
+
+				//******************* populate response....
+				nsReq.response.data = claims.data();
+				nsReq.response.status = 'valid';
+
+				deferred.resolve(nsReq);
+			}
+		});
 	}
+
+	return deferred.promise.nodeify(next);
+}
+
+exports.getPolicies = function(nsReq, next) {
+
+	var result = ns.tools.collection('policies');
+
+	//******************* setup filters....
+	var claimNo = nsReq.getParameter('claimno', { 
+		typeName: 'number', 
+		mandatory: true, 
+		description: 'claim number to retrieve'
+	});
+
+	var policyNo = nsReq.getParameter('policyno', { 
+		typeName: 'number', 
+		mandatory: false, 
+		description: 'policy number of claims to retrieve',
+	});
+
+	var deferred = ns.Q.defer();
+
+	//******************* validate filters
+	// if (nsReq.helping) {
+	// 	return next(nsReq.education);
+	// }
+
+	if (nsReq.invalidFilter()) {
+		//return epty results
+		nsReq.response.data = result.data();
+		nsReq.response.status = 'invalid';
+		deferred.resolve(nsReq);
+	} else {
+		//******************* process....		
+		//setup search filter
+		var filter = { ref: policyNo, claimNo: claimNo };
+
+		//get the data
+		tia.loadPolicy(filter, function(err, policies) {
+			
+			if (err) {
+				deferred.reject(err);
+			} else {
+
+				//******************* populate response....
+				nsReq.response.data = policies.data();
+				nsReq.response.status = 'valid';
+
+				deferred.resolve(nsReq);
+			}
+		});
+	}
+
+	return deferred.promise.nodeify(next);
 }

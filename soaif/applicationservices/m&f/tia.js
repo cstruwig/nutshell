@@ -1,133 +1,74 @@
-var ns = require('..//lib');
+require('longjohn');
 
-// var auth = new require('oauth').OAuth(
-// 	'https://api.twitter.com/oauth/request_token',
-// 	'https://api.twitter.com/oauth/access_token',
-// 	'vkH63VwSGPC3o49i3oVnTOfky',
-// 	'Bhi0AnClhmRK3DMZmdkj1WFnOAps5kv44C4wTvqqSZJeprA4hX',
-// 	'1.0A',
-// 	null,
-// 	'HMAC-SHA1'
-//);
-
-var Twitter = require('twitter');
-//var Twitter = require('../soaif/node_modules/twitter/lib/twitter.js');
-//var Twit = require('../soaif/node_modules/twit');
-//var OAuth = require('oauth');
-
+var ns = require('../../lib');
 var debug = ns.debug;
 var tools = ns.tools;
 
-// exports.getTweets4 = function(filter, next) {
+//var apiUrl = 'https://services.mf.co.za:8100/rester/lob.mf/';
+var apiUrl = 'https://196.38.69.25:8100/rester/lob.mf/';
 
-// 	console.log('sssssssssssssss');
-// 	var account = 'sunfork_com';
+exports.loadClaim = function(filter, next) {
 
-// 	var auth = new OAuth.OAuth(
-// 		'https://api.twitter.com/oauth/request_token',
-// 		'https://api.twitter.com/oauth/access_token',
-// 		'8Q984mFnqyE8eP2oT8zOw',
-// 		'e28el70NwnEtERMxv0kwICRakxAlr5ZHeWgcaNqP8',
-// 		'1.0A',
-// 		null,
-// 		'HMAC-SHA1'
-// 	);
-
-// 	auth.get(
-// 		'https://api.twitter.com/1.1/search/tweets.json?count=50&q=' + account,
-// 		'1464975770-khNtNk6CUxkcjUjIoRPse3IGkQeuQSY5US2fH1r',
-// 		'hedKT1ZLETDvIWN8a8keIc8BA1YifvWxvw84fH80t0U',
-// 		function(error, data, res) {
-// 			console.log('___________________sssssssssssssss');
-// 			if (error) {
-// 				debug.sho(error);
-// 				console.log('****************');
-// 				throw error;
-// 			} else {
-// 				console.log('twitter callback success...');
-// 				debug.sho(data);
-// 				next();
-// 			}
-// 		}
-// 	);
-// }
-
-// exports.getTweets2 = function(filter, next) {
-
-// 	var T = new Twit({
-//     	consumer_key: 'vkH63VwSGPC3o49i3oVnTOfky',
-// 		consumer_secret: 'Bhi0AnClhmRK3DMZmdkj1WFnOAps5kv44C4wTvqqSZJeprA4hX',
-// 		access_token: '1464975770-cNOOdcXgfAeh14QxwzeVfe6lo3sMJVZ0StjNK3j',
-// 		access_token_secret: 'rgQIDn48T9jXjMlTCfQMLvBZzxQn1MFBKMkyrRru1mWgt'
-// 	});
-
-// 	var params = { q: 'banana since:2014-11-11', count: 100 };
-// 	T.get('search/tweets', params, function(error, tweets, response){
-// 		//debug.sho(error);
-// 		//debug.sho(tweets);
-// 		debug.sho(response);	
-// 		if (error) {
-// 			debug.sho(error);
-// 			throw error;
-// 		} else {
-// 			console.log(tweets);
-// 			next(null, {})
-// 		}
-// 	});
-// }
-
-exports.getTweets = function(filter, next) {
-
-	//var result = tools.collection('tweets');
+	var url = apiUrl + 'claim?claimno=' + (filter.ref || '');
+	url += '&policyno=' + (filter.policyno || '');
 	
-	try {
-		var client = new Twitter({
-			consumer_key: 'vkH63VwSGPC3o49i3oVnTOfky',
-			consumer_secret: 'Bhi0AnClhmRK3DMZmdkj1WFnOAps5kv44C4wTvqqSZJeprA4hX',
-			access_token_key: '1464975770-cNOOdcXgfAeh14QxwzeVfe6lo3sMJVZ0StjNK3j',
-			access_token_secret: 'rgQIDn48T9jXjMlTCfQMLvBZzxQn1MFBKMkyrRru1mWgt'
-		});
+	var result = tools.collection('claims');
 
-		//var params = { screen_name: filter.account || 'sunfork_com' };
-		var params = { screen_name: 'sunfork_com' };
-		//var params = { user_id: 1464975770 };
-		//var params = {};
+	result.add({
+		brokername: "Swarts T/a Charel Swarts Makelaa",
+		brokerno: "644498",
+		brokerref: "",
+		caseno: "979373",
+		claimbranchcode: "CM",
+		claimbranchname: "Cape Town Claims Hub",
+		claimno: "120578870",
+		clientname: "GG V/D BERG",
+		clientno: "10007144",
+		costofclaim: "85,266.53",
+		datasource: "TIA",
+		dateofloss: "12/06/2011 22:15:00",
+		handler: "JSCHEUN",
+		latestestimate: "0.00",
+		latestestimateod: "0.00",
+		lossdescription: "VOERTUIG GLY OP NAT PAD EN BOTS TEEN PAAL",
+		policyno: "108",
+		registereddate: "22/06/2011 11:49:25",
+		riskaddress: "",
+		sourcesystem: "TIA",
+		totalpayments: "85,266.53",
+		type: "Motor"
+	});
 
-		//client.get('favorites/list', function(err, tweets, response) {
-		client.get('statuses/user_timeline.json', params, function(err, tweets, response) {
-			console.log('twitter -> getTweets');
-			if (err) {
-				console.log('err');
-				debug.sho(tweets);
-				throw new Error('some error' + err);
-			} else {
-				console.log(tweets);
-
-				//var artists = JSON.parse(body).results.artistmatches.artist;
-				
-				//FIX! validate
-				/*artists.forEach(function(item) {
-					
-					var artist = {
-						name: item.name,
-						url: item.url,
-						image: ''
-					};
-					
-					item.image.forEach(function(image) {
-						if (image['#text'] !== '' && image.size === 'mega') {
-							artist.image = image['#text'];
-						}
-					});
-
-					result.add(artist);					
-				});*/
-				
-				return next(null, result);
-			}
-		});
-	}
-	catch (err) {
-		return next(err, null);
-	}
+	return next(null, result);
 };
+
+
+exports.loadPolicy = function(filter, next) {
+
+	var url = apiUrl + 'policy?policyno=' + (filter.ref || '');
+	
+	var result = tools.collection('policies');
+
+	result.add({
+		branch: "KB - Upington Branch",
+		brokername: "Swarts T/a Charel Swarts Makelaa",
+		brokerno: "644498",
+		brokerref: "",
+		brokertel: "054 332-1724",
+		clientname: "GG V/D BERG",
+		clientno: "10007144",
+		clienttel: "0000000000000000",
+		coverenddate: "23/12/2014 00:00:00",
+		coverstartdate: "23/12/2014 00:00:00",
+		datasource: "TIA",
+		division: "Unknown",
+		inceptiondate: "28/05/1986 00:00:00",
+		policyno: "108",
+		productcode: "01",
+		productdesc: "Allsure South Africa",
+		totalpremium: "1,085.09"
+	});
+
+	return next(null, result);
+};
+

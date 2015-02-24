@@ -16,8 +16,6 @@ exports.instantAnswer = function(filter, next) {
 
 		response.RelatedTopics.forEach(function(item) {
 
-			console.log(item);
-
 			var ddgResult = {
 				title: item.Text,
 				description: '',
