@@ -85,6 +85,8 @@ function calculateSuggestions() {
       }
     }
   });
+
+  console.log('suggestedOptions.length=', suggestedOptions.length);
 }
 
 function showSuggestions(hide) {
@@ -154,6 +156,17 @@ function initEvents() {
       console.log('no suggestions, no roles configured :( check the logged on user record on FB...');
       userOptions.resources = [];
     }
+
+    searchBarVal = searchBar.val();
+    if (
+        searchBarVal !== (nsPathInfo().service + ' > ' + nsPathInfo().resource)
+      ) {
+      console.log(searchBarVal);
+      console.log(nsPathInfo().service + ' > ' + nsPathInfo().resource);
+      console.log('bug!!!');
+      calculateSuggestions();
+      showSuggestions();  
+    }
   });
   //*************************************** FB ****************************************************
 
@@ -196,11 +209,12 @@ function initEvents() {
         searchBar.val(suggestedOptions[0]);
 
         if (key === 13) {
-          //the user hit enter
-          console.log('doo the enter baby!');
-          var url = nsData.request.url + '/nutshell/' + searchBar.val().replace(' > ', '/') + '.view?educateme=1';
-          console.log(url);
-          //nsRedirect({ url: url });
+          searchBarVal = searchBar.val();
+          if (searchBarVal !== (nsPathInfo().service + ' > ' + nsPathInfo().resource)) {
+
+            var url = nsData.request.url + '/nutshell/' + searchBar.val().replace(' > ', '/') + '?view=default';
+            nsRedirect({ url: url });
+          }
         }
 
         evt.preventDefault();
@@ -218,18 +232,28 @@ function initEvents() {
   });      
 
   searchBar.click(function() {
+    calculateSuggestions();
     searchBarVal = searchBar.val();
-    console.log(searchBarVal, '===', (nsPathInfo().service + ' > ' + nsPathInfo().resource) );
-    if (searchBarVal !== (nsPathInfo().service + ' > ' + nsPathInfo().resource) ) {
-      calculateSuggestions();
+    console.log(searchBarVal !== (nsPathInfo().service + ' > ' + nsPathInfo().resource));
+    console.log(suggestedOptions.length > 1);
+    if (searchBarVal !== (nsPathInfo().service + ' > ' + nsPathInfo().resource) && suggestedOptions.length > 1) {
+      console.log('showing the suggestions');
       showSuggestions();  
     }
   });
 
   searchBar.blur(function() {
     showSuggestions(false);
-    //searchBar.val(nsPathInfo().service + ' > ' + nsPathInfo().resource);
   });
+
+  $('.nsmenu > li > a').click(function() {
+    
+    var $this = $(this);
+    console.log($this);
+
+
+  });
+
   //*************************************** searchbar ****************************************************
 }
 

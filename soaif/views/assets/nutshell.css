@@ -77,6 +77,11 @@ background-color: #eee;
 background-color: #F2C314;
 border-color: #eee;
 }
+
+.btn-primary:focus, .btn-primary:hover {
+	background-color: #F2C314;
+	border-color: #eee;
+}
 /*
 .tabbable {
 	background-color: #FFF3CA;

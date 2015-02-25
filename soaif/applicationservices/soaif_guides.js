@@ -7,23 +7,27 @@ var fs = require('fs');
 var util = require('util');
 var path = require('path');
 
-function getGuideList(audience, next) {
+// function getGuideList(role, next) {
 
-	switch (audience.toLowerCase()) {
-		case 'admin':
-			break;
-		case 'rules':
-			break;
-		case 'governance':
-			break;
-		case 'user':
-		default:
-			tools.getFileList(process.cwd() + '/soaif/views/guides/users', function(err, list) {
-				next(err, list);
-			});
-			break;
-	}
-}
+// 	// switch (role.toLowerCase()) {
+// 	// 	case 'admin':
+// 	// 		break;
+// 	// 	case 'rules':
+// 	// 		break;
+// 	// 	case 'governance':
+// 	// 		break;
+// 	// 	case 'user':
+// 	// 	default:
+// 	// 		tools.getFileList(process.cwd() + '/soaif/views/guides/users', function(err, list) {
+// 	// 			next(err, list);
+// 	// 		});
+// 	// 		break;
+// 	// }
+
+// 	tools.getFileList(process.cwd() + '/soaif/views/guides/' + role, function(err, list) {
+// 		return next(err, list);
+// 	});
+// }
 
 module.exports = {
 
@@ -32,7 +36,7 @@ module.exports = {
 		
 		try {
 			//******************* setup filters....
-			var audience = nsReq.getParameter('audience', {
+			var role = nsReq.getParameter('role', {
 				typeName: 'list',
 				description: 'service type to retrieve',
 				defaultValue: 'user',
@@ -49,9 +53,9 @@ module.exports = {
 			var result = tools.collection('guide');	//=== generate point for add service stub
 			var guidePath = tools.getURL(nsReq.req, { excludePath: true });
 
-			tools.getFileList(process.cwd() + '/soaif/views/guides/' + audience, function(err, list) {
+			tools.getFileList(process.cwd() + '/soaif/views/guides/' + role, function(err, list) {
 				list.each(function(ctr, item) {
-					result.add({ name: item.name, url: guidePath + '/guides/' + audience + '/' + item.name });
+					result.add({ name: item.name, url: guidePath + '/guides/' + role + '/' + item.name });
 				});
 
 				nsReq.response.data = result.data();
@@ -61,9 +65,7 @@ module.exports = {
 			});
 		}
 		catch (err) {
-			console.log(err);
 			nsReq.response.status = 'invalid';
-			//nsReq.setError(err);
 			next(err, nsReq);
 		}
 	}

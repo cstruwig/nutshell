@@ -1,0 +1,53 @@
+[ {
+  "ops" : "r",
+  "path" : "entertainment/artists",
+  "role" : "user"
+}, {
+  "ops" : "r",
+  "path" : "entertainment/movies",
+  "role" : "user"
+}, {
+  "ops" : "r",
+  "path" : "insurance/claims",
+  "role" : "user"
+}, {
+  "ops" : "r",
+  "path" : "insurance/policies",
+  "role" : "user"
+}, {
+  "ops" : "r",
+  "path" : "orchestrationdemo/infatuations",
+  "role" : "user"
+}, {
+  "ops" : "r",
+  "path" : "soaif/guides",
+  "role" : "user"
+}, {
+  "ops" : "r",
+  "path" : "soaif/metrics",
+  "role" : "user"
+}, {
+  "ops" : "r",
+  "path" : "soaif/resources",
+  "role" : "user"
+}, {
+  "ops" : "r",
+  "path" : "soaif/roles",
+  "role" : "user"
+}, {
+  "ops" : "ru",
+  "path" : "soaif/security",
+  "role" : "admin"
+}, {
+  "ops" : "r",
+  "path" : "soaif/services",
+  "role" : "user"
+}, {
+  "ops" : "r",
+  "path" : "weather/conditions",
+  "role" : "user"
+}, {
+  "ops" : "ru",
+  "path" : "websearch/results",
+  "role" : "demo"
+} ]

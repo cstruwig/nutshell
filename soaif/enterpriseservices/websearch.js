@@ -24,13 +24,8 @@ module.exports = {
 			defaultValue: 100,	
 			maxValue: 1000
 		});
-
-		//validate
-		//nsReq.validateParameters();
 		
 		//******************* process...
-		//setup search filter
-
 		var allPromise = ns.Q.all([ 
 			_searchGoogle(nsReq.filter), 
 			_searchDuckDuckGo(nsReq.filter)

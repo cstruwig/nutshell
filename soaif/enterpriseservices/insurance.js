@@ -15,12 +15,6 @@ exports.getClaims = function(nsReq, next) {
 		description: 'claim number to retrieve'
 	});
 
-	var policyNo = nsReq.getParameter('policyno', { 
-		typeName: 'number', 
-		mandatory: false, 
-		description: 'policy number of claims to retrieve',
-	});
-
 	var deferred = ns.Q.defer();
 
 	//******************* validate filters
@@ -28,7 +22,7 @@ exports.getClaims = function(nsReq, next) {
 	// 	return next(nsReq.education);
 	// }
 
-	if (nsReq.invalidFilter()) {
+	if (!nsReq.validFilter()) {
 		//return epty results
 		nsReq.response.data = result.data();
 		nsReq.response.status = 'invalid';
@@ -36,7 +30,7 @@ exports.getClaims = function(nsReq, next) {
 	} else {
 		//******************* process....		
 		//setup search filter
-		var filter = { ref: claimNo, policyNo: policyNo };
+		var filter = { ref: claimNo };
 		//get the data
 		tia.loadClaim(filter, function(err, claims) {
 			
@@ -61,16 +55,10 @@ exports.getPolicies = function(nsReq, next) {
 	var result = ns.tools.collection('policies');
 
 	//******************* setup filters....
-	var claimNo = nsReq.getParameter('claimno', { 
-		typeName: 'number', 
-		mandatory: true, 
-		description: 'claim number to retrieve'
-	});
-
 	var policyNo = nsReq.getParameter('policyno', { 
 		typeName: 'number', 
-		mandatory: false, 
-		description: 'policy number of claims to retrieve',
+		mandatory: true, 
+		description: 'policy number to retrieve',
 	});
 
 	var deferred = ns.Q.defer();
@@ -80,7 +68,7 @@ exports.getPolicies = function(nsReq, next) {
 	// 	return next(nsReq.education);
 	// }
 
-	if (nsReq.invalidFilter()) {
+	if (!nsReq.validFilter()) {
 		//return epty results
 		nsReq.response.data = result.data();
 		nsReq.response.status = 'invalid';
@@ -88,7 +76,7 @@ exports.getPolicies = function(nsReq, next) {
 	} else {
 		//******************* process....		
 		//setup search filter
-		var filter = { ref: policyNo, claimNo: claimNo };
+		var filter = { ref: policyNo };
 
 		//get the data
 		tia.loadPolicy(filter, function(err, policies) {

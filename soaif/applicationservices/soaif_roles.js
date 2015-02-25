@@ -29,8 +29,9 @@ module.exports = {
 
 			result.add({ name: 'user' });
 			result.add({ name: 'admin' });
-			result.add({ name: 'demo' });
-			result.add({ name: 'security' });
+			result.add({ name: 'rules' });
+			result.add({ name: 'governance' });
+			result.add({ name: 'monitoring' });
 
 	 		nsReq.response.data = result.data();
 	 		nsReq.response.status = 'valid';

@@ -10,11 +10,14 @@ function getDefaultValueForType(typeName) {
 		case 'bool': 
 			defaultValue = false;
 			break;
-		case 'integer': 
+		case 'number': 
 			defaultValue = -1;
 			break;
+		case 'list': 
+			defaultValue = '!error!';
+			break;
 		case 'date': 
-			defaultValue = new Date(1970, 1, 1);
+			defaultValue = Date.now(); //new Date(1970, 1, 1);
 			break;
 		case 'string':
 		default:
@@ -99,6 +102,7 @@ exports.init = function(req) {
 			modulePath: null,
 			module: {}
 		},
+		validInputs: true,
 		filter: {},
 		education: {},
 		resource: {
@@ -119,8 +123,8 @@ exports.init = function(req) {
 		addMessage: function(message) {
 			this._messages.push[message];
 		},
-		invalidFilter: function() {
-			return false;
+		validFilter: function() {
+			return this.validInputs;
 		},
 		getParameter: function(parameterName, attributes) {
 			var attributes = {
@@ -164,10 +168,10 @@ exports.init = function(req) {
 			var emptyParamOption = (typeof attributes.value === 'undefined' || attributes.value === '');
 
 			if (invalidListOption || emptyParamOption) {
-				console.log('defaulting value... [parameter=' + parameterName + ', invalidListOption=' + invalidListOption + ', emptyParamOption=' + emptyParamOption + ']');
+				//console.log('defaulting value... [parameter=' + parameterName + ', invalidListOption=' + invalidListOption + ', emptyParamOption=' + emptyParamOption + ']');
 				attributes.value = attributes.defaultValue;
 				if (attributes.mandatory) {
-					this.filter.valid = false;		//FIX! kep keywords or namespace them...
+					this.validInputs = false;		//FIX! keep keywords or namespace them...
 				}
 			}
 

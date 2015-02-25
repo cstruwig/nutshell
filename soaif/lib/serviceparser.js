@@ -54,9 +54,11 @@ exports.parse = function(nsReq, next) {
 					service.serviceType = 'compound';
 
 					//remove the 'get' and otjer CRUD prefixes for custom models
-					debug.log(nsReq.ref + ' compound service intricacies - before:' + nsReq.resource.functionName);
-					nsReq.resource.functionName = nsReq.resource.name;
-					debug.log(nsReq.ref + ' compound service intricacies - after:' + nsReq.resource.functionName);
+					if (nsReq.resource.functionName != 'getResources') {
+						debug.log(nsReq.ref + ' compound service intricacies - before:' + nsReq.resource.functionName);
+						nsReq.resource.functionName = nsReq.resource.name;
+						debug.log(nsReq.ref + ' compound service intricacies - after:' + nsReq.resource.functionName);
+					}
 				}
 				break;
 		}
@@ -88,6 +90,8 @@ exports.parse = function(nsReq, next) {
 						if (service.serviceType !== 'soaif') { //for soaif_resources
 							nutshellIt(service.module);
 						}
+
+						console.log(service.module);
 
 						return next(null, nsReq);
 					});

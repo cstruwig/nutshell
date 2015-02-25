@@ -14,7 +14,7 @@
       if (parent.length === 1) {
         return result;
       } else {
-        debugger;
+//        debugger;
       }
 
     } else {
@@ -31,7 +31,7 @@
 
     if (nsView && nsView.length > 0) {
       if (nsView.length === 0 || nsView.length > 1) {
-        debugger;
+        //debugger;
       } else {
         if (nsView.hasClass('nsView')) {
           return nsView;
@@ -75,6 +75,7 @@
   }
 
   this.nsModal = function(options) {
+
     var options = {
       message: options.message || 'hi...',
       messageHtml: options.messageHtml || '<p>' + options.message + '</p>',
@@ -84,26 +85,30 @@
       size: options.size || 'normal'
     }
 
+
     var $nsModal = $('#nsModal');
-    $nsModal.find('.modal-dialog').removeClass('modal-lg').removeClass('modal-sm');
+    $nsModal.find('.modal-dialog').removeClass('modal-lg').removeClass('modal-sm');   //HACK!
 
     switch (options.size) {
       case 'small':
         $nsModal.find('.modal-dialog').addClass('modal-sm');
         break;
       case 'large':
+      default:
         $nsModal.find('.modal-dialog').addClass('modal-lg');
         break;
-      // default:
-      //   break;
     }
-    //'<strong>nut</strong>shell > ' + parsePath(nsData).service + ' > ' + 'resourceName'
-
-    //$('#your-modal').removeData('bs.modal');
-    var title = '<strong>nut</strong>shell > ' + parsePath(nsData).service + ' > ' + 'resourceName';
+    
     $('#nsModalTitle').html(options.titleHtml);
-    $nsModal.find('.modal-body').html('').append($(options.messageHtml));
-    $nsModal.modal('show');
+
+    if (options.buttons === 'default') {
+        options.buttons = $('<button type="button" class="btn btn-default" data-dismiss="modal">cancel</button>');
+    }
+
+    $nsModal.find('.modal-body').empty().append($(options.messageHtml));
+    $nsModal.find('.modal-footer').empty().append(options.buttons);
+
+    return $nsModal.modal('show');
   }
 
 }());

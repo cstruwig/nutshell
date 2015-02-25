@@ -114,7 +114,7 @@ exports.getResources = function(nsReq, next) {
 			if (!!(obj && obj.constructor && obj.call && obj.apply) ) { //} && name !== 'getResources') {
 				//its a function, now lets check for the CRUDs
 
-				if (name.startsWith('get') || name.startsWith('add') || name.startsWith('update') || name.startsWith('delete')) {
+				if (name.startsWith('get') || name.startsWith('add') || name.startsWith('update') || name.startsWith('delete') || (nsReq.service.serviceType === 'compound')) {
 					var resource = name.replace('get', '').replace('add', '').replace('udpate', '').replace('delete', '').toLowerCase();
 
 					if (nameFilter && resource.includes(nameFilter)) {

@@ -8,10 +8,13 @@ var google = require('google');
 exports.search = function(filter, next) {
 
 	var query = filter.query || 'i must work hard because';
-	var maxResults = filter.maxResults || 50;		//FIX! filter.extract()...
+	var maxResults = filter.maxResults || 50;
 	
 	var result = tools.collection('results');
-	var nextCounter = 0;
+
+//***************************************************************************************************
+// return next(null, result);		//bypass search logic below and return...
+//***************************************************************************************************
 
 	google.resultsPerPage = 25;
 	google(query, function(err, next2, links) {
@@ -24,15 +27,11 @@ exports.search = function(filter, next) {
 				link: links[i].link
 			};
 
-			result.add(googleResult);
+			if (googleResult.link !== null) {
+				result.add(googleResult);	
+			}
 		}
 
-		//run 4 times
-		//FIX! limit as per maxResults
-		// if (nextCounter < 4) {
-		// 	nextCounter += 1;
-			//if (next2) next2();
-			return next(null, result);
-		//}
+		return next(null, result);
 	});
 };

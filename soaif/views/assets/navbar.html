@@ -22,11 +22,22 @@
 						</ul>
 					</form>
 					<ul class="nav navbar-nav pull-right">
-						<button type="button" class="btn btn-primary navbar-btn"><span class="glyphicon glyphicon-star" aria-hidden="true"></span><span class="badge">3</span></button>
+						<div class="btn-group">
+							<button type="button" class="btn btn-primary navbar-btn pull-right" data-toggle="dropdown" aria-expanded="false"><span class="glyphicon glyphicon-star" aria-hidden="true"></span></button>
+							<ul class="nsmenu dropdown-menu pull-right" role="menu">
+								<li><a class="myViews" href="#">my views</a></li>
+								<li><a class="updates" href="#">updates <span class="badge">3</span></a></li>
+								<li class="divider"></li>
+								<li class="disabled"><a class="reportBug" href="#">report a bug</a></li>
+								<li class="disabled"><a class="requestChange" href="#">request a change</a></li>
+								<li class="divider"></li>
+								<li class="disabled"><a href="#">sign out (<span class="text-decoration: underline;">hardus@sunfork.com</span>)</a></li>
+							</ul>
+						</div>
 					</ul>
 				</div>
 			</nav>
-			
+
 			<div class="modal fade" id="nsModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 				<div class="modal-dialog">
 					<div class="modal-content">
@@ -40,7 +51,7 @@
 							BODY! B o d eeeeeeeeee!
 						</div>
 						<div class="modal-footer">
-							 <button type="button" class="btn btn-default" data-dismiss="modal">cancel</button> <button type="button" id="invokeService" class="btn btn-primary">invoke</button>
+							  <button type="button" class="btn btn-primary">invoke</button>
 						</div>
 					</div>
 					

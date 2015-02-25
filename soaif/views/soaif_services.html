@@ -151,14 +151,14 @@
 					var resourceUrl = url + serviceName + '/' + resource.name + '?educateme=1';
 					var resourceLink = $('<li class="nsResource"><a href="#">' + resource.name + '</a></li>');
 						
-					resourceLink.find('a').hover(
-						function() {
-							$('#searchBar').val(serviceName + ' > ' + resource.name);
-						}, 
-						function() {
-							$('#searchBar').val(currentPath);
-						}
-					).click(function() {
+					// resourceLink.find('a').hover(
+					// 	function() {
+					// 		$('#searchBar').val(serviceName + ' > ' + resource.name);
+					// 	}, 
+					// 	function() {
+					// 		$('#searchBar').val(currentPath);
+					// 	}
+					resourceLink.find('a').click(function() {
 						if (!resource.education) {
 							$.get(resourceUrl, function(data) {
 								
@@ -217,14 +217,14 @@
 						var resourceUrl = url + service.name + '/resources';
 						var serviceLink = $('<li class="nsService"><a href="#"><img style="width: 15px;" src="../../assets/' + service.type + '.png" />' + service.name.replace(/.js/gi, '') + '</a></li>');
 
-						serviceLink.find('a').hover(
-							function() {
-								$('#searchBar').val($(this).text() + ' > ');
-							}, 
-							function() {
-								$('#searchBar').val(currentPath);
-							}
-						).click(function() {
+						// serviceLink.find('a').hover(
+						// 	function() {
+						// 		$('#searchBar').val($(this).text() + ' > ');
+						// 	}, 
+						// 	function() {
+						// 		$('#searchBar').val(currentPath);
+						// 	}
+						resourceLink.find('a').click(function() {
 
 							//$('#resources-tab')
 

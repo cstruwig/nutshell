@@ -11,14 +11,14 @@ var util = require('util');
 
 module.exports = {
 	getServices: function(nsReq, next) {
-		
+		console.log(nsReq.filter);
 		var path;
 		var showSOAIF = false;					//this is used to in/exclude the SOAIF_ prefix in the results
 
 		try {
 			//******************* setup filters....
 			var type = nsReq.getParameter('type', {
-				typeName: 'string',
+				typeName: 'list',
 				description: 'service type to retrieve',
 				defaultValue: 'enterprise',
 				options: ['application', 'enterprise', 'compound', 'soaif']
@@ -27,7 +27,7 @@ module.exports = {
 			var name = nsReq.getParameter('name', {
 				typeName: 'string',
 				description: 'partial service name to search',
-				defaultValue: ''
+				mandatory: false
 			});
 
 			//validate
@@ -62,8 +62,8 @@ module.exports = {
 				//console.log(util.inspect(item, { showHidden: true, depth: null }));
 				var file = fs.lstatSync(path + item);
 
-				var tempParams = nsReq.filter;	//.parameters;
-				tempParams.name = item.replace('.js', '');
+				// var tempParams = nsReq.filter;	//.parameters;
+				// tempParams.name = item.replace('.js', '');
 
 				//main result
 				var service = { 

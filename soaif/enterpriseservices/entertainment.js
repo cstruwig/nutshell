@@ -28,7 +28,7 @@ exports.getArtists = function(nsReq, next) {
 	// 	return next(nsReq.education);
 	// }
 
-	if (nsReq.invalidFilter()) {
+	if (!nsReq.validFilter()) {
 		//return epty results
 		nsReq.response.data = ns.tools.collection('artists');
 		nsReq.response.status = 'invalid';
@@ -73,7 +73,7 @@ exports.getMovies = function(nsReq, next) {
 	var deferred = ns.Q.defer();
 
 	//******************* validate filters
-	if (nsReq.invalidFilter()) {
+	if (!nsReq.validFilter()) {
 		nsReq.response.data = ns.tools.collection('movies');
 		nsReq.response.status = 'invalid';
 		deferred.resolve(nsReq);
