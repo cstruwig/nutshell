@@ -134,8 +134,15 @@ var nsHTML = {
     
     if (pKey)
       r = r + key + pKey.replace(/[": ]/g, '') + '</span>: ';
-    if (pVal)
+    if (pVal) {
       r = r + (pVal[0] == '"' ? str : val) + pVal + '</span>';
+
+      // if (pVal.startsWith('"http')) {
+      //   console.log(pVal);
+      //   pVal = '<a href="' + pVal + '">' + pVal + '</a>';
+      // }
+      
+    }
 
     return r + (pEnd || '');
   },

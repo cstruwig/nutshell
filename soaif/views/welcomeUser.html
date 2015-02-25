@@ -184,6 +184,11 @@
 				data.resource.forEach(function(resource) {
 
 					var resourceUrl = url + serviceName + '/' + resource.name;
+					console.log('kwagga', serviceName);
+					// if (serviceName === 'soaif') {
+					// 	resourceUrl = url + 'soaif_' + serviceName + '/' + resource.name;
+					// }
+
 					var resourceLink = $('<li class="nsResource"><a href="#">' + resource.name + '</a></li>');
 						
 					// resourceLink.find('a').hover(
@@ -205,7 +210,7 @@
 								queryString += $item.data('name') + '=' + $item.val() + '&';
 							});
 
-							window.open(resourceUrl + '?' + queryString);
+							window.open(resourceUrl + '.view?' + queryString);
 						}
 
 						var path = serviceName + ' > ' + resource.name;						
@@ -262,8 +267,14 @@
 					data.services.service.forEach(function(service) {
 
 						var resourceUrl = url + service.name + '/resources';
+						
 						var imageSize = serviceType === 'compound' ? 25 : 15;
 						var serviceLink = $('<li class="nsService"><a href="#"><img style="width: ' + imageSize + 'px;" src="../../assets/' + service.type + '.png" />' + service.name.replace(/.js/gi, '') + '</a></li>');
+
+						if (serviceType === 'soaif') {
+							//serviceLink.data('soaif');
+							resourceUrl = url + 'soaif/resources';
+						}
 
 						// serviceLink.find('a').hover(
 						// 	function() {
@@ -274,10 +285,10 @@
 						// 	}
 						serviceLink.find('a').click(function() {
 
-							//$('#resources-tab')
-
 							if (!service.resources) {
-								console.log(resourceUrl);
+								console.log('kyk man', resourceUrl);
+
+
 								$.get(resourceUrl, function(data) {
 									if (!data || !data.resources) {
 										console.log('die vark gebeur hier!!');

@@ -13,41 +13,52 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css" />
 		<link rel="stylesheet" href="../../assets/nutshell.css" />
-		<style type="text/css">
-		pre.nsJSON {
-		  max-width: none;
-		  max-height: none;
-		}
-		</style>
 	</head>
 	<body>
 		<div class="container" id="nsView">
 			<div class="row clearfix">
 				<div class="col-md-12 column">
-					<!-- <h3><small><strong>nut</strong>shell result viewer</small></h3> -->
-					<div class="container">
-							<pre class="nsJSON" id="nsData">
-						</pre>
+					<div class="jumbotron">
+						<h3 align="center">
+							"WE LOVE YOU MICHAEL !!!"
+						</h3>
 					</div>
-
 				</div>
-			</div>	
+			</div>
+			<div class="row clearfix">
+				<div class="col-md-12 column">
+				</div>
+			</div>
+
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>
+							&nbsp;
+						</th>
+						<th>
+							name
+						</th>
+						<th>
+							image
+						</th>
+					</tr>
+				</thead>
+				<tbody id="artistTable">
+				</tbody>
+			</table>
+
 		</div>
+
 		<script type="text/javascript">
 			/** #nsData */
+			$('document').ready(nutshell({ navbar : true }, function() {
 
-			$('document').ready(nutshell({ navbar: true }, function() {
-				var results = nsHTML.printJSON(nsData);
-
-				//console.log(results);
-				// results.find('.json-string').each(function(ctr, item) {
-				// 	console.log(item);
-				// 	// if (item.startsWith("http")) {
-				// 	// 	item.
-				// 	// }
-				// });
-
-				ns('#nsData').html(results);
+				nsData.artists.artist.forEach(function(item) {
+					var artistRow = $('<tr><td><img style="max-width: 100px; max-height: 100px" src="' + item.image + '" /></td><td>' + item.name + '</td><td><a target="_blank" href="' + item.url + '">read more...</a></td></tr>');
+					$('#artistTable').append(artistRow);
+				});
+					
 			}));
 		</script>
 	</body>

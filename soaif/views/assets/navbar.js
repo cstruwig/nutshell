@@ -247,11 +247,27 @@ function initEvents() {
   });
 
   $('.nsmenu > li > a').click(function() {
-    
     var $this = $(this);
-    console.log($this);
 
+    if ($this.hasClass('myViews')) {
+      var viewsHtml = '';
+      var url = 'http://localhost:8080/nutshell/soaif/links?account=' + nsData.request.user.account;
+      $.get(url, function(data) {
+        data.links.link.forEach(function(item) {
+          viewsHtml += '<a href="' + item.url + '" class="btn btn-xs btn-block btn-default" type="button">' + item.description + '</a><br>';
+        });
 
+        nsModal({
+          titleHtml: '<span>my <strong>nut</strong>shell views</span>',
+          messageHtml: viewsHtml,
+          buttons: [
+            $('<button type="button" class="btn btn-default" data-dismiss="modal">cancel</button>')
+          ]
+        });
+      });
+      
+      
+    }
   });
 
   //*************************************** searchbar ****************************************************
