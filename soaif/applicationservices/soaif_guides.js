@@ -51,7 +51,7 @@ module.exports = {
 			
 			//get the data
 			var result = tools.collection('guide');	//=== generate point for add service stub
-			var guidePath = tools.getURL(nsReq.req, { excludePath: true });
+			var guidePath = tools.getURL(nsReq.req, { excludePath: true }) + '/nuthshell';
 
 			tools.getFileList(process.cwd() + '/soaif/views/guides/' + role, function(err, list) {
 				list.each(function(ctr, item) {

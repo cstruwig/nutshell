@@ -138,7 +138,7 @@ function initUI() {
   searchBar.val(searchBarVal);
   //searchBar.attr('placeholder', request.service + ' > ' + request.resource);
   searchBar.attr('placeholder', 'service > resource');
-  searchBar.focus();
+  //searchBar.focus();
 }
 
 function initEvents() {
