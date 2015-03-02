@@ -13,6 +13,12 @@ module.exports = {
 				mandatory: true,
 				description: 'place name for weather condition search'
 			});
+
+			var xyz = nsReq.getParameter('xyz', { 
+				typeName: 'string', 
+				mandatory: true,
+				description: 'enter xyz'
+			});
 			
 			//validate
 			//if (!nsReq.validInputs) {

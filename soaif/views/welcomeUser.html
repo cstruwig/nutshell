@@ -323,14 +323,48 @@
 				var url = 'http://localhost:8080/nutshell/websearch/results?query=' + $('#websearchquery').val();
 				$.get(url, function(data) {
 					if (data) {
-						var searchResults = '';
+						$('#searchResults').empty();
+						searchResults = '';
 						var ctr = 0;
 						data.results.result.forEach(function(item) {
 							ctr++;
-							searchResults += '<div><a target="_blank" href="' + (item.url || 'http://www.sunfork.com') + '">' + ctr + ') ' + item.name + '</a><br><span >' + item.description || 'no description' + '</span><br><div>';
+
+							var url = (item.url || 'http://www.sunfork.com/#news');
+							var parts = url.replace('http://', '').replace('https://', '').split('.');
+							// console.log('url', url);
+							// console.log('parts...', parts[0], parts[1], parts[2], parts.lenght + ' in total');
+
+							//parts[0] = parts[0].replace('www.', '');
+							if (parts[0] === 'www') {
+								parts.splice(0, 1);
+								// console.log('REVISED parts...', parts[0], parts[1], parts[2]);
+							} 
+							// console.log('klaar');		//wont work for www22.xxx
+
+							var friendlyUrl = (parts[0] + '.' + parts[1]);
+
+							var searchResults = $('<div><a alt="' + item.description + '" target="_blank" href="' + url + '">' + ctr + ') ' + item.name.substring(0, 55) + '</a> <span class="pull-right">' + friendlyUrl.substring(0, 30) + '</span><div>');
+
+							searchResults.find('>a').click(function(evt) {
+								evt.preventDefault();
+								console.log($(this).attr('href'));
+
+								var external = $('<div class="container"><iframe style="width: ' + searchResults.parent().css('width') + '" /></div>');
+								external.find('>iframe').attr('src', item.url);
+
+								nsModal({
+									titleHtml: friendlyUrl,
+									messageHtml: external.get(),
+									buttons: [
+										$('<button type="button" class="btn btn-default" data-dismiss="modal">close</button>')
+									]
+								});
+							});
+
+							$('#searchResults').append(searchResults);
 						});
 
-						$('#searchResults').html(searchResults);
+						
 					}
 				});
 			});

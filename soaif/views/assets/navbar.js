@@ -242,9 +242,9 @@ function initEvents() {
     }
   });
 
-  searchBar.blur(function() {
-    showSuggestions(false);
-  });
+  // searchBar.blur(function() {
+  //   showSuggestions(false);
+  // });
 
   $('.nsmenu > li > a').click(function() {
     var $this = $(this);
