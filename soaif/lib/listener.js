@@ -11,9 +11,6 @@ exports.setupRequest = function(req, next) {
 
 	var nsRequest = require('./nsrequest');
 	var nsReq = nsRequest.init(req);
-
-	//nsReq.host = options.host || 'n/a';
-	
 	nsRequest.parse(nsReq, function(err, result) {
 		if (err) {
 			next(err);

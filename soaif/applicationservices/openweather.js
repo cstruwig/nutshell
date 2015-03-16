@@ -5,7 +5,7 @@ var tools = ns.tools;
 
 var apiUrl = 'http://api.openweathermap.org/data/2.5/weather?';
 
-exports.getCityForecase = function(filter, next) {
+exports.getCityForecast = function(filter, next) {
 
 	var result = tools.collection('conditions');
 	var url = apiUrl + 'q=' + filter.city || 'durban';
@@ -31,7 +31,7 @@ exports.getCityForecase = function(filter, next) {
 					description: conditions.weather.description,
 					temperature: conditions.main,
 					wind: conditions.wind
-				});	
+				});
 			}
 
 			return next(null, result);

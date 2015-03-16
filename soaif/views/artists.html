@@ -55,7 +55,7 @@
 			$('document').ready(nutshell({ navbar : true }, function() {
 
 				nsData.artists.artist.forEach(function(item) {
-					var artistRow = $('<tr><td><img style="max-width: 100px; max-height: 100px" src="' + item.image + '" /></td><td>' + item.name + '</td><td><a target="_blank" href="' + item.url + '">read more...</a></td></tr>');
+					var artistRow = $('<tr><td><img style="max-width: 100px; max-height: 100px" src="' + item.image + '" /></td><td>	' + item.name + '</td><td><a target="_blank" href="' + item.url + '">read more...</a></td></tr>');
 					$('#artistTable').append(artistRow);
 				});
 					

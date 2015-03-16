@@ -29,7 +29,7 @@ function getDefaultValueForType(typeName) {
 }
 
 exports.parse = function(nsReq, next) {
-
+	
 	//check service exists
 	require('./resourceparser').parse(nsReq, function(err, nsReq) {
 		if (err) {
@@ -127,14 +127,23 @@ exports.init = function(req) {
 			return this.validInputs;
 		},
 		getParameter: function(parameterName, attributes) {
+
+			// console.log('parameterName=' + parameterName + '!');
+			// console.log('attributes.typeName=' + attributes.typeName + '!');
+			// console.log('attributes.mandatory=' + attributes.mandatory + '!');
+			// console.log('attributes.options=' + attributes.options + '!');
+			// console.log('attributes.defaultValue=' + attributes.defaultValue + '!');
+			// console.log('getDefaultValueForType(attributes.inputType)=' + getDefaultValueForType(attributes.typeName) + '!');
+			// console.log('req.params[parameterName]=' + req.params[parameterName] + '!');
+
 			var attributes = {
 				name: parameterName.toLowerCase(),
 				inputType: attributes.typeName || 'string',
 				mandatory: attributes.mandatory || false,
 				options: attributes.options || [],
 				description: attributes.description || 'input value',
-				defaultValue: attributes.defaultValue || getDefaultValueForType(this.inputType), //typeName),
-				value: req.params[parameterName] || attributes.value || '',
+				defaultValue: attributes.defaultValue || getDefaultValueForType(attributes.typeName),
+				value: req.params[parameterName] || attributes.defaultValue || ''
 				//maxValue: attributes.max || 5000
 			}
 

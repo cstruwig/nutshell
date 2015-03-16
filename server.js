@@ -1,7 +1,9 @@
+//look at:
+//require('heapdump'); - heapdump.writeSnapshot();
+//slc simple cluster tool
 
-//if (process.env.NODE_ENV !== 'production'){
 require('longjohn');
-//}
+
 
 var restify = require('restify');
 var ns = require('./soaif/lib');		//require('nuthselljs');
@@ -22,6 +24,7 @@ function serveResponse(nsReq, res, options, next) {
 
 		//modify response for request options eg. educateme...
 		if (nsReq) {
+
 			if (nsReq.options.educateme) {
 				console.log('...about to school your ass!');
 				nsReq.response.data.education = nsReq.education;
@@ -69,10 +72,8 @@ function serveResponse(nsReq, res, options, next) {
 			content = content.replace(contentLengthPlaceHolder, content.length);
 		}
 
-
-		
-		
 		res.writeHead(code, {
+			'Access-Control-Allow-Origin': '*',
 			'Content-Length': Buffer.byteLength(content),
 			'Content-Type': contentType
 		});
@@ -89,9 +90,9 @@ function serveResponse(nsReq, res, options, next) {
 
 function processRequest(req, res, next) {
 	try {
-		
 		listener.setupRequest(req, function(err, nsReq) {
 			if (err) {
+
 				debug.log(req.id() + ' failed to parse request');
 				ns.metrics.addCounter('badRequestReceived');
 				serveResponse(nsReq, res, { content: 'INVALID_REQUEST' }, function(err) {			//...unsupported protocol (unauthorized, or unknown path)
@@ -159,10 +160,10 @@ var middleware = function(options) {
 	
 	function _middleware(req, res, next) {
 		console.log(req.id() + ' request received ' + req.path() + ' (serving as ' + options + ')');
-		//ns.metrics.addCounter(req.path());
-
+		ns.metrics.addRequest(req.path(), function(err, inserted) {
+			console.log('sssdb!!', req.path());	
+		});
 	 	return (next());	
-		
 	}
 
 	return (_middleware);
@@ -235,3 +236,6 @@ server.on('InternalError', errorRequest);
 server.listen(8080, '127.0.0.1', function() {
 	console.log('nutshell RESTful listener started...\naccepting requests @ %s\n', server.url);
 });
+
+
+

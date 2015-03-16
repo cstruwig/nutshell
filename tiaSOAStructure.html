@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<link rel="shortcut icon" href="/favicon.ico?v=1" />
+		<title>nutshell</title>
+		<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+		<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+		<script src="https://cdn.firebase.com/js/client/2.1.2/firebase.js"></script>
+		<script src="../../assets/nutshell.js?v=1"></script>
+		<script src="../../assets/navbar.js?v=1"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css" />
+		<link rel="stylesheet" href="../../assets/nutshell.css" />
+	</head>
+	<body>
+		<div class="container" id="nsView">
+			<div class="row clearfix">
+				<div class="col-md-12 column">
+					<div class="jumbotron">
+						<h1>
+							<strong>nut</strong>shell
+						</h1>
+						<p>
+							<strong>nut</strong>shell puts you in control... <p>building applications to expose business services is time-consuming and expensive. it requires implementing standard connectivity and security on top of business logic, and designing for scalability.</p>
+						</p>
+						<p>
+							<a class="btn btn-primary btn-large readMore" href="#">hide this</a>
+						</p>
+					</div>
+					
+					<div class="row clearfix">
+						<div class="col-md-6 column">
+							<div class="tabbable" id="tabs-979518">
+
+								<a class="disabled btn btn-primary btn-small pull-right" href="#">request a service</a>
+								<ul class="nav nav-tabs">
+									<li class="active">
+										<a id="compound-services-tab" href="#panel-compound" data-toggle="tab">compound</a>
+									</li>
+									<li>
+										<a href="#panel-enterprise" data-toggle="tab">enterprise</a>
+									</li>
+									<li>
+										<a href="#panel-application" data-toggle="tab">application</a>
+									</li>
+									<li>
+										<a href="#panel-soaif" data-toggle="tab">soaif</a>
+									</li>
+								</ul>
+								<div class="tab-content">
+									<div class="tab-pane active" id="panel-compound">
+										<br>
+										<div id="compoundServices"></div>
+									</div>
+									<div class="tab-pane" id="panel-enterprise">
+										<br>
+										<div id="enterpriseServices"></div>
+									</div>
+									<div class="tab-pane" id="panel-application">
+										<br>
+										<div id="applicationServices"></div>
+									</div>
+									<div class="tab-pane" id="panel-soaif">
+										<br>
+										<div id="soaifServices"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6 column">
+
+							<div class="tabbable" id="tabs-97951800000">
+
+								<!-- <a class="btn btn-primary btn-small pull-right" href="#">help</a> -->
+								<ul class="nav nav-tabs">
+									<li class="active">
+										<a id="resources-tab" href="#panel-resources" data-toggle="tab">resources</a>
+									</li>
+								</ul>
+								<div class="tab-content">
+									<div class="tab-pane active" id="panel-resources">
+										<div class="col-md-2 column">
+											<h2>
+												<span class="glyphicon glyphicon-menu-right"></span>
+											</h2>
+										</div>
+										<div class="col-md-10 column">
+											<br>
+										<div class="resourceList">
+										</div>
+										
+											
+										</div>
+									</div>
+								
+								</div>
+							</div>
+							
+						</div>
+
+						<div class="row clearfix">
+							<div class="col-md-12 column">
+								<div class="page-header">
+									<h1><small>what the professionals say...</small></h1>
+								</div>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-md-6 column">
+								<blockquote>
+									<p>
+										<strong>nut</strong>shell saved my life on numerous ocasions.<br>2000 thumbs up!
+									</p> <small>Stevie Wonder</small>
+								</blockquote>
+								<blockquote>
+									<p>
+										this <strong>nut</strong>shell thing is grrrrreat hey...
+									</p> <small>Bakkies Botha</small>
+								</blockquote>
+								<blockquote>
+									<p>
+										i use <strong>nut</strong>shell to run ALL my companies
+									</p> <small>Bill Gates</small>
+								</blockquote>
+							</div>
+							<div class="col-md-6 column">
+								<div class="panel panel-default">
+									<div class="panel-heading">
+										<h3 class="panel-title">
+											convenient web search
+										</h3>
+										<div class="pull-right">
+											<input type="text" id="websearchquery" placeholder="search query" value="how to demo">
+											<a id="websearchbutton" class="btn btn-primary btn-xs" href="#">search</a>
+										</div>
+									</div>
+									<div id="searchResults" class="panel-body">
+										<span>enter a query and click search</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+			/** #nsData */
+
+			var nsCache = { serviceType: {} };
+			var currentPath = nsData.request.path.split('/').splice(0, 2).join(' > ');
+			var url = 'http://localhost:8080/nutshell/';			//FIX! get this from nsData.request!
+
+			function populateEducation(education) {
+				
+				var educationHtml = $('<form></form>');
+
+				var ctr = 0;
+				for(var key in education) {
+					var input = education[key];
+					var inputHtml = '<div class="form-group">';
+					inputHtml += '<label for="input' + key + ctr + '" class="control-label">' + key + '</label>';
+					inputHtml += '<input type="text" data-name="' + key + '" placeholder="' + input.description + '" class="nsInput form-control" id="input' + key + ctr + '" />';
+					inputHtml += '</div>';
+
+					educationHtml.append(inputHtml);					
+				}
+
+				return educationHtml.html();
+			}
+
+			function populateResources(data, serviceName) {
+
+				var ul = $('<ul class="noBullets"></ul>');
+				$('.resourceList').html(ul);
+
+				if (!data || !data.resource) {
+					console.log('satan dwells on this page...');
+				}
+
+				data.resource.forEach(function(resource) {
+
+					var resourceUrl = url + serviceName + '/' + resource.name;
+					console.log('kwagga', serviceName);
+					// if (serviceName === 'soaif') {
+					// 	resourceUrl = url + 'soaif_' + serviceName + '/' + resource.name;
+					// }
+
+					var resourceLink = $('<li class="nsResource"><a href="#">' + resource.name + '</a></li>');
+						
+					// resourceLink.find('a').hover(
+					// 	function() {
+					// 		$('#searchBar').val(serviceName + ' > ' + resource.name);
+					// 	}, 
+					// 	function() {
+					// 		$('#searchBar').val(currentPath);
+					// 	}
+					resourceLink.find('a').click(function() {
+
+						function invokeService() {
+							//var $form = $('nsModal > .modal-dialog > .modal-content > .modal-body');
+
+							var queryString = '';
+
+							$('.nsInput').each(function(ctr, item) {
+								var $item = $(item);
+								queryString += $item.data('name') + '=' + $item.val() + '&';
+							});
+
+							window.open(resourceUrl + '.view?' + queryString);
+						}
+
+						var path = serviceName + ' > ' + resource.name;						
+
+						if (!resource.education) {
+							console.log('loading the education');
+							
+							$.get(resourceUrl + '?educateme=1', function(data) {
+						
+								resource.education = data.education;
+								resource.educationHtml = populateEducation(resource.education);
+								delete resource.education.request;
+
+								nsModal({
+									titleHtml: '<span><strong>nut</strong>shell > ' + path + '</span>',
+									messageHtml: resource.educationHtml,
+									buttons: [
+										$('<button type="button" class="btn btn-default" data-dismiss="modal">cancel</button>'),
+										$('<button type="button" data-dismiss="modal" class="btn btn-primary">invoke</button>').click(function() {
+											invokeService();
+										})
+									]
+								});
+							});							
+						} else {
+							nsModal({
+								titleHtml: '<span><strong>nut</strong>shell > ' + path + '</span>',
+								messageHtml: resource.educationHtml,
+								buttons: [
+									$('<button type="button" class="btn btn-default" data-dismiss="modal">cancel</button>'),
+									$('<button type="button" data-dismiss="modal" class="btn btn-primary">invoke</button>').click(function() {
+										invokeService();
+									})
+								]
+							});
+						}
+					});
+
+				 	ul.append(resourceLink);
+				});
+				//$('.resourceList').html(JSON.stringify(data));
+			}
+
+			function listServices(serviceType, parent) {
+
+				$.get(url + 'soaif/service?type=' + serviceType, function(data) {
+
+					nsCache.serviceType[serviceType] = data;
+					delete nsCache.serviceType[serviceType].request;
+
+					var ul = $('<ul class="noBullets"></ul>');
+					$('#' + serviceType + 'Services').append(ul);
+
+					data.services.service.forEach(function(service) {
+
+						var resourceUrl = url + service.name + '/resources';
+						
+						var imageSize = serviceType === 'compound' ? 25 : 15;
+						var serviceLink = $('<li class="nsService"><a href="#"><img style="width: ' + imageSize + 'px;" src="../../assets/' + service.type + '.png" />' + service.name.replace(/.js/gi, '') + '</a></li>');
+
+						if (serviceType === 'soaif') {
+							//serviceLink.data('soaif');
+							resourceUrl = url + 'soaif/resources';
+						}
+
+						// serviceLink.find('a').hover(
+						// 	function() {
+						// 		$('#searchBar').val($(this).text() + ' > ');
+						// 	}, 
+						// 	function() {
+						// 		$('#searchBar').val(currentPath);
+						// 	}
+						serviceLink.find('a').click(function() {
+
+							if (!service.resources) {
+								console.log('kyk man', resourceUrl);
+
+
+								$.get(resourceUrl, function(data) {
+									if (!data || !data.resources) {
+										console.log('die vark gebeur hier!!');
+									}
+									service.resources = data.resources;
+									populateResources(service.resources, service.name);
+								});
+							} else {
+								console.log('reasources in cache');
+								populateResources(service.resources, service.name);
+							}
+						});
+
+						ul.append(serviceLink);
+					});
+				});
+			}
+
+			$('document').ready(nutshell({ navbar : true }, function() {
+				listServices('compound');
+				listServices('enterprise');
+				listServices('application');
+				listServices('soaif');
+			}));
+
+			$('.readMore').click(function() {
+				$('.jumbotron').hide();
+			});
+
+			$('#websearchbutton').click(function(evt) {
+				evt.preventDefault();
+				var url = 'http://localhost:8080/nutshell/websearch/results?query=' + $('#websearchquery').val();
+				$.get(url, function(data) {
+					if (data) {
+						$('#searchResults').empty();
+						searchResults = '';
+						var ctr = 0;
+						data.results.result.forEach(function(item) {
+							ctr++;
+
+							var url = (item.url || 'http://www.sunfork.com/#news');
+							var parts = url.replace('http://', '').replace('https://', '').split('.');
+							// console.log('url', url);
+							// console.log('parts...', parts[0], parts[1], parts[2], parts.lenght + ' in total');
+
+							//parts[0] = parts[0].replace('www.', '');
+							if (parts[0] === 'www') {
+								parts.splice(0, 1);
+								// console.log('REVISED parts...', parts[0], parts[1], parts[2]);
+							} 
+							// console.log('klaar');		//wont work for www22.xxx
+
+							var friendlyUrl = (parts[0] + '.' + parts[1]);
+
+							var searchResults = $('<div><a alt="' + item.description + '" target="_blank" href="' + url + '">' + ctr + ') ' + item.name.substring(0, 55) + '</a> <span class="pull-right">' + friendlyUrl.substring(0, 30) + '</span><div>');
+
+							searchResults.find('>a').click(function(evt) {
+								evt.preventDefault();
+								console.log($(this).attr('href'));
+
+								var external = $('<div class="container"><iframe style="width: ' + searchResults.parent().css('width') + '" /></div>');
+								external.find('>iframe').attr('src', item.url);
+
+								nsModal({
+									titleHtml: friendlyUrl,
+									messageHtml: external.get(),
+									buttons: [
+										$('<button type="button" class="btn btn-default" data-dismiss="modal">close</button>')
+									]
+								});
+							});
+
+							$('#searchResults').append(searchResults);
+						});
+
+						
+					}
+				});
+			});
+		</script>
+	</body>
+</html>

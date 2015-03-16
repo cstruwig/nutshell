@@ -76,7 +76,9 @@ exports.parse = function(nsReq, next) {
 				// }
 
 				db.open(function(err, connection) {
-					if (err) return next(null);	//FIX! set error n nsReq
+					if (err) {
+						return next(err, null);	//FIX! set error n nsReq
+					}
 					connection.collection('defaultView').findOne({ path: nsReq.request.path }, function(err, results) {
 						if (results && results.view.name !== '') {
 							debug.lo('found DB view', results.view.name);
@@ -91,13 +93,11 @@ exports.parse = function(nsReq, next) {
 							nutshellIt(service.module);
 						}
 
-						console.log(service.module);
-
 						return next(null, nsReq);
 					});
 				});
 			}
-			catch (err) {
+			catch (err) {		
 				debug.lo('invalid service or resource ' + err);
 				return next(err);
 			}

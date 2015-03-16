@@ -8,14 +8,17 @@ var apiUrl = 'http://www.omdbapi.com/?r=json&';
 
 exports.searchMovies = function(filter, next) {
 
-	var result = tools.collection('forecast');
-	var url = apiUrl + 'type=movie&s=' + filter.name + '&y=' + filter.year;
-
+	var url = apiUrl + 'type=movie&s=' + filter.name;
 	var result = tools.collection('movies');
+
 
 	// if (!filter.name || filter.name === '') {
 	// 	next(new Error('invalid or empty name specified'));
 	// }
+
+	if (filter.year > 0) {
+		url += '&y=' + filter.year;
+	}
 
 	ns.request(url, function (err, response, body) {
 		if (err || response.statusCode !== 200) {

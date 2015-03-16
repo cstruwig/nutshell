@@ -2,23 +2,16 @@ require('longjohn');
 
 var ns = require('../lib');
 var debug = ns.debug;
-var lastfm = require('../applicationservices/lastfm');
-var omdb = require('../applicationservices/omdb');
+var cricscore = require('../applicationservices/cricscore');
 
-exports.getArtists = function(nsReq, next) {
+exports.getMatches = function(nsReq, next) {
 
 	//******************* setup filters....
-	var name = nsReq.getParameter('name', { 
-		typeName: 'string', 
-		mandatory: true, 
-		description: 'partial artist name to search for'
-	});
-
-	var limit = nsReq.getParameter('limit', { 
-		typeName: 'number', 
-		mandatory: false, 
-		description: 'maximum no of results to return from music source',
-		defaultValue: 10
+	var type = nsReq.getParameter('type', { 
+		typeName: 'list', 
+		mandatory: false,
+		options: ['cricket', 'rugby'],
+		description: 'type of sport matches to retrieve'
 	});
 
 	var deferred = ns.Q.defer();
@@ -30,26 +23,29 @@ exports.getArtists = function(nsReq, next) {
 
 	if (!nsReq.validFilter()) {
 		//return epty results
-		nsReq.response.data = ns.tools.collection('artists');
+		nsReq.response.data = ns.tools.collection('matches');
 		nsReq.response.status = 'invalid';
 		deferred.resolve(nsReq);
 	} else {
 		//******************* process....		
-		//setup search filter
-		var filter = { name: name, limit: limit };
-		
-		//get the data
-		lastfm.searchArtists(filter, function(err, artists) {
-			if (err) {
-				deferred.reject(err);
-			} else {
-				//******************* populate response....
-				nsReq.response.data = artists.data();
-				nsReq.response.status = 'valid';
 
-				deferred.resolve(nsReq);
-			}
-		});
+		if (type === 'cricket') {
+			//get the data
+			cricscore.availableMatches({}, function(err, matches) {
+				if (err) {
+					deferred.reject(err);
+				} else {
+					//******************* populate response....
+					nsReq.response.data = matches.data();
+					nsReq.response.status = 'valid';
+
+					deferred.resolve(nsReq);
+				}
+			});	
+		}
+
+		//WAIT FOR CB!!!
+		
 	}
 
 	return deferred.promise.nodeify(next);
@@ -87,7 +83,6 @@ exports.getMovies = function(nsReq, next) {
 			if (err) {
 				deferred.reject(err);
 			} else {
-				console.log(movies.movie);
 				//******************* populate response....
 				nsReq.response.data = movies.data();
 				nsReq.response.status = 'valid';
@@ -100,7 +95,11 @@ exports.getMovies = function(nsReq, next) {
 	return deferred.promise.nodeify(next);	
 }
 
+
+
+
 // getVideos: function(nsReq, next) {
+
 // 	//******************* setup filters....
 // 	var query = nsReq.getParameter('query', { 
 // 		typeName: 'string', 

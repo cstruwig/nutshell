@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<link rel="shortcut icon" href="/favicon.ico?v=1" />
+		<title>nutshell</title>
+		<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+		<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+		<script src="https://cdn.firebase.com/js/client/2.1.2/firebase.js"></script>
+		<script src="../../assets/nutshell.js?v=1"></script>
+		<script src="../../assets/navbar.js?v=1"></script>
+
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css" />
+		<link rel="stylesheet" href="../../assets/nutshell.css" />
+	</head>
+	<body>
+		<div class="container" id="nsView">
+			<div class="row clearfix">
+				<div class="col-md-12 column">
+					<div class="container" id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+			/** #nsData */
+
+			function drawBarGraphTotals(data) {
+
+				//convert data
+				// var categories = []
+				// nsData.counters.counter.forEach(function(item) {
+				// 	//if (!item.name.includes('\/assets\/') && !item.name.includes('._middleware./')) {
+				// 		categories.push(item.name);
+
+				// 	//}
+				// });
+
+				var counters = [];
+				nsData.counters.counter.forEach(function(item) {
+					if (!item.name.includes('\/assets\/') && !item.name.includes('._middleware./')) {
+						counters.push({ name: item.name, data: [item.total] });
+					}
+				});
+
+				$('#container').highcharts({
+			        chart: {
+			            type: 'column'
+			        },
+			        title: {
+			            text: 'Monthly Average Rainfall'
+			        },
+			        subtitle: {
+			            text: 'Source: WorldClimate.com'
+			        },
+			        xAxis: {
+			            categories: [
+			                'Jan',
+			                'Feb',
+			                'Mar',
+			                'Apr',
+			                'May',
+			                'Jun',
+			                'Jul',
+			                'Aug',
+			                'Sep',
+			                'Oct',
+			                'Nov',
+			                'Dec'
+			            ]
+			        },
+			        yAxis: {
+			            min: 0,
+			            title: {
+			                text: 'Rainfall (mm)'
+			            }
+			        },
+			        tooltip: {
+			            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+			            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+			                '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+			            footerFormat: '</table>',
+			            shared: true,
+			            useHTML: true
+			        },
+			        plotOptions: {
+			            column: {
+			                pointPadding: 0.2,
+			                borderWidth: 0
+			            }
+			        },
+			        series: counters
+			    });		
+			}
+
+			function drawLineGraphDetails() {
+				
+				//convert data
+				var counters = [];
+				nsData.counters.counter.forEach(function(item) {
+					if (!item.name.includes('\/assets\/') && !item.name.includes('._middleware./')) {
+						counters.push({ name: item.name, data: [item.total] });
+					}
+				});
+
+				$('#container').highcharts({
+			        chart: {
+			            type: 'spline'
+			        },
+			        title: {
+			            text: '<strong>nut</strong>shell counters'
+			        },
+			        subtitle: {
+			            text: 'October 6th and 7th 2009 at two locations in Vik i Sogn, Norway'
+			        },
+			        xAxis: {
+			            type: 'datetime',
+			            labels: {
+			                overflow: 'justify'
+			            }
+			        },
+			        yAxis: {
+			            title: {
+			                text: 'stuff per time (s/t)'
+			            },
+			            min: 0,
+			            minorGridLineWidth: 0,
+			            gridLineWidth: 0,
+			            alternateGridColor: null,
+			            plotBands: [{ // Light air
+			                from: 0.3,
+			                to: 1.5,
+			                color: 'rgba(68, 170, 213, 0.1)',
+			                label: {
+			                    text: 'Light air',
+			                    style: {
+			                        color: '#606060'
+			                    }
+			                }
+			            }, { // Light breeze
+			                from: 1.5,
+			                to: 3.3,
+			                color: 'rgba(0, 0, 0, 0)',
+			                label: {
+			                    text: 'Light breeze',
+			                    style: {
+			                        color: '#606060'
+			                    }
+			                }
+			            }, { // Gentle breeze
+			                from: 3.3,
+			                to: 5.5,
+			                color: 'rgba(68, 170, 213, 0.1)',
+			                label: {
+			                    text: 'Gentle breeze',
+			                    style: {
+			                        color: '#606060'
+			                    }
+			                }
+			            }, { // Moderate breeze
+			                from: 5.5,
+			                to: 8,
+			                color: 'rgba(0, 0, 0, 0)',
+			                label: {
+			                    text: 'Moderate breeze',
+			                    style: {
+			                        color: '#606060'
+			                    }
+			                }
+			            }, { // Fresh breeze
+			                from: 8,
+			                to: 11,
+			                color: 'rgba(68, 170, 213, 0.1)',
+			                label: {
+			                    text: 'Fresh breeze',
+			                    style: {
+			                        color: '#606060'
+			                    }
+			                }
+			            }, { // Strong breeze
+			                from: 11,
+			                to: 14,
+			                color: 'rgba(0, 0, 0, 0)',
+			                label: {
+			                    text: 'Strong breeze',
+			                    style: {
+			                        color: '#606060'
+			                    }
+			                }
+			            }, { // High wind
+			                from: 14,
+			                to: 15,
+			                color: 'rgba(68, 170, 213, 0.1)',
+			                label: {
+			                    text: 'High wind',
+			                    style: {
+			                        color: '#606060'
+			                    }
+			                }
+			            }]
+			        },
+			        tooltip: {
+			            valueSuffix: ' m/s'
+			        },
+			        plotOptions: {
+			            spline: {
+			                lineWidth: 4,
+			                states: {
+			                    hover: {
+			                        lineWidth: 5
+			                    }
+			                },
+			                marker: {
+			                    enabled: false
+			                },
+			                pointInterval: 3600000, // one hour
+			                pointStart: Date.UTC(2009, 9, 6, 0, 0, 0)
+			            }
+			        },
+			        series: counters,
+			        navigation: {
+			            menuItemStyle: {
+			                fontSize: '10px'
+			            }
+			        }
+			    });
+			}
+
+			$('document').ready(nutshell({ navbar : true }, function() {
+
+				switch (nsData.request.inputs.grouping.toLowerCase()) {
+					case 'totals':
+						drawBarGraphTotals();
+						break;
+					default:
+						drawLineGraphDetails();
+						break;
+				}
+
+			}));
+
+		</script>
+	</body>
+</html>

@@ -46,9 +46,16 @@ module.exports = {
 			mandatory: true
 		}).toLowerCase();
 
+		var grouping = nsReq.getParameter('grouping', {
+			typeName: 'list',
+			options: ['none', 'totals'],
+			description: 'aggregation type for counters',
+			defaultValue: 'totals'
+		})
+
 		var result = tools.collection('counters');
 
-		metrics.getCounter(name, function(counters) {
+		metrics.getCounters({ name: name, grouping: grouping }, function(err, counters) {
 
 			counters.forEach(function(counter) {
 				var count = {}

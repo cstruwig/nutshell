@@ -17,6 +17,22 @@
 		pre.nsJSON {
 		  max-width: none;
 		  max-height: none;
+		  font-size: 1.2em;
+		}
+
+		.zoomer {
+			font-size: 2.2em;
+			color: #c0c0c0;
+			cursor: pointer;
+		}
+
+		.noselect {
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
 		}
 		</style>
 	</head>
@@ -24,12 +40,14 @@
 		<div class="container" id="nsView">
 			<div class="row clearfix">
 				<div class="col-md-12 column">
-					<!-- <h3><small><strong>nut</strong>shell result viewer</small></h3> -->
 					<div class="container">
-							<pre class="nsJSON" id="nsData">
+						<div class="noselect zoomer pull-right">
+							<span data-direction="out" class="button glyphicon glyphicon-zoom-out"></span>
+							<span data-direction="in" class="button glyphicon glyphicon-zoom-in"></span>
+						</div>
+						<pre class="nsJSON" id="nsData">
 						</pre>
 					</div>
-
 				</div>
 			</div>	
 		</div>
@@ -38,17 +56,23 @@
 
 			$('document').ready(nutshell({ navbar: true }, function() {
 				var results = nsHTML.printJSON(nsData);
-
-				//console.log(results);
-				// results.find('.json-string').each(function(ctr, item) {
-				// 	console.log(item);
-				// 	// if (item.startsWith("http")) {
-				// 	// 	item.
-				// 	// }
-				// });
-
 				ns('#nsData').html(results);
 			}));
+
+			$('.zoomer>span').hover(function() {
+				$(this).css('color', '#000');
+			}, function() {
+				$(this).css('color', 'grey');
+			});
+
+			$('.zoomer>span').click(function(evt) {
+				var size = parseInt(ns('#nsData').css('font-size'));
+				if ($(this).data('direction') === 'in') {
+					if (size < 25) ns('#nsData').css('font-size', size + 1 + 'px');
+				} else {
+					if (size > 10) ns('#nsData').css('font-size', size - 1 + 'px');
+				}
+			});
 		</script>
 	</body>
 </html>

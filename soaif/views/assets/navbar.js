@@ -75,9 +75,11 @@ function calculateSuggestions() {
   //identify matches/filter suggestions
   userOptions.resources.forEach(function(item, ctr) {   //this comes from fb...
 
+    console.log('item', item);
+
     //check user's' CRUD priviliges
     if (!item.ops.includes('c') && !item.ops.includes('r') && !item.ops.includes('u') && !item.ops.includes('d') ) {
-      console.log('no suggestions, no roles configured :( check the logged on user record on FB...');
+      console.log('...no suggestions, no roles configured :( check the logged on user record on FB...');
     } else {
       var optionText = item.path.replace('/', ' > ');
       if (optionText.includes(searchBar.val())) {
@@ -149,7 +151,7 @@ function initEvents() {
   User.on('value', function(data) {
 
     //setup roles //FIX! dont think we use this...
-    userOptions = data.val() ? data.val().roles : [];
+    userOptions = data.val();
 
     if (!userOptions.resources || userOptions.resources.length === 0) {
       //no roles configured
@@ -265,8 +267,6 @@ function initEvents() {
           ]
         });
       });
-      
-      
     }
   });
 
