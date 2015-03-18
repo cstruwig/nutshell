@@ -13,27 +13,23 @@
 		<script src="http://d3js.org/d3.v3.min.js"></script> 
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css" />
-		<link rel="stylesheet" href="../../assets/nutshell.css" />
-		
+		<link rel="stylesheet" href="../../assets/nutshell.css" />		
 		<style>
 		.node {
 		  cursor: pointer;
 		}
 
 		.node circle {
-		  fill: #fff;
-		  stroke: steelblue;
+		  fill: #C09100;
+		  stroke: #C09100;
 		  stroke-width: 1.5px;
 		}
 
-		.node text {
-		  font: 10px sans-serif;
-		}
-
+		
 		.link {
 		  fill: none;
-		  stroke: #ccc;
-		  stroke-width: 1.5px;
+		  stroke: #FFDA5C;
+		  stroke-width: 1.0px;
 		}
 		</style>
 	</head>
@@ -61,12 +57,30 @@
 			// 	});
 			}));
 
-var margin = {top: 20, right: 120, bottom: 20, left: 120},
+			function populateEducation(education) {
+				
+				var educationHtml = $('<form></form>');
+
+				var ctr = 0;
+				for(var key in education) {
+					var input = education[key];
+					var inputHtml = '<div class="form-group">';
+					inputHtml += '<label for="input' + key + ctr + '" class="control-label">' + key + '</label>';
+					inputHtml += '<input type="text" data-name="' + key + '" placeholder="' + input.description + '" class="nsInput form-control" id="input' + key + ctr + '" />';
+					inputHtml += '</div>';
+
+					educationHtml.append(inputHtml);					
+				}
+
+				return educationHtml.html();
+			}
+
+var margin = {top: 0, right: 20, bottom: 20, left: 70},
     width = 960 - margin.right - margin.left,
-    height = 800 - margin.top - margin.bottom;
+    height = 600 - margin.top - margin.bottom;
     
 var i = 0,
-    duration = 750,
+    duration = 250,
     root;
 
 var tree = d3.layout.tree()
@@ -81,24 +95,23 @@ var svg = d3.select("#tree").append("svg")
   	.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-//d3.json("http://localhost:8080/assets/flare.json", function(error, flare) {
-  root = nsData;		//flare;
-  root.x0 = height / 2;
-  root.y0 = 0;
 
-  function collapse(d) {
-    if (d.children) {
-      d._children = d.children;
-      d._children.forEach(collapse);
-      d.children = null;
-    }
-  }
+root = nsData;		//flare;
+root.x0 = height / 2;
+root.y0 = 0;
 
-  root.children.forEach(collapse);
-  update(root);
-//});
+function collapse(d) {
+	if (d.children) {
+	  d._children = d.children;
+	  d._children.forEach(collapse);
+	  d.children = null;
+	}
+}
 
-d3.select(self.frameElement).style("height", "800px");
+root.children.forEach(collapse);
+update(root);
+
+d3.select(self.frameElement).style("height", "600px");
 
 function update(source) {
 
@@ -107,7 +120,7 @@ function update(source) {
       links = tree.links(nodes);
 
   // Normalize for fixed-depth.
-  nodes.forEach(function(d) { d.y = d.depth * 180; });
+  nodes.forEach(function(d) { d.y = d.depth * 220; });
 
   // Update the nodes…
   var node = svg.selectAll("g.node")
@@ -121,14 +134,44 @@ function update(source) {
 
   nodeEnter.append("circle")
       .attr("r", 1e-6)
-      .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+      .style("fill", function(d) { return d._children ? "#C09100" : "#fff"; });
 
   nodeEnter.append("text")
       .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
       .attr("dy", ".35em")
       .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
-      .text(function(d) { return d.name; })
-      .style("fill-opacity", 1e-6);
+      .html(function(d) { 
+      	return d.name; 
+      })
+      .style("fill-opacity", 1e-6)
+      .on("mouseover", function(d) {
+	      d3.select(this).attr('font-size', '15px');
+	  })
+	  .on("mouseout", function() {
+	      d3.select(this).attr('font-size', '14px');
+	  })
+	  .on("click", function() {
+			var node = d3.select(this).data()[0];
+			if (node.depth === 3) {
+				var path = node.parent.name + ' > ' + node.name.replace(/get/, '').toLowerCase();
+
+				$.get(nsData.request.url + '/nutshell/' + node.parent.name + '/' + node.name.replace(/get/, '').toLowerCase() + '?educateme=1', function(data) {
+					var educationHtml = populateEducation(data.education);
+					
+					nsModal({
+						titleHtml: '<span><strong>nut</strong>shell > ' + path + '</span>',
+						messageHtml: educationHtml,
+						buttons: [
+							$('<button type="button" class="btn btn-default" data-dismiss="modal">cancel</button>'),
+							$('<button type="button" data-dismiss="modal" class="btn btn-primary">invoke</button>').click(function() {
+								invokeService();
+							})
+						]
+					});
+				});
+			}
+	  });
+
 
   // Transition nodes to their new position.
   var nodeUpdate = node.transition()
@@ -137,7 +180,7 @@ function update(source) {
 
   nodeUpdate.select("circle")
       .attr("r", 4.5)
-      .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+      .style("fill", function(d) { return d._children ? "#C09100" : "#fff"; });
 
   nodeUpdate.select("text")
       .style("fill-opacity", 1);
