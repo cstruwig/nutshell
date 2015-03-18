@@ -155,7 +155,7 @@ function update(source) {
 			if (node.depth === 3) {
 				var path = node.parent.name + ' > ' + node.name.replace(/get/, '').toLowerCase();
 
-				$.get(nsData.request.url + '/nutshell/' + node.parent.name + '/' + node.name.replace(/get/, '').toLowerCase() + '?educateme=1', function(data) {
+				$.get(url + node.parent.name + '/' + node.name.replace(/get/, '').toLowerCase() + '?educateme=1', function(data) {
 					var educationHtml = populateEducation(data.education);
 					
 					nsModal({
@@ -171,7 +171,6 @@ function update(source) {
 				});
 			}
 	  });
-
 
   // Transition nodes to their new position.
   var nodeUpdate = node.transition()
